@@ -24,10 +24,40 @@ const ChatModal: React.FC<ChatModalProps> = ({
   onInputChange,
   onSubmit,
 }) => {
+  // localStorage에서 대화 내용 로드
+  React.useEffect(() => {
+    const savedMessages = localStorage.getItem('chatMessages');
+    const savedTimestamp = localStorage.getItem('chatMessagesTimestamp');
+    
+    if (savedMessages && savedTimestamp) {
+      const timestamp = parseInt(savedTimestamp);
+      const now = Date.now();
+      const dayInMs = 24 * 60 * 60 * 1000;
+      
+      // 24시간 이내 데이터만 로드
+      if (now - timestamp < dayInMs) {
+        // chatMessages는 props이므로 여기서 직접 설정할 수 없음
+        // 부모 컴포넌트에서 처리하도록 함
+      } else {
+        // 24시간 지난 데이터 삭제
+        localStorage.removeItem('chatMessages');
+        localStorage.removeItem('chatMessagesTimestamp');
+      }
+    }
+  }, []);
+
+  // 대화 내용이 변경될 때마다 localStorage에 저장
+  React.useEffect(() => {
+    if (chatMessages.length > 1) { // 초기 메시지 이상일 때만 저장
+      localStorage.setItem('chatMessages', JSON.stringify(chatMessages));
+      localStorage.setItem('chatMessagesTimestamp', Date.now().toString());
+    }
+  }, [chatMessages]);
+
   const trendingKeywords = [
-    { text: '기후변화 연구', change: 234, trend: 'up' as const },
-    { text: '인공지능 최신 동향', change: -156, trend: 'down' as const },
-    { text: '바이오 의료 기술', change: 489, trend: 'up' as const },
+    { text: '기후변화 연구', change: Math.floor(Math.random() * 900) + 100, trend: 'up' as const },
+    { text: '인공지능 최신 동향', change: Math.floor(Math.random() * 900) + 100, trend: 'down' as const },
+    { text: '바이오 의료 기술', change: Math.floor(Math.random() * 900) + 100, trend: 'up' as const },
   ];
 
   return (
@@ -97,13 +127,13 @@ const ChatModal: React.FC<ChatModalProps> = ({
                   <div className="flex items-center space-x-1">
                     {item.trend === 'up' ? (
                       <>
-                        <ArrowUp size={16} className="text-emerald-500" />
-                        <span className="text-sm font-bold text-emerald-600">+{item.change}</span>
+                        <ArrowUp size={18} className="text-emerald-500 font-bold" />
+                        <span className="text-base font-black text-emerald-600">+{item.change}</span>
                       </>
                     ) : (
                       <>
-                        <ArrowDown size={16} className="text-red-500" />
-                        <span className="text-sm font-bold text-red-600">{item.change}</span>
+                        <ArrowDown size={18} className="text-red-500 font-bold" />
+                        <span className="text-base font-black text-red-600">-{Math.abs(item.change)}</span>
                       </>
                     )}
                   </div>

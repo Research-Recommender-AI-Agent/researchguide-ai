@@ -4,6 +4,8 @@ import Header from '@/components/Header';
 import ChatModal from '@/components/ChatModal';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import fireIcon from '@/assets/fire-3d-icon.png';
+import newBadgeIcon from '@/assets/new-badge-3d-icon.png';
 
 interface ChatMessage {
   type: 'user' | 'agent';
@@ -27,6 +29,32 @@ const ResearchRecommendationAgent = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10);
 
+  // localStorage에서 대화 내용 로드
+  useEffect(() => {
+    const savedMessages = localStorage.getItem('chatMessages');
+    const savedTimestamp = localStorage.getItem('chatMessagesTimestamp');
+    
+    if (savedMessages && savedTimestamp) {
+      const timestamp = parseInt(savedTimestamp);
+      const now = Date.now();
+      const dayInMs = 24 * 60 * 60 * 1000;
+      
+      // 24시간 이내 데이터만 로드
+      if (now - timestamp < dayInMs) {
+        try {
+          const messages = JSON.parse(savedMessages);
+          setChatMessages(messages);
+        } catch (e) {
+          console.error('Failed to parse chat messages:', e);
+        }
+      } else {
+        // 24시간 지난 데이터 삭제
+        localStorage.removeItem('chatMessages');
+        localStorage.removeItem('chatMessagesTimestamp');
+      }
+    }
+  }, []);
+
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([
     { 
       type: 'agent', 
@@ -36,11 +64,11 @@ const ResearchRecommendationAgent = () => {
   ]);
 
   const [trendingPapers, setTrendingPapers] = useState([
-    { id: 1, rank: 1, prevRank: 5, rankChange: 234, title: 'GPT-4 in Scientific Research', author: 'OpenAI Research Team', trend: 'hot', url: 'https://arxiv.org/abs/2303.08774' },
-    { id: 2, rank: 2, prevRank: 3, rankChange: 156, title: 'Climate Change ML Models', author: 'Smith, J. et al.', trend: 'up', url: 'https://www.nature.com/articles/s41558-019-0666-1' },
-    { id: 3, rank: 3, prevRank: 1, rankChange: -189, title: 'Quantum Computing Advances', author: 'Chen, L. & Park, K.', trend: 'down', url: 'https://www.nature.com/articles/s41586-019-1666-5' },
-    { id: 4, rank: 4, prevRank: 4, rankChange: 0, title: 'Biomedical Data Mining', author: 'Johnson, M. et al.', trend: 'same', url: 'https://www.nature.com/articles/s41591-018-0316-z' },
-    { id: 5, rank: 5, prevRank: 2, rankChange: -234, title: 'Neural Network Optimization', author: 'Lee, S. & Kim, H.', trend: 'down', url: 'https://arxiv.org/abs/1412.6980' }
+    { id: 1, rank: 1, prevRank: 5, rankChange: Math.floor(Math.random() * 900) + 100, title: 'Attention Is All You Need', author: 'Vaswani et al.', trend: 'hot', url: 'https://arxiv.org/abs/1706.03762' },
+    { id: 2, rank: 2, prevRank: 3, rankChange: Math.floor(Math.random() * 900) + 100, title: 'Deep Residual Learning for Image Recognition', author: 'He, K. et al.', trend: 'up', url: 'https://arxiv.org/abs/1512.03385' },
+    { id: 3, rank: 3, prevRank: 1, rankChange: -(Math.floor(Math.random() * 900) + 100), title: 'BERT: Pre-training of Deep Bidirectional Transformers', author: 'Devlin, J. et al.', trend: 'down', url: 'https://arxiv.org/abs/1810.04805' },
+    { id: 4, rank: 4, prevRank: 4, rankChange: 0, title: 'Generative Adversarial Networks', author: 'Goodfellow, I. et al.', trend: 'same', url: 'https://arxiv.org/abs/1406.2661' },
+    { id: 5, rank: 5, prevRank: 2, rankChange: -(Math.floor(Math.random() * 900) + 100), title: 'ImageNet Classification with Deep Convolutional Neural Networks', author: 'Krizhevsky, A. et al.', trend: 'down', url: 'https://papers.nips.cc/paper/2012/hash/c399862d3b9d6b76c8436e924a68c45b-Abstract.html' }
   ]);
 
   const mockRecommendations = [
@@ -48,8 +76,8 @@ const ResearchRecommendationAgent = () => {
     {
       id: 1,
       type: 'paper',
-      title: 'Deep Learning Approaches for Climate Change Analysis',
-      description: 'This paper presents novel deep learning methodologies for analyzing climate change patterns.',
+      title: 'Attention Is All You Need',
+      description: 'This paper introduces the Transformer architecture, which has revolutionized natural language processing.',
       score: 0.94,
       level: '가장 추천',
       reason: '입력된 연구데이터와 높은 의미적 연관성을 보입니다.',
@@ -60,18 +88,18 @@ const ResearchRecommendationAgent = () => {
         recencyScore: 0.88,
         explanation: '김연구님의 연구 데이터와 94%의 의미적 유사도를 보이며, 핵심 키워드 매칭률 89%를 기록했습니다.'
       },
-      url: 'https://www.nature.com/articles/s41558-019-0666-1',
-      journal: 'Nature Climate Change',
-      authors: ['Smith, J.', 'Kim, H.S.'],
-      year: 2023,
-      citationCount: 127,
-      keywords: ['deep learning', 'climate change', 'satellite data']
+      url: 'https://arxiv.org/abs/1706.03762',
+      journal: 'NeurIPS',
+      authors: ['Vaswani, A.', 'Shazeer, N.'],
+      year: 2017,
+      citationCount: 127543,
+      keywords: ['transformer', 'attention mechanism', 'neural networks']
     },
     {
       id: 2,
       type: 'paper',
-      title: 'Transformer Networks in Scientific Computing',
-      description: 'Novel transformer architecture applications in scientific research.',
+      title: 'BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding',
+      description: 'BERT obtains new state-of-the-art results on eleven natural language processing tasks.',
       score: 0.93,
       level: '가장 추천',
       reason: '최신 AI 기술과 과학 연구의 융합을 제시합니다.',
@@ -82,188 +110,188 @@ const ResearchRecommendationAgent = () => {
         recencyScore: 0.96,
         explanation: '최신 트랜스포머 아키텍처를 과학 컴퓨팅에 적용한 혁신적 연구입니다.'
       },
-      url: 'https://arxiv.org/abs/1706.03762',
-      journal: 'Nature Machine Intelligence',
-      authors: ['Vaswani, A.', 'Shazeer, N.'],
-      year: 2024,
-      citationCount: 234,
-      keywords: ['transformer', 'scientific computing', 'AI']
+      url: 'https://arxiv.org/abs/1810.04805',
+      journal: 'NAACL',
+      authors: ['Devlin, J.', 'Chang, M.W.'],
+      year: 2019,
+      citationCount: 98234,
+      keywords: ['BERT', 'language models', 'NLP']
     },
     {
       id: 3,
       type: 'paper',
-      title: 'Quantum Machine Learning Fundamentals',
-      description: 'Comprehensive guide to quantum machine learning principles and applications.',
+      title: 'Deep Residual Learning for Image Recognition',
+      description: 'Residual networks address the degradation problem in very deep networks.',
       score: 0.91,
       level: '가장 추천',
-      reason: '양자 컴퓨팅과 머신러닝의 교차점을 탐구합니다.',
+      reason: '딥러닝 아키텍처의 혁신적 발전을 보여줍니다.',
       detailedReason: {
         semanticSimilarity: 0.91,
         keywordMatch: 0.88,
         citationRelevance: 0.90,
         recencyScore: 0.92,
-        explanation: '양자 머신러닝의 이론과 실제를 모두 다룬 포괄적 연구입니다.'
+        explanation: 'ResNet은 컴퓨터 비전의 이론과 실제를 모두 다룬 포괄적 연구입니다.'
       },
-      url: 'https://www.nature.com/articles/s41586-019-0980-2',
-      journal: 'Nature',
-      authors: ['Preskill, J.'],
-      year: 2024,
-      citationCount: 189,
-      keywords: ['quantum computing', 'machine learning', 'NISQ']
+      url: 'https://arxiv.org/abs/1512.03385',
+      journal: 'CVPR',
+      authors: ['He, K.', 'Zhang, X.'],
+      year: 2016,
+      citationCount: 156789,
+      keywords: ['ResNet', 'computer vision', 'deep learning']
     },
     {
       id: 4,
       type: 'paper',
-      title: 'CRISPR Gene Editing: Recent Advances',
-      description: 'Latest developments in CRISPR-Cas9 gene editing technology.',
+      title: 'Generative Adversarial Networks',
+      description: 'GANs are a class of machine learning frameworks for training generative models.',
       score: 0.90,
       level: '추천',
-      reason: '바이오 기술의 최신 발전사항을 제공합니다.',
+      reason: '생성 모델의 혁신적 접근법을 제시합니다.',
       detailedReason: {
         semanticSimilarity: 0.90,
         keywordMatch: 0.87,
         citationRelevance: 0.89,
         recencyScore: 0.94,
-        explanation: 'CRISPR 기술의 최신 응용 사례와 미래 전망을 제시합니다.'
+        explanation: 'GAN은 생성 AI의 기초가 되는 획기적인 연구입니다.'
       },
-      url: 'https://www.nature.com/articles/nbt.3659',
-      journal: 'Nature Biotechnology',
-      authors: ['Zhang, F.', 'Doudna, J.A.'],
-      year: 2024,
-      citationCount: 312,
-      keywords: ['CRISPR', 'gene editing', 'biotechnology']
+      url: 'https://arxiv.org/abs/1406.2661',
+      journal: 'NeurIPS',
+      authors: ['Goodfellow, I.', 'Pouget-Abadie, J.'],
+      year: 2014,
+      citationCount: 89312,
+      keywords: ['GAN', 'generative models', 'adversarial training']
     },
     {
       id: 5,
       type: 'paper',
-      title: 'Neural Architecture Search: A Survey',
-      description: 'Comprehensive survey of neural architecture search methods.',
+      title: 'ImageNet Classification with Deep Convolutional Neural Networks',
+      description: 'AlexNet achieved breakthrough results on ImageNet classification challenge.',
       score: 0.89,
       level: '추천',
-      reason: 'AutoML의 핵심 기술을 상세히 설명합니다.',
+      reason: '딥러닝 혁명의 시작을 알린 논문입니다.',
       detailedReason: {
         semanticSimilarity: 0.89,
         keywordMatch: 0.86,
         citationRelevance: 0.88,
         recencyScore: 0.90,
-        explanation: '신경망 구조 탐색의 다양한 방법론을 비교 분석합니다.'
+        explanation: 'AlexNet은 현대 딥러닝의 토대를 마련한 중요한 연구입니다.'
       },
-      url: 'https://arxiv.org/abs/1808.05377',
-      journal: 'Journal of Machine Learning Research',
-      authors: ['Elsken, T.', 'Metzen, J.H.'],
-      year: 2023,
-      citationCount: 156,
-      keywords: ['NAS', 'AutoML', 'neural networks']
+      url: 'https://papers.nips.cc/paper/2012/hash/c399862d3b9d6b76c8436e924a68c45b-Abstract.html',
+      journal: 'NeurIPS',
+      authors: ['Krizhevsky, A.', 'Sutskever, I.'],
+      year: 2012,
+      citationCount: 134156,
+      keywords: ['AlexNet', 'CNN', 'ImageNet']
     },
     {
       id: 6,
       type: 'paper',
-      title: 'Explainable AI in Healthcare',
-      description: 'Methods for interpreting AI models in medical diagnosis.',
+      title: 'Mastering the Game of Go with Deep Neural Networks and Tree Search',
+      description: 'AlphaGo combines deep neural networks with Monte Carlo tree search.',
       score: 0.88,
       level: '추천',
-      reason: '의료 분야 AI의 설명가능성을 향상시킵니다.',
+      reason: '강화학습과 탐색 알고리즘의 결합을 보여줍니다.',
       detailedReason: {
         semanticSimilarity: 0.88,
         keywordMatch: 0.85,
         citationRelevance: 0.87,
         recencyScore: 0.91,
-        explanation: '의료 AI의 신뢰성과 투명성을 높이는 방법을 제시합니다.'
+        explanation: 'AlphaGo는 AI가 인간 수준을 넘어선 역사적 연구입니다.'
       },
-      url: 'https://www.nature.com/articles/s41591-018-0300-7',
-      journal: 'Nature Medicine',
-      authors: ['Topol, E.J.'],
-      year: 2023,
-      citationCount: 201,
-      keywords: ['XAI', 'healthcare', 'medical AI']
+      url: 'https://www.nature.com/articles/nature16961',
+      journal: 'Nature',
+      authors: ['Silver, D.', 'Huang, A.'],
+      year: 2016,
+      citationCount: 45201,
+      keywords: ['AlphaGo', 'reinforcement learning', 'MCTS']
     },
     {
       id: 7,
       type: 'paper',
-      title: 'Reinforcement Learning for Robotics',
-      description: 'Advanced RL techniques for robot control and manipulation.',
+      title: 'Adam: A Method for Stochastic Optimization',
+      description: 'Adam optimizer is widely used for training deep learning models.',
       score: 0.87,
       level: '추천',
-      reason: '로봇 제어의 최신 강화학습 기법을 다룹니다.',
+      reason: '최적화 알고리즘의 실용적 발전을 제시합니다.',
       detailedReason: {
         semanticSimilarity: 0.87,
         keywordMatch: 0.84,
         citationRelevance: 0.86,
         recencyScore: 0.89,
-        explanation: '실제 로봇 시스템에 적용 가능한 RL 알고리즘을 제공합니다.'
+        explanation: 'Adam은 실제 딥러닝 학습에 필수적인 최적화 방법입니다.'
       },
-      url: 'https://www.science.org/doi/10.1126/scirobotics.abb1696',
-      journal: 'Science Robotics',
-      authors: ['Levine, S.', 'Kumar, A.'],
-      year: 2023,
-      citationCount: 178,
-      keywords: ['reinforcement learning', 'robotics', 'control']
+      url: 'https://arxiv.org/abs/1412.6980',
+      journal: 'ICLR',
+      authors: ['Kingma, D.P.', 'Ba, J.'],
+      year: 2015,
+      citationCount: 178567,
+      keywords: ['Adam', 'optimization', 'stochastic gradient descent']
     },
     {
       id: 8,
       type: 'paper',
-      title: 'Graph Neural Networks: A Review',
-      description: 'Comprehensive overview of GNN architectures and applications.',
+      title: 'Batch Normalization: Accelerating Deep Network Training',
+      description: 'Batch normalization reduces internal covariate shift in neural networks.',
       score: 0.86,
       level: '참고',
-      reason: '그래프 데이터 처리의 핵심 기술을 소개합니다.',
+      reason: '딥러닝 학습 안정화의 핵심 기술입니다.',
       detailedReason: {
         semanticSimilarity: 0.86,
         keywordMatch: 0.83,
         citationRelevance: 0.85,
         recencyScore: 0.88,
-        explanation: 'GNN의 다양한 아키텍처와 응용 분야를 체계적으로 정리합니다.'
+        explanation: 'Batch normalization은 현대 신경망 학습의 표준 기법입니다.'
       },
-      url: 'https://arxiv.org/abs/1901.00596',
-      journal: 'IEEE Transactions on Neural Networks',
-      authors: ['Wu, Z.', 'Pan, S.'],
-      year: 2023,
-      citationCount: 267,
-      keywords: ['GNN', 'graph learning', 'neural networks']
+      url: 'https://arxiv.org/abs/1502.03167',
+      journal: 'ICML',
+      authors: ['Ioffe, S.', 'Szegedy, C.'],
+      year: 2015,
+      citationCount: 89267,
+      keywords: ['batch normalization', 'training acceleration', 'neural networks']
     },
     {
       id: 9,
       type: 'paper',
-      title: 'Federated Learning for Privacy-Preserving AI',
-      description: 'Decentralized machine learning while preserving data privacy.',
+      title: 'Dropout: A Simple Way to Prevent Neural Networks from Overfitting',
+      description: 'Dropout is a regularization technique for reducing overfitting in neural networks.',
       score: 0.85,
       level: '참고',
-      reason: '프라이버시 보호 AI의 핵심 방법론입니다.',
+      reason: '과적합 방지의 효과적인 방법론입니다.',
       detailedReason: {
         semanticSimilarity: 0.85,
         keywordMatch: 0.82,
         citationRelevance: 0.84,
         recencyScore: 0.87,
-        explanation: '데이터 프라이버시를 보호하면서 효과적인 학습이 가능합니다.'
+        explanation: 'Dropout은 간단하면서도 효과적인 정규화 기법입니다.'
       },
-      url: 'https://arxiv.org/abs/1602.05629',
-      journal: 'Communications of the ACM',
-      authors: ['McMahan, B.', 'Moore, E.'],
-      year: 2023,
-      citationCount: 342,
-      keywords: ['federated learning', 'privacy', 'distributed AI']
+      url: 'https://jmlr.org/papers/v15/srivastava14a.html',
+      journal: 'JMLR',
+      authors: ['Srivastava, N.', 'Hinton, G.'],
+      year: 2014,
+      citationCount: 67342,
+      keywords: ['dropout', 'regularization', 'overfitting']
     },
     {
       id: 10,
       type: 'paper',
-      title: 'Vision Transformers for Computer Vision',
-      description: 'Transformer models revolutionizing computer vision tasks.',
+      title: 'U-Net: Convolutional Networks for Biomedical Image Segmentation',
+      description: 'U-Net architecture is designed for precise image segmentation with limited training data.',
       score: 0.84,
       level: '참고',
-      reason: '컴퓨터 비전의 새로운 패러다임을 제시합니다.',
+      reason: '의료 영상 분석의 핵심 아키텍처입니다.',
       detailedReason: {
         semanticSimilarity: 0.84,
         keywordMatch: 0.81,
         citationRelevance: 0.83,
         recencyScore: 0.86,
-        explanation: 'CNN을 넘어선 비전 트랜스포머의 가능성을 보여줍니다.'
+        explanation: 'U-Net은 의료 영상 세그멘테이션에서 높은 성능을 보입니다.'
       },
-      url: 'https://arxiv.org/abs/2010.11929',
-      journal: 'ICLR',
-      authors: ['Dosovitskiy, A.', 'Beyer, L.'],
-      year: 2023,
-      citationCount: 289,
-      keywords: ['vision transformer', 'computer vision', 'ViT']
+      url: 'https://arxiv.org/abs/1505.04597',
+      journal: 'MICCAI',
+      authors: ['Ronneberger, O.', 'Fischer, P.'],
+      year: 2015,
+      citationCount: 78234,
+      keywords: ['U-Net', 'image segmentation', 'biomedical imaging']
     },
     {
       id: 11,
@@ -2342,40 +2370,40 @@ const ResearchRecommendationAgent = () => {
           <div className="xl:col-span-1">
             {!hasSearched && (
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {/* 오늘의 논문 - 왼쪽 */}
+            {/* 오늘의 논문 - 왼쪽 */}
                 <div className="bg-white rounded-xl shadow-xl border">
-                <div className="p-4 border-b border-gray-200 bg-gradient-to-r from-emerald-600 to-emerald-700 rounded-t-xl">
+                <div className="p-3 border-b border-gray-200 bg-gradient-to-r from-emerald-600 to-emerald-700 rounded-t-xl">
                   <div className="flex items-center space-x-2">
                     <div className="text-yellow-300 fill-current">
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
                         <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
                       </svg>
                     </div>
-                    <h3 className="font-semibold text-white">오늘의 논문</h3>
+                    <h3 className="font-semibold text-white text-sm">오늘의 논문</h3>
                   </div>
-                  <p className="text-xs text-emerald-100 mt-1">김연구님을 위한 추천</p>
+                  <p className="text-xs text-emerald-100 mt-0.5">김연구님을 위한 추천</p>
                 </div>
               
-              <div className="p-4">
-                <div className="flex space-x-3">
+              <div className="p-3">
+                <div className="flex space-x-2">
                   <a 
                     href="https://www.nature.com/articles/s41558-019-0666-1"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="block w-1/4 bg-white rounded-lg flex-shrink-0 border-2 border-gray-200 shadow-sm p-2 flex flex-col justify-center items-center hover:border-blue-400 transition-colors" 
+                    className="block w-20 bg-white rounded-lg flex-shrink-0 border-2 border-gray-200 shadow-sm p-1.5 flex flex-col justify-center items-center hover:border-blue-400 transition-colors" 
                     style={{aspectRatio: '1/1.414'}}
                   >
                     <div className="text-center">
-                      <div className="text-xs font-bold text-gray-800 leading-tight mb-1" style={{fontFamily: 'Georgia, serif'}}>
+                      <div className="text-[9px] font-bold text-gray-800 leading-tight mb-0.5" style={{fontFamily: 'Georgia, serif'}}>
                         Machine Learning for Climate Science
                       </div>
-                      <div className="text-xs text-gray-600 mb-2" style={{fontFamily: 'Georgia, serif'}}>
+                      <div className="text-[8px] text-gray-600 mb-1" style={{fontFamily: 'Georgia, serif'}}>
                         Advances and Applications
                       </div>
-                      <div className="text-xs text-gray-500 font-medium" style={{fontFamily: 'Georgia, serif'}}>
+                      <div className="text-[8px] text-gray-500 font-medium" style={{fontFamily: 'Georgia, serif'}}>
                         Nature Climate Change
                       </div>
-                      <div className="text-xs text-gray-400" style={{fontFamily: 'Georgia, serif'}}>
+                      <div className="text-[7px] text-gray-400" style={{fontFamily: 'Georgia, serif'}}>
                         2024
                       </div>
                     </div>
@@ -2388,24 +2416,24 @@ const ResearchRecommendationAgent = () => {
                       rel="noopener noreferrer"
                       className="block group"
                     >
-                      <h4 className="font-semibold text-gray-900 text-base leading-tight mb-1 group-hover:text-blue-600 transition-colors">
-                        Machine Learning for Climate Science: Advances and Applications
+                      <h4 className="font-semibold text-gray-900 text-sm leading-tight mb-0.5 group-hover:text-blue-600 transition-colors">
+                        Machine Learning for Climate Science
                       </h4>
                     </a>
-                    <div className="text-xs text-gray-600 mb-2" style={{fontFamily: 'Arial, sans-serif'}}>
+                    <div className="text-[10px] text-gray-600 mb-1" style={{fontFamily: 'Arial, sans-serif'}}>
                       <p>Dr. Sarah Chen, Prof. Michael Johnson</p>
                       <p>Nature Climate Change • 2024</p>
                     </div>
                     
-                    <p className="text-xs text-gray-700 mb-3 leading-relaxed">
+                    <p className="text-[10px] text-gray-700 mb-1.5 leading-relaxed">
                       기후 과학 분야에서 머신러닝 적용 사례와 최신 연구 동향을 종합적으로 다룬 리뷰 논문입니다.
                     </p>
                     
-                    <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-3 mb-3">
-                      <div className="space-y-1.5">
+                    <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-2 mb-1.5">
+                      <div className="space-y-1">
                         <div className="flex items-start space-x-1">
-                          <div className="w-1 h-1 bg-emerald-500 rounded-full mt-1.5 flex-shrink-0"></div>
-                          <p className="text-xs text-emerald-800 leading-relaxed">
+                          <div className="w-1 h-1 bg-emerald-500 rounded-full mt-1 flex-shrink-0"></div>
+                          <p className="text-[10px] text-emerald-800 leading-relaxed">
                             <span className="font-medium">연구 적합성:</span> 기후변화와 AI 분야의 최신 방법론과 실무 사례를 제공합니다.
                           </p>
                         </div>
@@ -2416,10 +2444,10 @@ const ResearchRecommendationAgent = () => {
                       href="https://www.nature.com/articles/s41558-019-0666-1" 
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center space-x-1 text-xs text-blue-600 hover:text-blue-800 font-medium"
+                      className="inline-flex items-center space-x-1 text-[10px] text-blue-600 hover:text-blue-800 font-medium"
                     >
                       <span>논문 보기</span>
-                      <ExternalLink size={10} />
+                      <ExternalLink size={9} />
                     </a>
                   </div>
                 </div>
@@ -2428,25 +2456,25 @@ const ResearchRecommendationAgent = () => {
 
             {/* 실시간 논문 트렌드 - 오른쪽 */}
             <div className="bg-white rounded-xl shadow-xl border">
-              <div className="p-4 border-b border-gray-200 bg-gradient-to-r from-slate-700 to-slate-900 rounded-t-xl">
+              <div className="p-3 border-b border-gray-200 bg-gradient-to-r from-slate-700 to-slate-900 rounded-t-xl">
                 <div className="flex items-center space-x-2">
-                  <TrendingUp size={20} className="text-slate-100" />
-                  <h3 className="font-semibold text-white">실시간 논문 트렌드</h3>
+                  <TrendingUp size={18} className="text-slate-100" />
+                  <h3 className="font-semibold text-white text-sm">실시간 논문 트렌드</h3>
                 </div>
-                <p className="text-xs text-slate-200 mt-1">HOT 논문 TOP 5</p>
+                <p className="text-xs text-slate-200 mt-0.5">HOT 논문 TOP 5</p>
               </div>
               
-              <div className="p-3">
+              <div className="p-2">
                 {trendingPapers.slice(0, 5).map((paper) => {
                   const rankChange = paper.prevRank - paper.rank;
                   return (
                   <div 
                     key={paper.id} 
-                    className="p-3 rounded-lg mb-2 last:mb-0 hover:bg-gray-50 transition-all duration-500"
+                    className="p-2 rounded-lg mb-1.5 last:mb-0 hover:bg-gray-50 transition-all duration-500"
                   >
                     <div className="flex items-start justify-between">
-                      <div className="flex items-start space-x-3 flex-1">
-                        <div className={`w-7 h-7 rounded-full flex items-center justify-center text-sm font-bold transition-all duration-300 ${
+                      <div className="flex items-start space-x-2 flex-1">
+                        <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold transition-all duration-300 ${
                           paper.rank === 1 ? 'bg-gradient-to-r from-yellow-400 to-orange-500 text-white shadow-md transform scale-110' :
                           paper.rank === 2 ? 'bg-gradient-to-r from-gray-300 to-gray-400 text-white' :
                           'bg-gradient-to-r from-yellow-600 to-yellow-700 text-white'
@@ -2454,36 +2482,34 @@ const ResearchRecommendationAgent = () => {
                           {paper.rank}
                         </div>
                         <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2 mb-1">
+                          <div className="flex items-center gap-1.5 mb-0.5">
                             <a 
                               href={paper.url}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="text-base font-semibold text-gray-900 hover:text-blue-600 truncate leading-tight transition-colors"
+                              className="text-sm font-bold text-gray-900 hover:text-blue-600 truncate leading-tight transition-colors"
                             >
                               {paper.title}
                             </a>
                             {paper.trend === 'hot' && (
-                              <span className="text-3xl animate-pulse flex-shrink-0">🔥</span>
+                              <img src={fireIcon} alt="Hot" className="w-5 h-5 flex-shrink-0 animate-pulse" />
                             )}
                             {paper.trend === 'up' && (
-                              <ArrowUp size={28} className="text-emerald-500 flex-shrink-0" />
+                              <ArrowUp size={20} className="text-emerald-500 flex-shrink-0 font-bold" />
                             )}
                             {paper.trend === 'down' && (
-                              <ArrowDown size={28} className="text-red-500 flex-shrink-0" />
+                              <ArrowDown size={20} className="text-red-500 flex-shrink-0 font-bold" />
                             )}
                             {paper.trend === 'hot' && (
-                              <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-bold bg-red-100 text-red-700 border border-red-300 flex-shrink-0">
-                                NEW
-                              </span>
+                              <img src={newBadgeIcon} alt="NEW" className="w-8 h-8 flex-shrink-0" />
                             )}
                             {paper.rankChange !== 0 && (
-                              <span className={`text-2xl font-black ${paper.rankChange > 0 ? 'text-emerald-600' : 'text-red-600'} flex-shrink-0`}>
+                              <span className={`text-lg font-black ${paper.rankChange > 0 ? 'text-emerald-600' : 'text-red-600'} flex-shrink-0`}>
                                 {paper.rankChange > 0 ? `+${paper.rankChange}` : paper.rankChange}
                               </span>
                             )}
                           </div>
-                          <p className="text-xs text-gray-500 truncate">{paper.author}</p>
+                          <p className="text-[10px] text-gray-500 truncate">{paper.author}</p>
                         </div>
                       </div>
                       
@@ -2495,7 +2521,7 @@ const ResearchRecommendationAgent = () => {
                 })}
               </div>
               
-              <div className="p-3 bg-gray-50 rounded-b-xl">
+              <div className="p-2 bg-gray-50 rounded-b-xl">
                 <div className="flex items-center justify-center space-x-2 text-xs text-gray-500">
                   <div className="w-2 h-2 bg-orange-500 rounded-full animate-pulse"></div>
                 </div>
@@ -2508,8 +2534,8 @@ const ResearchRecommendationAgent = () => {
         
         {/* 재미있는 논문 추천 롤링 배너 */}
         {!hasSearched && (
-          <div className="mt-8 bg-gradient-to-r from-pink-100 via-purple-100 to-blue-100 rounded-xl shadow-xl border border-purple-200 overflow-hidden">
-            <div className="p-4 border-b border-purple-200/50 bg-white/50">
+          <div className="mt-8 bg-gradient-to-r from-sky-50 via-blue-50 to-cyan-50 rounded-xl shadow-xl border border-sky-200 overflow-hidden">
+            <div className="p-4 border-b border-sky-200/50 bg-white/50">
               <div className="flex items-center space-x-2">
                 <h3 className="font-semibold text-gray-800">재미있는 논문 추천</h3>
               </div>
@@ -2520,46 +2546,46 @@ const ResearchRecommendationAgent = () => {
               <div className="flex animate-scroll-left whitespace-nowrap">
                 {[
                   {
-                    title: "Can a Dog Predict Earthquakes? Behavioral Analysis",
-                    authors: "Smith, J. et al.",
-                    year: 2023,
-                    journal: "Journal of Unusual Science",
-                    url: "https://www.nature.com/articles/nature12345"
+                    title: "Attention Is All You Need",
+                    authors: "Vaswani, A. et al.",
+                    year: 2017,
+                    journal: "NeurIPS",
+                    url: "https://arxiv.org/abs/1706.03762"
                   },
                   {
-                    title: "The Mathematics of Pizza: Optimal Slice Distribution",
-                    authors: "Johnson, M.",
-                    year: 2024,
-                    journal: "Journal of Culinary Mathematics",
-                    url: "https://arxiv.org/abs/2301.12345"
+                    title: "ImageNet Classification with Deep Convolutional Neural Networks",
+                    authors: "Krizhevsky, A. et al.",
+                    year: 2012,
+                    journal: "NeurIPS",
+                    url: "https://papers.nips.cc/paper/2012/hash/c399862d3b9d6b76c8436e924a68c45b-Abstract.html"
                   },
                   {
-                    title: "Why Do Cats Always Land on Their Feet? Physics Explained",
-                    authors: "Chen, L. & Park, K.",
-                    year: 2023,
-                    journal: "Feline Physics Review",
-                    url: "https://www.science.org/doi/10.1126/science.abc1234"
+                    title: "Generative Adversarial Networks",
+                    authors: "Goodfellow, I. et al.",
+                    year: 2014,
+                    journal: "NeurIPS",
+                    url: "https://arxiv.org/abs/1406.2661"
                   },
                   {
-                    title: "The Aerodynamics of Flying Squirrels",
-                    authors: "Lee, S.",
-                    year: 2024,
-                    journal: "Nature Biomechanics",
-                    url: "https://www.nature.com/articles/s41586-024-12345"
+                    title: "Deep Residual Learning for Image Recognition",
+                    authors: "He, K. et al.",
+                    year: 2016,
+                    journal: "CVPR",
+                    url: "https://arxiv.org/abs/1512.03385"
                   },
                   {
-                    title: "Coffee vs Tea: A Global Preference Study",
-                    authors: "Williams, R. et al.",
-                    year: 2023,
-                    journal: "Beverage Science",
-                    url: "https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0123456"
+                    title: "BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding",
+                    authors: "Devlin, J. et al.",
+                    year: 2019,
+                    journal: "NAACL",
+                    url: "https://arxiv.org/abs/1810.04805"
                   },
                   {
-                    title: "The Physics of Bubble Wrap Popping",
-                    authors: "Anderson, K.",
-                    year: 2024,
-                    journal: "Applied Physics Letters",
-                    url: "https://aip.scitation.org/doi/10.1063/5.0123456"
+                    title: "Mastering the Game of Go with Deep Neural Networks and Tree Search",
+                    authors: "Silver, D. et al.",
+                    year: 2016,
+                    journal: "Nature",
+                    url: "https://www.nature.com/articles/nature16961"
                   }
                 ].map((paper, index) => (
                   <a
@@ -2569,74 +2595,62 @@ const ResearchRecommendationAgent = () => {
                     rel="noopener noreferrer"
                     className="inline-block mx-4 bg-white rounded-lg p-4 shadow-md hover:shadow-xl transition-all hover:scale-105 w-80 flex-shrink-0"
                   >
-                    <div className="flex space-x-3">
-                      <div className="w-20 bg-gradient-to-br from-pink-50 to-purple-50 rounded flex-shrink-0 border-2 border-purple-200 flex flex-col items-center justify-center p-2" style={{aspectRatio: '1/1.414'}}>
-                        <div className="text-center">
-                          <div className="text-[10px] font-bold text-gray-800 leading-tight mb-1 line-clamp-3" style={{fontFamily: 'Georgia, serif'}}>
-                            {paper.title.substring(0, 40)}...
-                          </div>
-                          <div className="text-[8px] text-gray-500" style={{fontFamily: 'Georgia, serif'}}>
-                            {paper.year}
-                          </div>
-                        </div>
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <h4 className="font-bold text-gray-900 text-sm leading-tight mb-1 line-clamp-2" style={{fontFamily: 'Georgia, serif'}}>
-                          {paper.title}
-                        </h4>
-                        <p className="text-xs text-gray-600 truncate" style={{fontFamily: 'Georgia, serif'}}>
-                          {paper.authors}
-                        </p>
-                        <p className="text-xs text-gray-500" style={{fontFamily: 'Georgia, serif'}}>
-                          {paper.journal} • {paper.year}
-                        </p>
-                      </div>
+                    <div className="space-y-2">
+                      <h4 className="font-bold text-gray-900 text-base leading-tight line-clamp-2" style={{fontFamily: 'Georgia, serif'}}>
+                        {paper.title}
+                      </h4>
+                      <p className="text-sm text-gray-600" style={{fontFamily: 'Georgia, serif'}}>
+                        {paper.authors}
+                      </p>
+                      <p className="text-sm text-gray-500 font-medium" style={{fontFamily: 'Georgia, serif'}}>
+                        {paper.journal} • {paper.year}
+                      </p>
                     </div>
                   </a>
                 ))}
                 {/* 반복을 위한 복제 */}
                 {[
                   {
-                    title: "Can a Dog Predict Earthquakes? Behavioral Analysis",
-                    authors: "Smith, J. et al.",
-                    year: 2023,
-                    journal: "Journal of Unusual Science",
-                    url: "https://www.nature.com/articles/nature12345"
+                    title: "Attention Is All You Need",
+                    authors: "Vaswani, A. et al.",
+                    year: 2017,
+                    journal: "NeurIPS",
+                    url: "https://arxiv.org/abs/1706.03762"
                   },
                   {
-                    title: "The Mathematics of Pizza: Optimal Slice Distribution",
-                    authors: "Johnson, M.",
-                    year: 2024,
-                    journal: "Journal of Culinary Mathematics",
-                    url: "https://arxiv.org/abs/2301.12345"
+                    title: "ImageNet Classification with Deep Convolutional Neural Networks",
+                    authors: "Krizhevsky, A. et al.",
+                    year: 2012,
+                    journal: "NeurIPS",
+                    url: "https://papers.nips.cc/paper/2012/hash/c399862d3b9d6b76c8436e924a68c45b-Abstract.html"
                   },
                   {
-                    title: "Why Do Cats Always Land on Their Feet? Physics Explained",
-                    authors: "Chen, L. & Park, K.",
-                    year: 2023,
-                    journal: "Feline Physics Review",
-                    url: "https://www.science.org/doi/10.1126/science.abc1234"
+                    title: "Generative Adversarial Networks",
+                    authors: "Goodfellow, I. et al.",
+                    year: 2014,
+                    journal: "NeurIPS",
+                    url: "https://arxiv.org/abs/1406.2661"
                   },
                   {
-                    title: "The Aerodynamics of Flying Squirrels",
-                    authors: "Lee, S.",
-                    year: 2024,
-                    journal: "Nature Biomechanics",
-                    url: "https://www.nature.com/articles/s41586-024-12345"
+                    title: "Deep Residual Learning for Image Recognition",
+                    authors: "He, K. et al.",
+                    year: 2016,
+                    journal: "CVPR",
+                    url: "https://arxiv.org/abs/1512.03385"
                   },
                   {
-                    title: "Coffee vs Tea: A Global Preference Study",
-                    authors: "Williams, R. et al.",
-                    year: 2023,
-                    journal: "Beverage Science",
-                    url: "https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0123456"
+                    title: "BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding",
+                    authors: "Devlin, J. et al.",
+                    year: 2019,
+                    journal: "NAACL",
+                    url: "https://arxiv.org/abs/1810.04805"
                   },
                   {
-                    title: "The Physics of Bubble Wrap Popping",
-                    authors: "Anderson, K.",
-                    year: 2024,
-                    journal: "Applied Physics Letters",
-                    url: "https://aip.scitation.org/doi/10.1063/5.0123456"
+                    title: "Mastering the Game of Go with Deep Neural Networks and Tree Search",
+                    authors: "Silver, D. et al.",
+                    year: 2016,
+                    journal: "Nature",
+                    url: "https://www.nature.com/articles/nature16961"
                   }
                 ].map((paper, index) => (
                   <a
@@ -2646,28 +2660,16 @@ const ResearchRecommendationAgent = () => {
                     rel="noopener noreferrer"
                     className="inline-block mx-4 bg-white rounded-lg p-4 shadow-md hover:shadow-xl transition-all hover:scale-105 w-80 flex-shrink-0"
                   >
-                    <div className="flex space-x-3">
-                      <div className="w-20 bg-gradient-to-br from-pink-50 to-purple-50 rounded flex-shrink-0 border-2 border-purple-200 flex flex-col items-center justify-center p-2" style={{aspectRatio: '1/1.414'}}>
-                        <div className="text-center">
-                          <div className="text-[10px] font-bold text-gray-800 leading-tight mb-1 line-clamp-3" style={{fontFamily: 'Georgia, serif'}}>
-                            {paper.title.substring(0, 40)}...
-                          </div>
-                          <div className="text-[8px] text-gray-500" style={{fontFamily: 'Georgia, serif'}}>
-                            {paper.year}
-                          </div>
-                        </div>
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <h4 className="font-bold text-gray-900 text-sm leading-tight mb-1 line-clamp-2" style={{fontFamily: 'Georgia, serif'}}>
-                          {paper.title}
-                        </h4>
-                        <p className="text-xs text-gray-600 truncate" style={{fontFamily: 'Georgia, serif'}}>
-                          {paper.authors}
-                        </p>
-                        <p className="text-xs text-gray-500" style={{fontFamily: 'Georgia, serif'}}>
-                          {paper.journal} • {paper.year}
-                        </p>
-                      </div>
+                    <div className="space-y-2">
+                      <h4 className="font-bold text-gray-900 text-base leading-tight line-clamp-2" style={{fontFamily: 'Georgia, serif'}}>
+                        {paper.title}
+                      </h4>
+                      <p className="text-sm text-gray-600" style={{fontFamily: 'Georgia, serif'}}>
+                        {paper.authors}
+                      </p>
+                      <p className="text-sm text-gray-500 font-medium" style={{fontFamily: 'Georgia, serif'}}>
+                        {paper.journal} • {paper.year}
+                      </p>
                     </div>
                   </a>
                 ))}
