@@ -5,14 +5,13 @@ import { toast } from 'sonner';
 import { ArrowLeft, User, Mail, Calendar, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Header from '@/components/Header';
-import scientistIcon from '@/assets/scientist-profile.png';
-import engineerIcon from '@/assets/engineer-profile.png';
+import curiousScientistIcon from '@/assets/curious-scientist-profile.png';
 
 const Profile = () => {
   const [user, setUser] = useState<any>(null);
   const [profile, setProfile] = useState<any>(null);
   const [bookmarks, setBookmarks] = useState<any[]>([]);
-  const [userType, setUserType] = useState('호기심 많은 과학자');
+  const userType = '호기심 많은 과학자'; // 고정된 회원 유형
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
 
@@ -42,19 +41,6 @@ const Profile = () => {
       
       if (!bookmarksRes.error) {
         setBookmarks(bookmarksRes.data || []);
-        // 북마크 기반으로 회원 유형 결정
-        const keywords = bookmarksRes.data?.flatMap((b: any) => b.keywords || []) || [];
-        if (keywords.includes('climate') || keywords.includes('environment')) {
-          setUserType('환경을 사랑하는 연구자');
-        } else if (keywords.includes('AI') || keywords.includes('machine learning') || keywords.includes('deep learning') || keywords.includes('transformer')) {
-          setUserType('현학적인 AI 공학자');
-        } else if (keywords.includes('bio') || keywords.includes('medical')) {
-          setUserType('생명을 구하는 의학자');
-        } else if (keywords.includes('quantum')) {
-          setUserType('미래를 보는 물리학자');
-        } else {
-          setUserType('호기심 많은 과학자');
-        }
       }
     } catch (error: any) {
       toast.error('프로필을 불러오는데 실패했습니다.');
@@ -65,10 +51,7 @@ const Profile = () => {
   };
 
   const getProfileImage = () => {
-    if (userType.includes('공학자') || userType.includes('AI')) {
-      return engineerIcon;
-    }
-    return scientistIcon;
+    return curiousScientistIcon;
   };
 
   if (isLoading) {

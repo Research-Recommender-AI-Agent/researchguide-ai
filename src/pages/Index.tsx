@@ -67,7 +67,7 @@ const ResearchRecommendationAgent = () => {
     { id: 2, title: 'Deep Residual Learning for Image Recognition', author: 'He, K. et al.', url: 'https://arxiv.org/abs/1512.03385' },
     { id: 3, title: 'BERT: Pre-training of Deep Bidirectional Transformers', author: 'Devlin, J. et al.', url: 'https://arxiv.org/abs/1810.04805' },
     { id: 4, title: 'Generative Adversarial Networks', author: 'Goodfellow, I. et al.', url: 'https://arxiv.org/abs/1406.2661' },
-    { id: 5, title: 'ImageNet Classification with Deep Convolutional Neural Networks', author: 'Krizhevsky, A. et al.', url: 'https://papers.nips.cc/paper/2012/hash/c399862d3b9d6b76c8436e924a68c45b-Abstract.html' },
+    { id: 5, title: 'ImageNet Classification with Deep Convolutional Neural Networks', author: 'Krizhevsky, A. et al.', url: 'https://proceedings.neurips.cc/paper/2012/file/c399862d3b9d6b76c8436e924a68c45b-Paper.pdf' },
     { id: 6, title: 'Mastering the Game of Go with Deep Neural Networks', author: 'Silver, D. et al.', url: 'https://www.nature.com/articles/nature16961' },
     { id: 7, title: 'Adam: A Method for Stochastic Optimization', author: 'Kingma, D.P. et al.', url: 'https://arxiv.org/abs/1412.6980' },
     { id: 8, title: 'Batch Normalization: Accelerating Deep Network Training', author: 'Ioffe, S. et al.', url: 'https://arxiv.org/abs/1502.03167' },
@@ -304,7 +304,7 @@ const ResearchRecommendationAgent = () => {
         recencyScore: 0.90,
         explanation: 'AlexNet은 현대 딥러닝의 토대를 마련한 중요한 연구입니다.'
       },
-      url: 'https://papers.nips.cc/paper/2012/hash/c399862d3b9d6b76c8436e924a68c45b-Abstract.html',
+      url: 'https://proceedings.neurips.cc/paper/2012/file/c399862d3b9d6b76c8436e924a68c45b-Paper.pdf',
       journal: 'NeurIPS',
       authors: ['Krizhevsky, A.', 'Sutskever, I.'],
       year: 2012,
@@ -2331,16 +2331,24 @@ const ResearchRecommendationAgent = () => {
                               </div>
                             </div>
                             <div className="flex-1">
-                            <div className="flex items-center space-x-3 mb-2">
-                                <h4 className="font-semibold text-white text-lg">{rec.title}</h4>
-                                <span className={`px-2 py-1 rounded text-xs font-bold ${
+                            <div className="flex items-start gap-2 mb-2">
+                              <a 
+                                href={rec.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="flex-1 min-w-0"
+                              >
+                                <h4 className="font-semibold text-white text-lg hover:text-blue-400 transition-colors break-words">{rec.title}</h4>
+                              </a>
+                              <div className="flex items-center gap-2 flex-shrink-0">
+                                <span className={`px-2 py-1 rounded text-xs font-bold whitespace-nowrap ${
                                   rec.type === 'paper' ? 'bg-emerald-500 text-white' : 'bg-purple-500 text-white'
                                 }`}>
                                   {rec.type === 'paper' ? '논문' : '데이터셋'}
                                 </span>
                                 <button
                                   onClick={() => toggleBookmark(rec)}
-                                  className="p-1 hover:scale-110 transition-transform"
+                                  className="p-1 hover:scale-110 transition-transform flex-shrink-0"
                                   aria-label="북마크"
                                 >
                                   <Star
@@ -2348,10 +2356,11 @@ const ResearchRecommendationAgent = () => {
                                     className={bookmarkedIds.has(`${rec.title}-${rec.year}`) ? 'fill-yellow-400 text-yellow-400' : 'text-slate-400'}
                                   />
                                 </button>
-                                <span className={`px-3 py-1 rounded-full text-xs font-medium border ${getLevelColor(rec.level)}`}>
+                                <span className={`px-3 py-1 rounded-full text-xs font-medium border whitespace-nowrap ${getLevelColor(rec.level)}`}>
                                   {rec.level}
                                 </span>
                               </div>
+                            </div>
                               <div className="flex items-center space-x-4 text-sm text-slate-300 mb-3">
                                 {rec.type === 'paper' ? (
                                   <>
@@ -2433,15 +2442,6 @@ const ResearchRecommendationAgent = () => {
                               </span>
                             ))}
                           </div>
-                          <a
-                            href={rec.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="flex items-center space-x-1 text-blue-400 hover:text-blue-300 text-sm font-medium"
-                          >
-                            <span>상세 보기</span>
-                            <ExternalLink size={14} />
-                          </a>
                         </div>
 
                         {expandedCard === rec.id && (
@@ -2518,26 +2518,26 @@ const ResearchRecommendationAgent = () => {
                     href={todayPaper.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="block w-32 bg-white rounded-lg flex-shrink-0 border-2 border-gray-200 shadow-sm p-2 flex flex-col justify-center items-center hover:border-blue-400 transition-colors" 
+                    className="block w-64 bg-white rounded-lg flex-shrink-0 border-2 border-gray-200 shadow-sm p-4 flex flex-col justify-center items-center hover:border-blue-400 transition-colors" 
                     style={{aspectRatio: '1/1.414'}}
                   >
                     <div className="text-center">
-                      <div className="text-[11px] font-bold text-gray-800 leading-tight mb-1" style={{fontFamily: 'Georgia, serif'}}>
+                      <div className="text-[13px] font-bold text-gray-800 leading-tight mb-2" style={{fontFamily: 'Georgia, serif'}}>
                         {todayPaper.title.split(':')[0]}
                       </div>
-                      <div className="text-[9px] text-gray-600 mb-1" style={{fontFamily: 'Georgia, serif'}}>
+                      <div className="text-[11px] text-gray-600 mb-2" style={{fontFamily: 'Georgia, serif'}}>
                         {todayPaper.title.includes(':') ? todayPaper.title.split(':')[1] : ''}
                       </div>
-                      <div className="text-[9px] text-gray-500 font-medium" style={{fontFamily: 'Georgia, serif'}}>
+                      <div className="text-[10px] text-gray-500 font-medium mb-1" style={{fontFamily: 'Georgia, serif'}}>
                         {todayPaper.journal}
                       </div>
-                      <div className="text-[8px] text-gray-400" style={{fontFamily: 'Georgia, serif'}}>
+                      <div className="text-[9px] text-gray-400" style={{fontFamily: 'Georgia, serif'}}>
                         {todayPaper.year}
                       </div>
                     </div>
                   </a>
                   
-                  <div className="flex-1 min-w-0 flex flex-col justify-between">
+                  <div className="flex-1 min-w-0 flex flex-col justify-center">
                     <div>
                       <a 
                         href={todayPaper.url}
@@ -2545,11 +2545,11 @@ const ResearchRecommendationAgent = () => {
                         rel="noopener noreferrer"
                         className="block group"
                       >
-                        <h4 className="font-bold text-gray-900 text-base leading-tight mb-2 group-hover:text-blue-600 transition-colors">
+                        <h4 className="font-bold text-gray-900 text-base leading-tight mb-3 group-hover:text-blue-600 transition-colors">
                           {todayPaper.title}
                         </h4>
                       </a>
-                      <div className="text-xs text-gray-600 mb-2" style={{fontFamily: 'Arial, sans-serif'}}>
+                      <div className="text-xs text-gray-600 mb-3" style={{fontFamily: 'Arial, sans-serif'}}>
                         <p>{todayPaper.authors}</p>
                         <p>{todayPaper.journal} • {todayPaper.year}</p>
                       </div>
@@ -2560,9 +2560,9 @@ const ResearchRecommendationAgent = () => {
                     </div>
                     
                     <div>
-                      <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-2 mb-2">
-                        <div className="flex items-start space-x-1">
-                          <div className="w-1 h-1 bg-emerald-500 rounded-full mt-1.5 flex-shrink-0"></div>
+                      <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-3 mb-3">
+                        <div className="flex items-start space-x-2">
+                          <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full mt-1.5 flex-shrink-0"></div>
                           <p className="text-xs text-emerald-800 leading-relaxed">
                             <span className="font-medium">연구 적합성:</span> {todayPaper.reason}
                           </p>
@@ -2576,7 +2576,7 @@ const ResearchRecommendationAgent = () => {
                         className="inline-flex items-center space-x-1 text-xs text-blue-600 hover:text-blue-800 font-medium"
                       >
                         <span>논문 보기</span>
-                        <ExternalLink size={10} />
+                        <ExternalLink size={11} />
                       </a>
                     </div>
                   </div>
@@ -2612,34 +2612,37 @@ const ResearchRecommendationAgent = () => {
                           {paper.rank}
                         </div>
                         <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-1.5 mb-0.5">
+                          <div className="flex items-center gap-1.5 mb-0.5 overflow-hidden">
                             <a 
                               href={paper.url}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="text-sm font-bold text-gray-900 hover:text-blue-600 truncate leading-tight transition-colors"
+                              className="text-sm font-bold text-gray-900 hover:text-blue-600 leading-tight transition-colors flex-1 truncate"
+                              title={paper.title}
                             >
-                              {paper.title}
+                              {paper.title.length > 45 ? `${paper.title.substring(0, 45)}...` : paper.title}
                             </a>
-                            {paper.trend === 'hot' && (
-                              <span className="text-2xl animate-pulse flex-shrink-0">🔥</span>
-                            )}
-                            {paper.trend === 'up' && (
-                              <ArrowUp size={20} className="text-emerald-500 flex-shrink-0 font-bold" />
-                            )}
-                            {paper.trend === 'down' && (
-                              <ArrowDown size={20} className="text-red-500 flex-shrink-0 font-bold" />
-                            )}
-                            {paper.trend === 'hot' && (
-                              <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-red-100 text-red-700 border border-red-300 flex-shrink-0">
-                                NEW
-                              </span>
-                            )}
-                            {paper.rankChange !== 0 && (
-                              <span className={`text-lg font-black ${paper.rankChange > 0 ? 'text-emerald-600' : 'text-red-600'} flex-shrink-0`}>
-                                {paper.rankChange > 0 ? `+${paper.rankChange}` : paper.rankChange}
-                              </span>
-                            )}
+                            <div className="flex items-center gap-1 flex-shrink-0">
+                              {paper.trend === 'hot' && (
+                                <span className="text-2xl animate-pulse">🔥</span>
+                              )}
+                              {paper.trend === 'up' && (
+                                <ArrowUp size={20} className="text-emerald-500 font-bold" />
+                              )}
+                              {paper.trend === 'down' && (
+                                <ArrowDown size={20} className="text-red-500 font-bold" />
+                              )}
+                              {paper.trend === 'hot' && (
+                                <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-red-100 text-red-700 border border-red-300 whitespace-nowrap">
+                                  NEW
+                                </span>
+                              )}
+                              {paper.rankChange !== 0 && (
+                                <span className={`text-lg font-black whitespace-nowrap ${paper.rankChange > 0 ? 'text-emerald-600' : 'text-red-600'}`}>
+                                  {paper.rankChange > 0 ? `+${paper.rankChange}` : paper.rankChange}
+                                </span>
+                              )}
+                            </div>
                           </div>
                           <p className="text-[10px] text-gray-500 truncate">{paper.author}</p>
                         </div>
