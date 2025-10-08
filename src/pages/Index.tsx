@@ -2611,7 +2611,7 @@ const ResearchRecommendationAgent = () => {
           {/* Right Panel - 왼쪽/오른쪽 분할 */}
           <div className="xl:col-span-1">
             {!hasSearched && (
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div className="grid grid-cols-2 gap-6">
             {/* 오늘의 논문 - 왼쪽 */}
                 <div className="bg-white rounded-xl shadow-xl border">
                 <div className="p-3 border-b border-gray-200 bg-gradient-to-r from-emerald-600 to-emerald-700 rounded-t-xl">
