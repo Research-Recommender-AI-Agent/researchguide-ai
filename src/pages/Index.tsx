@@ -2832,7 +2832,7 @@ const ResearchRecommendationAgent = () => {
         chatMessages={chatMessages}
         chatInput={chatInput}
         onInputChange={setChatInput}
-        onSubmit={handleChatSubmit}
+        onSubmit={() => handleChatSubmit()}
       />
     </div>
   );

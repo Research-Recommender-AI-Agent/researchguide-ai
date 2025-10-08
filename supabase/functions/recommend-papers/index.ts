@@ -132,7 +132,7 @@ For each recommendation, provide:
 - For papers: journal, authors (array), year (realistic year between 2010-2024), citationCount, keywords (array)
 - For datasets: publisher, year (realistic year between 2015-2024), dataSize, format, keywords (array)
 
-Provide exactly 50 recommendations that are HIGHLY RELEVANT to: "${searchQuery}"
+Provide exactly 30 recommendations that are HIGHLY RELEVANT to: "${searchQuery}"
 Mix both papers (60%) and datasets (40%) appropriately.
 
 MULTILINGUAL HANDLING:
@@ -146,7 +146,7 @@ IMPORTANT:
 - Only recommend resources that are DIRECTLY related to the query
 - Higher relevance scores (0.90+) should only be given to highly relevant results
 - Use proper Korean grammar and natural language in descriptions and reasons
-- ALWAYS include matchedKeywords and matchedFields for explainability`;
+- matchedKeywords and matchedFields are OPTIONAL but highly recommended for explainability`;
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
@@ -198,7 +198,7 @@ IMPORTANT:
                       format: { type: "string" },
                       keywords: { type: "array", items: { type: "string" } }
                     },
-                    required: ["type", "title", "description", "score", "level", "reason", "url", "keywords", "matchedKeywords", "matchedFields"]
+                    required: ["type", "title", "description", "score", "level", "reason", "url", "keywords"]
                   }
                 }
               },
@@ -232,10 +232,21 @@ IMPORTANT:
     const toolCall = data.choices?.[0]?.message?.tool_calls?.[0];
     
     if (!toolCall) {
-      throw new Error("No recommendations generated");
+      console.error("AI response structure:", JSON.stringify(data, null, 2));
+      throw new Error("No tool call in AI response. The AI may not have generated recommendations.");
     }
 
-    const recommendations = JSON.parse(toolCall.function.arguments).recommendations;
+    let recommendations;
+    try {
+      recommendations = JSON.parse(toolCall.function.arguments).recommendations;
+    } catch (parseError) {
+      console.error("Failed to parse tool call arguments:", toolCall.function.arguments);
+      throw new Error("Invalid recommendation format from AI");
+    }
+
+    if (!recommendations || recommendations.length === 0) {
+      throw new Error("AI generated empty recommendations array");
+    }
 
     // 연관성 점수 기반 필터링 (0.85 이상만)
     const filteredRecommendations = recommendations.filter((rec: any) => rec.score >= 0.85);
