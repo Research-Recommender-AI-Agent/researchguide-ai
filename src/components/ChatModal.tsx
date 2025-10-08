@@ -150,12 +150,8 @@ const ChatModal: React.FC<ChatModalProps> = ({
                 <button
                   key={index}
                   onClick={() => {
-                    // 직접 텍스트를 입력하고 제출
                     onInputChange(item.text);
-                    // 약간의 지연 후 제출하여 상태 업데이트 보장
-                    setTimeout(() => {
-                      onSubmit();
-                    }, 100);
+                    setTimeout(() => onSubmit(), 50);
                   }}
                   className="w-full px-3 py-2 bg-white text-gray-600 rounded-lg text-xs hover:bg-gray-200 hover:text-gray-800 transition-colors flex items-center justify-between border border-gray-200 group"
                 >
