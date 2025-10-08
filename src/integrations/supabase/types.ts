@@ -14,7 +14,124 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      bookmark_categories: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          parent_id: string | null
+          position_x: number | null
+          position_y: number | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          parent_id?: string | null
+          position_x?: number | null
+          position_y?: number | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          parent_id?: string | null
+          position_x?: number | null
+          position_y?: number | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bookmark_categories_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "bookmark_categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      bookmarks: {
+        Row: {
+          authors: string[] | null
+          category_id: string | null
+          created_at: string
+          description: string | null
+          id: string
+          journal: string | null
+          keywords: string[] | null
+          paper_type: string
+          publisher: string | null
+          title: string
+          url: string
+          user_id: string
+          year: number | null
+        }
+        Insert: {
+          authors?: string[] | null
+          category_id?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          journal?: string | null
+          keywords?: string[] | null
+          paper_type: string
+          publisher?: string | null
+          title: string
+          url: string
+          user_id: string
+          year?: number | null
+        }
+        Update: {
+          authors?: string[] | null
+          category_id?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          journal?: string | null
+          keywords?: string[] | null
+          paper_type?: string
+          publisher?: string | null
+          title?: string
+          url?: string
+          user_id?: string
+          year?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bookmarks_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "bookmark_categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          full_name: string
+          id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          full_name: string
+          id?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          full_name?: string
+          id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
