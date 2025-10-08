@@ -883,12 +883,12 @@ const ResearchRecommendationAgent = () => {
                 <div className="flex items-center justify-center space-x-2 text-xs text-gray-500">
                   <div className="w-2 h-2 bg-orange-500 rounded-full animate-pulse"></div>
                 </div>
-                </div>
               </div>
             </div>
             )}
           </div>
         </div>
+      </div>
 
       {/* Chat Modal */}
       <ChatModal
