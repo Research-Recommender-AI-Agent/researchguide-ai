@@ -62,10 +62,29 @@ const ResearchRecommendationAgent = () => {
   }, []);
 
   const [userName, setUserName] = useState<string>('연구자');
+  
+  // 시간대별 인사말 생성
+  const getGreetingByTime = (name: string) => {
+    const hour = new Date().getHours();
+    let greeting = '';
+    
+    if (hour >= 5 && hour < 12) {
+      greeting = '좋은 아침입니다';
+    } else if (hour >= 12 && hour < 18) {
+      greeting = '좋은 오후입니다';
+    } else if (hour >= 18 && hour < 22) {
+      greeting = '좋은 저녁입니다';
+    } else {
+      greeting = '안녕하세요';
+    }
+    
+    return `${name}님 안녕하세요! ${greeting} 궁금한 내용을 설명해주시면 논문이나 데이터를 추천해드릴게요`;
+  };
+  
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([
     { 
       type: 'agent', 
-      message: '안녕하세요! 궁금한 내용을 설명해주시면 논문이나 데이터를 추천해드릴게요', 
+      message: getGreetingByTime('연구자'), 
       time: new Date().toLocaleTimeString() 
     }
   ]);
@@ -1905,7 +1924,7 @@ const ResearchRecommendationAgent = () => {
         setChatMessages([
           { 
             type: 'agent', 
-            message: `${data.full_name}님 안녕하세요! 궁금한 내용을 설명해주시면 논문이나 데이터를 추천해드릴게요`, 
+            message: getGreetingByTime(data.full_name), 
             time: new Date().toLocaleTimeString() 
           }
         ]);
@@ -2016,7 +2035,7 @@ const ResearchRecommendationAgent = () => {
     
     const agentResponse: ChatMessage = {
       type: 'agent',
-      message: `"${searchQuery}"와 관련된 논문을 검색해드리겠습니다!`,
+      message: `관련 논문과 데이터셋을 추천드릴게요`,
       time: new Date().toLocaleTimeString()
     };
     setChatMessages(prev => [...prev, agentResponse]);
@@ -2455,55 +2474,13 @@ const ResearchRecommendationAgent = () => {
             {/* Empty State - Agent AI 특징 강조 */}
             {recommendations.length === 0 && !isLoading && !clarifyOptions && (
               <div className="bg-gradient-to-br from-slate-800 to-blue-800 rounded-xl shadow-xl border border-slate-600 p-6">
-                <div className="text-center mb-6">
+                <div className="text-center">
                   <div className="inline-flex items-center gap-2 mb-4">
                     <Brain size={32} className="text-purple-400 animate-pulse" />
                     <span className="text-2xl font-bold text-white">AI Agent</span>
                   </div>
                   <h3 className="text-lg font-semibold text-white mb-2">자율적 연구 지원 시스템</h3>
                   <p className="text-slate-300 text-sm">하단 AI 채팅창 또는 실시간 검색어로 시작하세요</p>
-                </div>
-                
-                <div className="grid grid-cols-2 gap-4 mb-4">
-                  <div className="bg-white/5 backdrop-blur-sm rounded-lg p-4 border border-white/10">
-                    <div className="flex items-start gap-2 mb-2">
-                      <span className="text-2xl">🧠</span>
-                      <div>
-                        <h4 className="font-semibold text-white text-sm">다단계 추론</h4>
-                        <p className="text-xs text-slate-300 mt-1">BM25, Dense Embedding, Cross-Encoder 재랭킹</p>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div className="bg-white/5 backdrop-blur-sm rounded-lg p-4 border border-white/10">
-                    <div className="flex items-start gap-2 mb-2">
-                      <span className="text-2xl">🎯</span>
-                      <div>
-                        <h4 className="font-semibold text-white text-sm">의도 파악</h4>
-                        <p className="text-xs text-slate-300 mt-1">Clarify 질문으로 정확한 추천</p>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div className="bg-white/5 backdrop-blur-sm rounded-lg p-4 border border-white/10">
-                    <div className="flex items-start gap-2 mb-2">
-                      <span className="text-2xl">📚</span>
-                      <div>
-                        <h4 className="font-semibold text-white text-sm">패턴 학습</h4>
-                        <p className="text-xs text-slate-300 mt-1">북마크 분석으로 맞춤 제안</p>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div className="bg-white/5 backdrop-blur-sm rounded-lg p-4 border border-white/10">
-                    <div className="flex items-start gap-2 mb-2">
-                      <span className="text-2xl">⚡</span>
-                      <div>
-                        <h4 className="font-semibold text-white text-sm">프로액티브</h4>
-                        <p className="text-xs text-slate-300 mt-1">자율적 워크플로우 제안</p>
-                      </div>
-                    </div>
-                  </div>
                 </div>
               </div>
             )}
@@ -3017,7 +2994,6 @@ const ResearchRecommendationAgent = () => {
         onInputChange={setChatInput}
         onSubmit={() => handleChatSubmit()}
         onTrendingKeywordClick={(keyword) => {
-          setChatInput(keyword);
           // 대화 기록에 사용자 메시지 추가
           const userMessage: ChatMessage = {
             type: 'user',
@@ -3025,6 +3001,7 @@ const ResearchRecommendationAgent = () => {
             time: new Date().toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' })
           };
           setChatMessages(prev => [...prev, userMessage]);
+          setChatInput(keyword);
           setTimeout(() => handleChatSubmit(), 100);
         }}
       />
