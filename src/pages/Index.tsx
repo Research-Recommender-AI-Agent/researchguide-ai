@@ -36,14 +36,15 @@ const ResearchRecommendationAgent = () => {
   ]);
 
   const [trendingPapers, setTrendingPapers] = useState([
-    { id: 1, rank: 1, prevRank: 5, rankChange: 234, title: 'GPT-4 in Scientific Research', author: 'OpenAI Research Team', trend: 'hot' },
-    { id: 2, rank: 2, prevRank: 3, rankChange: 156, title: 'Climate Change ML Models', author: 'Smith, J. et al.', trend: 'up' },
-    { id: 3, rank: 3, prevRank: 1, rankChange: -189, title: 'Quantum Computing Advances', author: 'Chen, L. & Park, K.', trend: 'down' },
-    { id: 4, rank: 4, prevRank: 4, rankChange: 0, title: 'Biomedical Data Mining', author: 'Johnson, M. et al.', trend: 'same' },
-    { id: 5, rank: 5, prevRank: 2, rankChange: -234, title: 'Neural Network Optimization', author: 'Lee, S. & Kim, H.', trend: 'down' }
+    { id: 1, rank: 1, prevRank: 5, rankChange: 234, title: 'GPT-4 in Scientific Research', author: 'OpenAI Research Team', trend: 'hot', url: 'https://arxiv.org/abs/2303.08774' },
+    { id: 2, rank: 2, prevRank: 3, rankChange: 156, title: 'Climate Change ML Models', author: 'Smith, J. et al.', trend: 'up', url: 'https://www.nature.com/articles/s41558-019-0666-1' },
+    { id: 3, rank: 3, prevRank: 1, rankChange: -189, title: 'Quantum Computing Advances', author: 'Chen, L. & Park, K.', trend: 'down', url: 'https://www.nature.com/articles/s41586-019-1666-5' },
+    { id: 4, rank: 4, prevRank: 4, rankChange: 0, title: 'Biomedical Data Mining', author: 'Johnson, M. et al.', trend: 'same', url: 'https://www.nature.com/articles/s41591-018-0316-z' },
+    { id: 5, rank: 5, prevRank: 2, rankChange: -234, title: 'Neural Network Optimization', author: 'Lee, S. & Kim, H.', trend: 'down', url: 'https://arxiv.org/abs/1412.6980' }
   ]);
 
   const mockRecommendations = [
+    // 논문 20개
     {
       id: 1,
       type: 'paper',
@@ -57,9 +58,9 @@ const ResearchRecommendationAgent = () => {
         keywordMatch: 0.89,
         citationRelevance: 0.92,
         recencyScore: 0.88,
-        explanation: '김연구님의 연구 데이터와 94%의 의미적 유사도를 보이며, 핵심 키워드 매칭률 89%를 기록했습니다. 특히 딥러닝 기반 기후 분석 방법론이 김연구님의 연구 방향과 완벽하게 일치하며, 최근 인용 빈도(127회)가 높아 학계에서 주목받고 있는 연구입니다.'
+        explanation: '김연구님의 연구 데이터와 94%의 의미적 유사도를 보이며, 핵심 키워드 매칭률 89%를 기록했습니다.'
       },
-      url: 'https://scienceon.kisti.re.kr/paper/12345',
+      url: 'https://www.nature.com/articles/s41558-019-0666-1',
       journal: 'Nature Climate Change',
       authors: ['Smith, J.', 'Kim, H.S.'],
       year: 2023,
@@ -68,6 +69,426 @@ const ResearchRecommendationAgent = () => {
     },
     {
       id: 2,
+      type: 'paper',
+      title: 'Transformer Networks in Scientific Computing',
+      description: 'Novel transformer architecture applications in scientific research.',
+      score: 0.93,
+      level: '가장 추천',
+      reason: '최신 AI 기술과 과학 연구의 융합을 제시합니다.',
+      detailedReason: {
+        semanticSimilarity: 0.93,
+        keywordMatch: 0.90,
+        citationRelevance: 0.91,
+        recencyScore: 0.96,
+        explanation: '최신 트랜스포머 아키텍처를 과학 컴퓨팅에 적용한 혁신적 연구입니다.'
+      },
+      url: 'https://arxiv.org/abs/1706.03762',
+      journal: 'Nature Machine Intelligence',
+      authors: ['Vaswani, A.', 'Shazeer, N.'],
+      year: 2024,
+      citationCount: 234,
+      keywords: ['transformer', 'scientific computing', 'AI']
+    },
+    {
+      id: 3,
+      type: 'paper',
+      title: 'Quantum Machine Learning Fundamentals',
+      description: 'Comprehensive guide to quantum machine learning principles and applications.',
+      score: 0.91,
+      level: '가장 추천',
+      reason: '양자 컴퓨팅과 머신러닝의 교차점을 탐구합니다.',
+      detailedReason: {
+        semanticSimilarity: 0.91,
+        keywordMatch: 0.88,
+        citationRelevance: 0.90,
+        recencyScore: 0.92,
+        explanation: '양자 머신러닝의 이론과 실제를 모두 다룬 포괄적 연구입니다.'
+      },
+      url: 'https://www.nature.com/articles/s41586-019-0980-2',
+      journal: 'Nature',
+      authors: ['Preskill, J.'],
+      year: 2024,
+      citationCount: 189,
+      keywords: ['quantum computing', 'machine learning', 'NISQ']
+    },
+    {
+      id: 4,
+      type: 'paper',
+      title: 'CRISPR Gene Editing: Recent Advances',
+      description: 'Latest developments in CRISPR-Cas9 gene editing technology.',
+      score: 0.90,
+      level: '추천',
+      reason: '바이오 기술의 최신 발전사항을 제공합니다.',
+      detailedReason: {
+        semanticSimilarity: 0.90,
+        keywordMatch: 0.87,
+        citationRelevance: 0.89,
+        recencyScore: 0.94,
+        explanation: 'CRISPR 기술의 최신 응용 사례와 미래 전망을 제시합니다.'
+      },
+      url: 'https://www.nature.com/articles/nbt.3659',
+      journal: 'Nature Biotechnology',
+      authors: ['Zhang, F.', 'Doudna, J.A.'],
+      year: 2024,
+      citationCount: 312,
+      keywords: ['CRISPR', 'gene editing', 'biotechnology']
+    },
+    {
+      id: 5,
+      type: 'paper',
+      title: 'Neural Architecture Search: A Survey',
+      description: 'Comprehensive survey of neural architecture search methods.',
+      score: 0.89,
+      level: '추천',
+      reason: 'AutoML의 핵심 기술을 상세히 설명합니다.',
+      detailedReason: {
+        semanticSimilarity: 0.89,
+        keywordMatch: 0.86,
+        citationRelevance: 0.88,
+        recencyScore: 0.90,
+        explanation: '신경망 구조 탐색의 다양한 방법론을 비교 분석합니다.'
+      },
+      url: 'https://arxiv.org/abs/1808.05377',
+      journal: 'Journal of Machine Learning Research',
+      authors: ['Elsken, T.', 'Metzen, J.H.'],
+      year: 2023,
+      citationCount: 156,
+      keywords: ['NAS', 'AutoML', 'neural networks']
+    },
+    {
+      id: 6,
+      type: 'paper',
+      title: 'Explainable AI in Healthcare',
+      description: 'Methods for interpreting AI models in medical diagnosis.',
+      score: 0.88,
+      level: '추천',
+      reason: '의료 분야 AI의 설명가능성을 향상시킵니다.',
+      detailedReason: {
+        semanticSimilarity: 0.88,
+        keywordMatch: 0.85,
+        citationRelevance: 0.87,
+        recencyScore: 0.91,
+        explanation: '의료 AI의 신뢰성과 투명성을 높이는 방법을 제시합니다.'
+      },
+      url: 'https://www.nature.com/articles/s41591-018-0300-7',
+      journal: 'Nature Medicine',
+      authors: ['Topol, E.J.'],
+      year: 2023,
+      citationCount: 201,
+      keywords: ['XAI', 'healthcare', 'medical AI']
+    },
+    {
+      id: 7,
+      type: 'paper',
+      title: 'Reinforcement Learning for Robotics',
+      description: 'Advanced RL techniques for robot control and manipulation.',
+      score: 0.87,
+      level: '추천',
+      reason: '로봇 제어의 최신 강화학습 기법을 다룹니다.',
+      detailedReason: {
+        semanticSimilarity: 0.87,
+        keywordMatch: 0.84,
+        citationRelevance: 0.86,
+        recencyScore: 0.89,
+        explanation: '실제 로봇 시스템에 적용 가능한 RL 알고리즘을 제공합니다.'
+      },
+      url: 'https://www.science.org/doi/10.1126/scirobotics.abb1696',
+      journal: 'Science Robotics',
+      authors: ['Levine, S.', 'Kumar, A.'],
+      year: 2023,
+      citationCount: 178,
+      keywords: ['reinforcement learning', 'robotics', 'control']
+    },
+    {
+      id: 8,
+      type: 'paper',
+      title: 'Graph Neural Networks: A Review',
+      description: 'Comprehensive overview of GNN architectures and applications.',
+      score: 0.86,
+      level: '참고',
+      reason: '그래프 데이터 처리의 핵심 기술을 소개합니다.',
+      detailedReason: {
+        semanticSimilarity: 0.86,
+        keywordMatch: 0.83,
+        citationRelevance: 0.85,
+        recencyScore: 0.88,
+        explanation: 'GNN의 다양한 아키텍처와 응용 분야를 체계적으로 정리합니다.'
+      },
+      url: 'https://arxiv.org/abs/1901.00596',
+      journal: 'IEEE Transactions on Neural Networks',
+      authors: ['Wu, Z.', 'Pan, S.'],
+      year: 2023,
+      citationCount: 267,
+      keywords: ['GNN', 'graph learning', 'neural networks']
+    },
+    {
+      id: 9,
+      type: 'paper',
+      title: 'Federated Learning for Privacy-Preserving AI',
+      description: 'Decentralized machine learning while preserving data privacy.',
+      score: 0.85,
+      level: '참고',
+      reason: '프라이버시 보호 AI의 핵심 방법론입니다.',
+      detailedReason: {
+        semanticSimilarity: 0.85,
+        keywordMatch: 0.82,
+        citationRelevance: 0.84,
+        recencyScore: 0.87,
+        explanation: '데이터 프라이버시를 보호하면서 효과적인 학습이 가능합니다.'
+      },
+      url: 'https://arxiv.org/abs/1602.05629',
+      journal: 'Communications of the ACM',
+      authors: ['McMahan, B.', 'Moore, E.'],
+      year: 2023,
+      citationCount: 342,
+      keywords: ['federated learning', 'privacy', 'distributed AI']
+    },
+    {
+      id: 10,
+      type: 'paper',
+      title: 'Vision Transformers for Computer Vision',
+      description: 'Transformer models revolutionizing computer vision tasks.',
+      score: 0.84,
+      level: '참고',
+      reason: '컴퓨터 비전의 새로운 패러다임을 제시합니다.',
+      detailedReason: {
+        semanticSimilarity: 0.84,
+        keywordMatch: 0.81,
+        citationRelevance: 0.83,
+        recencyScore: 0.86,
+        explanation: 'CNN을 넘어선 비전 트랜스포머의 가능성을 보여줍니다.'
+      },
+      url: 'https://arxiv.org/abs/2010.11929',
+      journal: 'ICLR',
+      authors: ['Dosovitskiy, A.', 'Beyer, L.'],
+      year: 2023,
+      citationCount: 289,
+      keywords: ['vision transformer', 'computer vision', 'ViT']
+    },
+    {
+      id: 11,
+      type: 'paper',
+      title: 'Large Language Models: Capabilities and Limitations',
+      description: 'Analysis of modern LLMs including GPT and BERT variants.',
+      score: 0.92,
+      level: '가장 추천',
+      reason: 'LLM의 현재와 미래를 포괄적으로 분석합니다.',
+      detailedReason: {
+        semanticSimilarity: 0.92,
+        keywordMatch: 0.89,
+        citationRelevance: 0.90,
+        recencyScore: 0.95,
+        explanation: '최신 LLM 기술의 강점과 한계를 균형있게 제시합니다.'
+      },
+      url: 'https://arxiv.org/abs/2303.18223',
+      journal: 'arXiv',
+      authors: ['Brown, T.', 'Mann, B.'],
+      year: 2024,
+      citationCount: 412,
+      keywords: ['LLM', 'GPT', 'language models']
+    },
+    {
+      id: 12,
+      type: 'paper',
+      title: 'Diffusion Models for Generative AI',
+      description: 'State-of-the-art diffusion models for image and video generation.',
+      score: 0.90,
+      level: '추천',
+      reason: '생성 AI의 최신 기술을 상세히 다룹니다.',
+      detailedReason: {
+        semanticSimilarity: 0.90,
+        keywordMatch: 0.87,
+        citationRelevance: 0.89,
+        recencyScore: 0.93,
+        explanation: 'Stable Diffusion을 포함한 최신 확산 모델을 설명합니다.'
+      },
+      url: 'https://arxiv.org/abs/2006.11239',
+      journal: 'NeurIPS',
+      authors: ['Ho, J.', 'Jain, A.'],
+      year: 2024,
+      citationCount: 523,
+      keywords: ['diffusion models', 'generative AI', 'image synthesis']
+    },
+    {
+      id: 13,
+      type: 'paper',
+      title: 'Multimodal Learning: Vision and Language',
+      description: 'Integration of visual and linguistic information in AI systems.',
+      score: 0.89,
+      level: '추천',
+      reason: '멀티모달 AI의 핵심 개념과 구현을 제공합니다.',
+      detailedReason: {
+        semanticSimilarity: 0.89,
+        keywordMatch: 0.86,
+        citationRelevance: 0.88,
+        recencyScore: 0.91,
+        explanation: 'CLIP와 같은 최신 멀티모달 모델의 원리를 설명합니다.'
+      },
+      url: 'https://arxiv.org/abs/2103.00020',
+      journal: 'ICML',
+      authors: ['Radford, A.', 'Kim, J.W.'],
+      year: 2024,
+      citationCount: 378,
+      keywords: ['multimodal', 'vision-language', 'CLIP']
+    },
+    {
+      id: 14,
+      type: 'paper',
+      title: 'Self-Supervised Learning in Computer Vision',
+      description: 'Learning visual representations without labeled data.',
+      score: 0.88,
+      level: '추천',
+      reason: '레이블 없는 학습의 혁신적 접근법을 제시합니다.',
+      detailedReason: {
+        semanticSimilarity: 0.88,
+        keywordMatch: 0.85,
+        citationRelevance: 0.87,
+        recencyScore: 0.90,
+        explanation: 'SimCLR, MoCo 등 최신 자기지도 학습 기법을 다룹니다.'
+      },
+      url: 'https://arxiv.org/abs/2002.05709',
+      journal: 'CVPR',
+      authors: ['Chen, T.', 'Kornblith, S.'],
+      year: 2023,
+      citationCount: 445,
+      keywords: ['self-supervised', 'contrastive learning', 'computer vision']
+    },
+    {
+      id: 15,
+      type: 'paper',
+      title: 'Neural Networks for Time Series Forecasting',
+      description: 'Deep learning approaches for temporal data prediction.',
+      score: 0.87,
+      level: '추천',
+      reason: '시계열 예측의 최신 딥러닝 기법을 소개합니다.',
+      detailedReason: {
+        semanticSimilarity: 0.87,
+        keywordMatch: 0.84,
+        citationRelevance: 0.86,
+        recencyScore: 0.89,
+        explanation: 'LSTM, Transformer 기반 시계열 모델을 비교 분석합니다.'
+      },
+      url: 'https://arxiv.org/abs/1912.09363',
+      journal: 'Journal of Forecasting',
+      authors: ['Lim, B.', 'Zohren, S.'],
+      year: 2023,
+      citationCount: 198,
+      keywords: ['time series', 'forecasting', 'LSTM']
+    },
+    {
+      id: 16,
+      type: 'paper',
+      title: 'Edge AI: Machine Learning on IoT Devices',
+      description: 'Deploying AI models on resource-constrained edge devices.',
+      score: 0.86,
+      level: '참고',
+      reason: 'IoT 환경에서의 AI 구현 방법을 다룹니다.',
+      detailedReason: {
+        semanticSimilarity: 0.86,
+        keywordMatch: 0.83,
+        citationRelevance: 0.85,
+        recencyScore: 0.88,
+        explanation: '모델 경량화와 최적화 기법을 실용적으로 제시합니다.'
+      },
+      url: 'https://arxiv.org/abs/1908.00709',
+      journal: 'IEEE Internet of Things Journal',
+      authors: ['Zhou, Z.', 'Chen, X.'],
+      year: 2023,
+      citationCount: 167,
+      keywords: ['edge AI', 'IoT', 'model compression']
+    },
+    {
+      id: 17,
+      type: 'paper',
+      title: 'Meta-Learning: Learning to Learn',
+      description: 'Algorithms that improve learning efficiency through meta-knowledge.',
+      score: 0.85,
+      level: '참고',
+      reason: '효율적인 학습 방법론의 핵심을 제공합니다.',
+      detailedReason: {
+        semanticSimilarity: 0.85,
+        keywordMatch: 0.82,
+        citationRelevance: 0.84,
+        recencyScore: 0.87,
+        explanation: 'Few-shot learning과 MAML 등 메타학습 기법을 설명합니다.'
+      },
+      url: 'https://arxiv.org/abs/1703.03400',
+      journal: 'ICML',
+      authors: ['Finn, C.', 'Abbeel, P.'],
+      year: 2023,
+      citationCount: 389,
+      keywords: ['meta-learning', 'few-shot', 'MAML']
+    },
+    {
+      id: 18,
+      type: 'paper',
+      title: 'Adversarial Robustness in Deep Learning',
+      description: 'Defending neural networks against adversarial attacks.',
+      score: 0.84,
+      level: '참고',
+      reason: 'AI 보안의 중요한 측면을 다룹니다.',
+      detailedReason: {
+        semanticSimilarity: 0.84,
+        keywordMatch: 0.81,
+        citationRelevance: 0.83,
+        recencyScore: 0.86,
+        explanation: '적대적 공격과 방어 메커니즘을 체계적으로 분석합니다.'
+      },
+      url: 'https://arxiv.org/abs/1706.06083',
+      journal: 'IEEE S&P',
+      authors: ['Madry, A.', 'Makelov, A.'],
+      year: 2023,
+      citationCount: 512,
+      keywords: ['adversarial', 'robustness', 'security']
+    },
+    {
+      id: 19,
+      type: 'paper',
+      title: 'Neural Rendering and NeRF',
+      description: 'Novel view synthesis using neural radiance fields.',
+      score: 0.91,
+      level: '가장 추천',
+      reason: '3D 재구성의 혁신적 기술을 소개합니다.',
+      detailedReason: {
+        semanticSimilarity: 0.91,
+        keywordMatch: 0.88,
+        citationRelevance: 0.90,
+        recencyScore: 0.94,
+        explanation: 'NeRF를 활용한 고품질 3D 렌더링 기법을 제공합니다.'
+      },
+      url: 'https://arxiv.org/abs/2003.08934',
+      journal: 'ECCV',
+      authors: ['Mildenhall, B.', 'Srinivasan, P.P.'],
+      year: 2024,
+      citationCount: 678,
+      keywords: ['NeRF', 'neural rendering', '3D reconstruction']
+    },
+    {
+      id: 20,
+      type: 'paper',
+      title: 'Continual Learning: Lifelong AI Systems',
+      description: 'Learning new tasks without forgetting previous knowledge.',
+      score: 0.87,
+      level: '추천',
+      reason: '지속적 학습의 핵심 문제를 해결합니다.',
+      detailedReason: {
+        semanticSimilarity: 0.87,
+        keywordMatch: 0.84,
+        citationRelevance: 0.86,
+        recencyScore: 0.89,
+        explanation: 'Catastrophic forgetting을 방지하는 다양한 기법을 제시합니다.'
+      },
+      url: 'https://arxiv.org/abs/1904.07734',
+      journal: 'Neural Networks',
+      authors: ['Parisi, G.I.', 'Kemker, R.'],
+      year: 2023,
+      citationCount: 234,
+      keywords: ['continual learning', 'lifelong learning', 'catastrophic forgetting']
+    },
+    
+    // 데이터셋 20개
+    {
+      id: 101,
       type: 'dataset',
       title: 'Global Climate Monitoring Dataset',
       description: 'Comprehensive global climate monitoring dataset including temperature and precipitation.',
@@ -79,14 +500,432 @@ const ResearchRecommendationAgent = () => {
         keywordMatch: 0.87,
         citationRelevance: 0.85,
         recencyScore: 0.95,
-        explanation: '김연구님의 연구 주제와 91%의 의미적 연관성을 가진 최신 데이터셋입니다. 키워드 매칭률 87%로 연구에 직접 활용 가능한 데이터를 포함하고 있으며, 2024년 최신 데이터로 실시간 업데이트되어 연구 신뢰도를 크게 높일 수 있습니다.'
+        explanation: '김연구님의 연구 주제와 91%의 의미적 연관성을 가진 최신 데이터셋입니다.'
       },
-      url: 'https://dataon.kisti.re.kr/dataset/67890',
+      url: 'https://www.ncdc.noaa.gov/data-access',
       publisher: 'World Meteorological Organization',
       year: 2024,
       dataSize: '127GB',
       format: 'NetCDF, CSV',
       keywords: ['climate', 'meteorology', 'global']
+    },
+    {
+      id: 102,
+      type: 'dataset',
+      title: 'ImageNet Large Scale Visual Recognition',
+      description: 'Massive image dataset for object recognition and classification.',
+      score: 0.93,
+      level: '가장 추천',
+      reason: '컴퓨터 비전 연구의 표준 벤치마크입니다.',
+      detailedReason: {
+        semanticSimilarity: 0.93,
+        keywordMatch: 0.90,
+        citationRelevance: 0.92,
+        recencyScore: 0.88,
+        explanation: '1400만 장 이상의 레이블된 이미지로 구성된 대규모 데이터셋입니다.'
+      },
+      url: 'https://www.image-net.org/',
+      publisher: 'Stanford University',
+      year: 2023,
+      dataSize: '155GB',
+      format: 'JPEG, XML',
+      keywords: ['computer vision', 'object recognition', 'deep learning']
+    },
+    {
+      id: 103,
+      type: 'dataset',
+      title: 'Common Crawl Web Archive',
+      description: 'Petabyte-scale web crawl data for NLP research.',
+      score: 0.90,
+      level: '추천',
+      reason: '대규모 텍스트 데이터 분석에 필수적입니다.',
+      detailedReason: {
+        semanticSimilarity: 0.90,
+        keywordMatch: 0.87,
+        citationRelevance: 0.88,
+        recencyScore: 0.94,
+        explanation: '매월 업데이트되는 페타바이트급 웹 크롤 데이터입니다.'
+      },
+      url: 'https://commoncrawl.org/',
+      publisher: 'Common Crawl Foundation',
+      year: 2024,
+      dataSize: '250TB',
+      format: 'WARC, WET, WAT',
+      keywords: ['NLP', 'web crawl', 'text mining']
+    },
+    {
+      id: 104,
+      type: 'dataset',
+      title: 'Human Genome Variation Database',
+      description: 'Comprehensive database of human genetic variations.',
+      score: 0.89,
+      level: '추천',
+      reason: '유전체 연구의 기초 데이터를 제공합니다.',
+      detailedReason: {
+        semanticSimilarity: 0.89,
+        keywordMatch: 0.86,
+        citationRelevance: 0.87,
+        recencyScore: 0.91,
+        explanation: '인간 유전체 변이에 대한 포괄적 정보를 담고 있습니다.'
+      },
+      url: 'https://www.ncbi.nlm.nih.gov/clinvar/',
+      publisher: 'NCBI',
+      year: 2024,
+      dataSize: '890GB',
+      format: 'VCF, JSON',
+      keywords: ['genomics', 'genetics', 'bioinformatics']
+    },
+    {
+      id: 105,
+      type: 'dataset',
+      title: 'Satellite Imagery for Earth Observation',
+      description: 'High-resolution satellite images for environmental monitoring.',
+      score: 0.88,
+      level: '추천',
+      reason: '환경 연구의 핵심 데이터 소스입니다.',
+      detailedReason: {
+        semanticSimilarity: 0.88,
+        keywordMatch: 0.85,
+        citationRelevance: 0.86,
+        recencyScore: 0.92,
+        explanation: 'Sentinel-2와 Landsat 위성의 고해상도 영상 데이터입니다.'
+      },
+      url: 'https://earthdata.nasa.gov/',
+      publisher: 'NASA Earth Science',
+      year: 2024,
+      dataSize: '2.1TB',
+      format: 'GeoTIFF, HDF',
+      keywords: ['satellite', 'remote sensing', 'earth observation']
+    },
+    {
+      id: 106,
+      type: 'dataset',
+      title: 'Medical Imaging Dataset Collection',
+      description: 'Diverse medical imaging data including CT, MRI, and X-rays.',
+      score: 0.92,
+      level: '가장 추천',
+      reason: '의료 AI 연구의 필수 데이터셋입니다.',
+      detailedReason: {
+        semanticSimilarity: 0.92,
+        keywordMatch: 0.89,
+        citationRelevance: 0.90,
+        recencyScore: 0.93,
+        explanation: '다양한 의료 영상 모달리티의 레이블된 데이터를 제공합니다.'
+      },
+      url: 'https://www.cancerimagingarchive.net/',
+      publisher: 'NIH',
+      year: 2024,
+      dataSize: '750GB',
+      format: 'DICOM, NIfTI',
+      keywords: ['medical imaging', 'radiology', 'healthcare AI']
+    },
+    {
+      id: 107,
+      type: 'dataset',
+      title: 'Speech Recognition Audio Corpus',
+      description: 'Large-scale multilingual speech dataset for ASR.',
+      score: 0.87,
+      level: '추천',
+      reason: '음성 인식 모델 훈련에 최적화되어 있습니다.',
+      detailedReason: {
+        semanticSimilarity: 0.87,
+        keywordMatch: 0.84,
+        citationRelevance: 0.85,
+        recencyScore: 0.90,
+        explanation: '50개 이상 언어의 음성 데이터를 포함합니다.'
+      },
+      url: 'https://commonvoice.mozilla.org/',
+      publisher: 'Mozilla Foundation',
+      year: 2024,
+      dataSize: '450GB',
+      format: 'MP3, WAV',
+      keywords: ['speech recognition', 'ASR', 'audio processing']
+    },
+    {
+      id: 108,
+      type: 'dataset',
+      title: 'Financial Market Time Series Data',
+      description: 'Historical stock prices and trading volumes.',
+      score: 0.86,
+      level: '참고',
+      reason: '금융 예측 모델 개발에 활용됩니다.',
+      detailedReason: {
+        semanticSimilarity: 0.86,
+        keywordMatch: 0.83,
+        citationRelevance: 0.84,
+        recencyScore: 0.89,
+        explanation: '20년 이상의 글로벌 금융 시장 데이터를 제공합니다.'
+      },
+      url: 'https://www.kaggle.com/datasets/borismarjanovic/price-volume-data-for-all-us-stocks-etfs',
+      publisher: 'Kaggle',
+      year: 2023,
+      dataSize: '35GB',
+      format: 'CSV, JSON',
+      keywords: ['finance', 'time series', 'stock market']
+    },
+    {
+      id: 109,
+      type: 'dataset',
+      title: 'Social Media Sentiment Analysis Dataset',
+      description: 'Labeled tweets and posts for sentiment classification.',
+      score: 0.85,
+      level: '참고',
+      reason: 'NLP 감성 분석 연구에 적합합니다.',
+      detailedReason: {
+        semanticSimilarity: 0.85,
+        keywordMatch: 0.82,
+        citationRelevance: 0.83,
+        recencyScore: 0.88,
+        explanation: '100만 개 이상의 레이블된 소셜 미디어 포스트를 포함합니다.'
+      },
+      url: 'http://help.sentiment140.com/',
+      publisher: 'Stanford University',
+      year: 2023,
+      dataSize: '18GB',
+      format: 'CSV, JSON',
+      keywords: ['sentiment analysis', 'NLP', 'social media']
+    },
+    {
+      id: 110,
+      type: 'dataset',
+      title: 'Autonomous Driving Dataset',
+      description: 'LiDAR and camera data for self-driving car research.',
+      score: 0.90,
+      level: '추천',
+      reason: '자율주행 알고리즘 개발의 핵심 데이터입니다.',
+      detailedReason: {
+        semanticSimilarity: 0.90,
+        keywordMatch: 0.87,
+        citationRelevance: 0.88,
+        recencyScore: 0.92,
+        explanation: 'Waymo와 nuScenes의 고품질 센서 데이터를 제공합니다.'
+      },
+      url: 'https://www.nuscenes.org/',
+      publisher: 'Motional',
+      year: 2024,
+      dataSize: '1.2TB',
+      format: 'PCD, PNG, JSON',
+      keywords: ['autonomous driving', 'LiDAR', 'computer vision']
+    },
+    {
+      id: 111,
+      type: 'dataset',
+      title: 'Protein Structure Database',
+      description: '3D structures of proteins for drug discovery.',
+      score: 0.89,
+      level: '추천',
+      reason: '생명과학 연구의 필수 데이터베이스입니다.',
+      detailedReason: {
+        semanticSimilarity: 0.89,
+        keywordMatch: 0.86,
+        citationRelevance: 0.87,
+        recencyScore: 0.91,
+        explanation: 'AlphaFold 예측을 포함한 단백질 구조 데이터입니다.'
+      },
+      url: 'https://www.rcsb.org/',
+      publisher: 'RCSB PDB',
+      year: 2024,
+      dataSize: '560GB',
+      format: 'PDB, mmCIF',
+      keywords: ['protein structure', 'bioinformatics', 'drug discovery']
+    },
+    {
+      id: 112,
+      type: 'dataset',
+      title: 'Urban Air Quality Monitoring Data',
+      description: 'Real-time air pollution measurements from global cities.',
+      score: 0.87,
+      level: '추천',
+      reason: '환경 건강 연구에 중요한 데이터입니다.',
+      detailedReason: {
+        semanticSimilarity: 0.87,
+        keywordMatch: 0.84,
+        citationRelevance: 0.85,
+        recencyScore: 0.93,
+        explanation: '전 세계 주요 도시의 실시간 대기질 데이터를 제공합니다.'
+      },
+      url: 'https://aqicn.org/data-platform/',
+      publisher: 'World Air Quality Index',
+      year: 2024,
+      dataSize: '92GB',
+      format: 'CSV, JSON, API',
+      keywords: ['air quality', 'pollution', 'environmental health']
+    },
+    {
+      id: 113,
+      type: 'dataset',
+      title: 'Video Understanding Benchmark',
+      description: 'Annotated videos for action recognition and tracking.',
+      score: 0.88,
+      level: '추천',
+      reason: '비디오 분석 AI 개발에 최적화되어 있습니다.',
+      detailedReason: {
+        semanticSimilarity: 0.88,
+        keywordMatch: 0.85,
+        citationRelevance: 0.86,
+        recencyScore: 0.90,
+        explanation: 'Kinetics와 ActivityNet을 포함한 대규모 비디오 데이터입니다.'
+      },
+      url: 'http://activity-net.org/',
+      publisher: 'MIT-IBM Watson AI Lab',
+      year: 2024,
+      dataSize: '850GB',
+      format: 'MP4, JSON',
+      keywords: ['video understanding', 'action recognition', 'computer vision']
+    },
+    {
+      id: 114,
+      type: 'dataset',
+      title: 'Question Answering Dataset Collection',
+      description: 'Diverse QA datasets for NLP model training.',
+      score: 0.86,
+      level: '참고',
+      reason: '대화형 AI 시스템 구축에 활용됩니다.',
+      detailedReason: {
+        semanticSimilarity: 0.86,
+        keywordMatch: 0.83,
+        citationRelevance: 0.84,
+        recencyScore: 0.89,
+        explanation: 'SQuAD, Natural Questions 등 주요 QA 데이터셋을 포함합니다.'
+      },
+      url: 'https://rajpurkar.github.io/SQuAD-explorer/',
+      publisher: 'Stanford NLP Group',
+      year: 2023,
+      dataSize: '28GB',
+      format: 'JSON',
+      keywords: ['question answering', 'NLP', 'reading comprehension']
+    },
+    {
+      id: 115,
+      type: 'dataset',
+      title: 'Robotics Manipulation Dataset',
+      description: 'Demonstrations of robot manipulation tasks.',
+      score: 0.85,
+      level: '참고',
+      reason: '로봇 학습 알고리즘 훈련에 사용됩니다.',
+      detailedReason: {
+        semanticSimilarity: 0.85,
+        keywordMatch: 0.82,
+        citationRelevance: 0.83,
+        recencyScore: 0.88,
+        explanation: '다양한 물체 조작 작업의 시연 데이터를 제공합니다.'
+      },
+      url: 'https://robotics.google.com/datasets/',
+      publisher: 'Google Robotics',
+      year: 2023,
+      dataSize: '380GB',
+      format: 'TFRecord, HDF5',
+      keywords: ['robotics', 'manipulation', 'imitation learning']
+    },
+    {
+      id: 116,
+      type: 'dataset',
+      title: 'Earthquake Seismic Waveform Data',
+      description: 'Global seismological measurements for earthquake research.',
+      score: 0.84,
+      level: '참고',
+      reason: '지진 예측 및 분석 연구에 활용됩니다.',
+      detailedReason: {
+        semanticSimilarity: 0.84,
+        keywordMatch: 0.81,
+        citationRelevance: 0.82,
+        recencyScore: 0.87,
+        explanation: '전 세계 지진계 네트워크의 파형 데이터입니다.'
+      },
+      url: 'https://www.iris.edu/hq/',
+      publisher: 'IRIS',
+      year: 2023,
+      dataSize: '1.8TB',
+      format: 'SAC, miniSEED',
+      keywords: ['seismology', 'earthquake', 'geophysics']
+    },
+    {
+      id: 117,
+      type: 'dataset',
+      title: 'E-commerce Product Recommendation Data',
+      description: 'User interactions and product catalogs for recommendation systems.',
+      score: 0.86,
+      level: '참고',
+      reason: '추천 시스템 개발의 실무 데이터입니다.',
+      detailedReason: {
+        semanticSimilarity: 0.86,
+        keywordMatch: 0.83,
+        citationRelevance: 0.84,
+        recencyScore: 0.89,
+        explanation: 'Amazon과 같은 대규모 이커머스 플랫폼의 실제 데이터입니다.'
+      },
+      url: 'https://jmcauley.ucsd.edu/data/amazon/',
+      publisher: 'UCSD',
+      year: 2023,
+      dataSize: '142GB',
+      format: 'JSON, CSV',
+      keywords: ['recommendation', 'e-commerce', 'collaborative filtering']
+    },
+    {
+      id: 118,
+      type: 'dataset',
+      title: 'Neural Network Model Zoo',
+      description: 'Pre-trained models for transfer learning.',
+      score: 0.91,
+      level: '가장 추천',
+      reason: '전이 학습을 통한 빠른 모델 개발이 가능합니다.',
+      detailedReason: {
+        semanticSimilarity: 0.91,
+        keywordMatch: 0.88,
+        citationRelevance: 0.89,
+        recencyScore: 0.94,
+        explanation: 'ResNet, BERT, GPT 등 최신 사전 훈련 모델을 제공합니다.'
+      },
+      url: 'https://pytorch.org/hub/',
+      publisher: 'PyTorch Community',
+      year: 2024,
+      dataSize: '580GB',
+      format: 'PyTorch, ONNX',
+      keywords: ['pre-trained models', 'transfer learning', 'model zoo']
+    },
+    {
+      id: 119,
+      type: 'dataset',
+      title: 'Cybersecurity Threat Intelligence Feed',
+      description: 'Network traffic and malware samples for security research.',
+      score: 0.87,
+      level: '추천',
+      reason: 'AI 기반 보안 시스템 개발에 필수적입니다.',
+      detailedReason: {
+        semanticSimilarity: 0.87,
+        keywordMatch: 0.84,
+        citationRelevance: 0.85,
+        recencyScore: 0.92,
+        explanation: '최신 사이버 위협 정보와 악성코드 샘플을 포함합니다.'
+      },
+      url: 'https://www.stratosphereips.org/datasets-overview',
+      publisher: 'Stratosphere IPS',
+      year: 2024,
+      dataSize: '215GB',
+      format: 'PCAP, JSON',
+      keywords: ['cybersecurity', 'malware', 'network security']
+    },
+    {
+      id: 120,
+      type: 'dataset',
+      title: 'Agricultural Crop Monitoring Dataset',
+      description: 'Satellite and drone imagery for precision agriculture.',
+      score: 0.85,
+      level: '참고',
+      reason: '스마트 농업 AI 개발에 활용됩니다.',
+      detailedReason: {
+        semanticSimilarity: 0.85,
+        keywordMatch: 0.82,
+        citationRelevance: 0.83,
+        recencyScore: 0.90,
+        explanation: '작물 건강 모니터링과 수확량 예측을 위한 데이터입니다.'
+      },
+      url: 'https://www.usgs.gov/cropscape',
+      publisher: 'USDA',
+      year: 2024,
+      dataSize: '425GB',
+      format: 'GeoTIFF, Shapefile',
+      keywords: ['agriculture', 'crop monitoring', 'remote sensing']
     }
   ];
 
@@ -855,7 +1694,13 @@ const ResearchRecommendationAgent = () => {
               
               <div className="p-4">
                 <div className="flex space-x-3">
-                  <div className="w-1/4 bg-white rounded-lg flex-shrink-0 border-2 border-gray-200 shadow-sm p-2 flex flex-col justify-center items-center" style={{aspectRatio: '1/1.414'}}>
+                  <a 
+                    href="https://www.nature.com/articles/s41558-019-0666-1"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block w-1/4 bg-white rounded-lg flex-shrink-0 border-2 border-gray-200 shadow-sm p-2 flex flex-col justify-center items-center hover:border-blue-400 transition-colors" 
+                    style={{aspectRatio: '1/1.414'}}
+                  >
                     <div className="text-center">
                       <div className="text-xs font-bold text-gray-800 leading-tight mb-1" style={{fontFamily: 'Georgia, serif'}}>
                         Machine Learning for Climate Science
@@ -870,12 +1715,19 @@ const ResearchRecommendationAgent = () => {
                         2024
                       </div>
                     </div>
-                  </div>
+                  </a>
                   
                   <div className="flex-1 min-w-0">
-                    <h4 className="font-semibold text-gray-900 text-sm leading-tight mb-1">
-                      Machine Learning for Climate Science: Advances and Applications
-                    </h4>
+                    <a 
+                      href="https://www.nature.com/articles/s41558-019-0666-1"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="block group"
+                    >
+                      <h4 className="font-semibold text-gray-900 text-base leading-tight mb-1 group-hover:text-blue-600 transition-colors">
+                        Machine Learning for Climate Science: Advances and Applications
+                      </h4>
+                    </a>
                     <div className="text-xs text-gray-600 mb-2" style={{fontFamily: 'Arial, sans-serif'}}>
                       <p>Dr. Sarah Chen, Prof. Michael Johnson</p>
                       <p>Nature Climate Change • 2024</p>
@@ -897,7 +1749,9 @@ const ResearchRecommendationAgent = () => {
                     </div>
                     
                     <a 
-                      href="#" 
+                      href="https://www.nature.com/articles/s41558-019-0666-1" 
+                      target="_blank"
+                      rel="noopener noreferrer"
                       className="inline-flex items-center space-x-1 text-xs text-blue-600 hover:text-blue-800 font-medium"
                     >
                       <span>논문 보기</span>
@@ -919,7 +1773,7 @@ const ResearchRecommendationAgent = () => {
               </div>
               
               <div className="p-3">
-                {trendingPapers.slice(0, 3).map((paper) => {
+                {trendingPapers.slice(0, 5).map((paper) => {
                   const rankChange = paper.prevRank - paper.rank;
                   return (
                   <div 
@@ -936,19 +1790,31 @@ const ResearchRecommendationAgent = () => {
                           {paper.rank}
                         </div>
                         <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2">
-                            <p className="text-sm font-medium text-gray-800 truncate leading-tight">{paper.title}</p>
+                          <div className="flex items-center gap-2 mb-1">
+                            <a 
+                              href={paper.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-base font-semibold text-gray-900 hover:text-blue-600 truncate leading-tight transition-colors"
+                            >
+                              {paper.title}
+                            </a>
                             {paper.trend === 'hot' && (
-                              <span className="text-2xl animate-pulse">🔥</span>
+                              <span className="text-3xl animate-pulse flex-shrink-0">🔥</span>
                             )}
                             {paper.trend === 'up' && (
-                              <ArrowUp size={24} className="text-emerald-500" />
+                              <ArrowUp size={28} className="text-emerald-500 flex-shrink-0" />
                             )}
                             {paper.trend === 'down' && (
-                              <ArrowDown size={24} className="text-red-500" />
+                              <ArrowDown size={28} className="text-red-500 flex-shrink-0" />
+                            )}
+                            {paper.trend === 'hot' && (
+                              <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-bold bg-red-100 text-red-700 border border-red-300 flex-shrink-0">
+                                NEW
+                              </span>
                             )}
                             {paper.rankChange !== 0 && (
-                              <span className={`text-xl font-extrabold ${paper.rankChange > 0 ? 'text-emerald-600' : 'text-red-600'}`}>
+                              <span className={`text-2xl font-black ${paper.rankChange > 0 ? 'text-emerald-600' : 'text-red-600'} flex-shrink-0`}>
                                 {paper.rankChange > 0 ? `+${paper.rankChange}` : paper.rankChange}
                               </span>
                             )}
@@ -975,6 +1841,163 @@ const ResearchRecommendationAgent = () => {
             )}
           </div>
         </div>
+        
+        {/* 재미있는 논문 추천 롤링 배너 */}
+        {!hasSearched && (
+          <div className="mt-8 bg-gradient-to-r from-purple-600 to-pink-600 rounded-xl shadow-xl border border-purple-400 overflow-hidden">
+            <div className="p-4 border-b border-purple-400/30">
+              <div className="flex items-center space-x-2">
+                <span className="text-2xl">🎉</span>
+                <h3 className="font-semibold text-white">재미있는 논문 추천</h3>
+              </div>
+              <p className="text-xs text-purple-100 mt-1">특이하고 재미있는 주제의 연구들</p>
+            </div>
+            
+            <div className="relative overflow-hidden py-6 bg-white/10">
+              <div className="flex animate-scroll-left whitespace-nowrap">
+                {[
+                  {
+                    title: "Can a Dog Predict Earthquakes?",
+                    authors: "Smith, J. et al.",
+                    year: 2023,
+                    journal: "Unusual Science Quarterly",
+                    url: "https://www.nature.com/articles/nature12345"
+                  },
+                  {
+                    title: "The Mathematics of Pizza: Optimal Slice Distribution",
+                    authors: "Johnson, M.",
+                    year: 2024,
+                    journal: "Journal of Culinary Mathematics",
+                    url: "https://arxiv.org/abs/2301.12345"
+                  },
+                  {
+                    title: "Why Do Cats Always Land on Their Feet?",
+                    authors: "Chen, L. & Park, K.",
+                    year: 2023,
+                    journal: "Feline Physics Review",
+                    url: "https://www.science.org/doi/10.1126/science.abc1234"
+                  },
+                  {
+                    title: "The Aerodynamics of Flying Squirrels",
+                    authors: "Lee, S.",
+                    year: 2024,
+                    journal: "Nature Biomechanics",
+                    url: "https://www.nature.com/articles/s41586-024-12345"
+                  },
+                  {
+                    title: "Coffee vs Tea: A Global Preference Study",
+                    authors: "Williams, R. et al.",
+                    year: 2023,
+                    journal: "Beverage Science",
+                    url: "https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0123456"
+                  },
+                  {
+                    title: "The Physics of Bubble Wrap Popping",
+                    authors: "Anderson, K.",
+                    year: 2024,
+                    journal: "Applied Physics Letters",
+                    url: "https://aip.scitation.org/doi/10.1063/5.0123456"
+                  }
+                ].map((paper, index) => (
+                  <a
+                    key={index}
+                    href={paper.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-block mx-4 bg-white rounded-lg p-4 shadow-lg hover:shadow-2xl transition-all hover:scale-105 w-72 flex-shrink-0"
+                  >
+                    <div className="flex space-x-3">
+                      <div className="w-16 h-20 bg-gradient-to-br from-purple-200 to-pink-200 rounded flex-shrink-0 border-2 border-purple-300 flex items-center justify-center">
+                        <span className="text-3xl">📚</span>
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h4 className="font-bold text-gray-900 text-sm leading-tight mb-1 line-clamp-2" style={{fontFamily: 'Georgia, serif'}}>
+                          {paper.title}
+                        </h4>
+                        <p className="text-xs text-gray-600 truncate" style={{fontFamily: 'Georgia, serif'}}>
+                          {paper.authors}
+                        </p>
+                        <p className="text-xs text-gray-500" style={{fontFamily: 'Georgia, serif'}}>
+                          {paper.journal} • {paper.year}
+                        </p>
+                      </div>
+                    </div>
+                  </a>
+                ))}
+                {/* 반복을 위한 복제 */}
+                {[
+                  {
+                    title: "Can a Dog Predict Earthquakes?",
+                    authors: "Smith, J. et al.",
+                    year: 2023,
+                    journal: "Unusual Science Quarterly",
+                    url: "https://www.nature.com/articles/nature12345"
+                  },
+                  {
+                    title: "The Mathematics of Pizza: Optimal Slice Distribution",
+                    authors: "Johnson, M.",
+                    year: 2024,
+                    journal: "Journal of Culinary Mathematics",
+                    url: "https://arxiv.org/abs/2301.12345"
+                  },
+                  {
+                    title: "Why Do Cats Always Land on Their Feet?",
+                    authors: "Chen, L. & Park, K.",
+                    year: 2023,
+                    journal: "Feline Physics Review",
+                    url: "https://www.science.org/doi/10.1126/science.abc1234"
+                  },
+                  {
+                    title: "The Aerodynamics of Flying Squirrels",
+                    authors: "Lee, S.",
+                    year: 2024,
+                    journal: "Nature Biomechanics",
+                    url: "https://www.nature.com/articles/s41586-024-12345"
+                  },
+                  {
+                    title: "Coffee vs Tea: A Global Preference Study",
+                    authors: "Williams, R. et al.",
+                    year: 2023,
+                    journal: "Beverage Science",
+                    url: "https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0123456"
+                  },
+                  {
+                    title: "The Physics of Bubble Wrap Popping",
+                    authors: "Anderson, K.",
+                    year: 2024,
+                    journal: "Applied Physics Letters",
+                    url: "https://aip.scitation.org/doi/10.1063/5.0123456"
+                  }
+                ].map((paper, index) => (
+                  <a
+                    key={`duplicate-${index}`}
+                    href={paper.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-block mx-4 bg-white rounded-lg p-4 shadow-lg hover:shadow-2xl transition-all hover:scale-105 w-72 flex-shrink-0"
+                  >
+                    <div className="flex space-x-3">
+                      <div className="w-16 h-20 bg-gradient-to-br from-purple-200 to-pink-200 rounded flex-shrink-0 border-2 border-purple-300 flex items-center justify-center">
+                        <span className="text-3xl">📚</span>
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h4 className="font-bold text-gray-900 text-sm leading-tight mb-1 line-clamp-2" style={{fontFamily: 'Georgia, serif'}}>
+                          {paper.title}
+                        </h4>
+                        <p className="text-xs text-gray-600 truncate" style={{fontFamily: 'Georgia, serif'}}>
+                          {paper.authors}
+                        </p>
+                        <p className="text-xs text-gray-500" style={{fontFamily: 'Georgia, serif'}}>
+                          {paper.journal} • {paper.year}
+                        </p>
+                      </div>
+                    </div>
+                  </a>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Chat Modal */}

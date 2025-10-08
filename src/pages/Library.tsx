@@ -86,23 +86,6 @@ const Library = () => {
     const newNodes: Node[] = [];
     const newEdges: Edge[] = [];
 
-    // 중앙 루트 노드
-    newNodes.push({
-      id: 'root',
-      data: { label: '내 라이브러리' },
-      position: { x: 400, y: 50 },
-      style: {
-        background: '#3b82f6',
-        color: 'white',
-        border: '2px solid #1e40af',
-        borderRadius: '12px',
-        padding: '16px 24px',
-        fontSize: '18px',
-        fontWeight: 'bold',
-        width: 200,
-      },
-    });
-
     // 키워드별로 북마크 그룹화
     const keywordGroups = new Map<string, Bookmark[]>();
     bookmarks.forEach(bookmark => {
@@ -114,7 +97,6 @@ const Library = () => {
           keywordGroups.get(keyword)!.push(bookmark);
         });
       } else {
-        // 키워드가 없는 경우 "기타"로 분류
         if (!keywordGroups.has('기타')) {
           keywordGroups.set('기타', []);
         }
@@ -122,50 +104,53 @@ const Library = () => {
       }
     });
 
-    // 키워드 노드와 북마크 노드 생성
+    // 키워드가 없으면 빈 마인드맵 표시
+    if (keywordGroups.size === 0) {
+      setNodes([]);
+      setEdges([]);
+      return;
+    }
+
+    // 각 키워드를 독립적인 마인드맵의 중심으로 설정
     const keywordArray = Array.from(keywordGroups.keys());
-    const angleStep = (2 * Math.PI) / keywordArray.length;
-    const radius = 300;
+    const mapsPerRow = 3; // 한 행에 3개의 마인드맵
+    const mapSpacing = 600; // 마인드맵 간 간격
+    const verticalSpacing = 500; // 수직 간격
 
-    keywordArray.forEach((keyword, index) => {
-      const angle = index * angleStep;
-      const x = 500 + radius * Math.cos(angle);
-      const y = 250 + radius * Math.sin(angle);
+    keywordArray.forEach((keyword, keywordIndex) => {
+      const row = Math.floor(keywordIndex / mapsPerRow);
+      const col = keywordIndex % mapsPerRow;
+      const centerX = col * mapSpacing + 300;
+      const centerY = row * verticalSpacing + 200;
 
-      // 키워드(대분류) 노드
+      // 키워드(중심) 노드
       const keywordNodeId = `keyword-${keyword}`;
       newNodes.push({
         id: keywordNodeId,
         data: { label: keyword },
-        position: { x, y },
+        position: { x: centerX, y: centerY },
         style: {
-          background: '#10b981',
+          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
           color: 'white',
-          border: '2px solid #059669',
-          borderRadius: '10px',
-          padding: '12px 20px',
-          fontSize: '15px',
-          fontWeight: '600',
-          minWidth: 120,
+          border: '3px solid #5a67d8',
+          borderRadius: '16px',
+          padding: '20px 32px',
+          fontSize: '20px',
+          fontWeight: 'bold',
+          minWidth: 180,
+          boxShadow: '0 10px 25px rgba(102, 126, 234, 0.3)',
         },
       });
 
-      // 루트에서 키워드로 엣지
-      newEdges.push({
-        id: `edge-root-${keywordNodeId}`,
-        source: 'root',
-        target: keywordNodeId,
-        animated: true,
-        style: { stroke: '#3b82f6', strokeWidth: 2 },
-      });
-
-      // 각 키워드의 북마크 노드들
+      // 각 키워드의 북마크 노드들을 원형으로 배치
       const papers = keywordGroups.get(keyword) || [];
+      const radius = 250;
+      const angleStep = (2 * Math.PI) / papers.length;
+
       papers.forEach((paper, paperIndex) => {
-        const paperAngle = angle + (paperIndex - papers.length / 2) * 0.3;
-        const paperRadius = radius + 200;
-        const paperX = 500 + paperRadius * Math.cos(paperAngle);
-        const paperY = 250 + paperRadius * Math.sin(paperAngle);
+        const angle = paperIndex * angleStep - Math.PI / 2; // -90도에서 시작
+        const paperX = centerX + radius * Math.cos(angle);
+        const paperY = centerY + radius * Math.sin(angle);
 
         const paperNodeId = `paper-${paper.id}`;
         newNodes.push({
@@ -173,20 +158,23 @@ const Library = () => {
           data: {
             label: (
               <div className="text-left">
-                <div className="font-semibold text-xs mb-1 line-clamp-2">{paper.title}</div>
-                <div className="text-xs opacity-80">{paper.year}</div>
+                <div className="font-bold text-sm mb-2 line-clamp-2 leading-tight">{paper.title}</div>
+                <div className="text-xs opacity-90 mb-1">{paper.authors?.[0] || 'Unknown'}</div>
+                <div className="text-xs opacity-75">{paper.year}</div>
               </div>
             ),
           },
           position: { x: paperX, y: paperY },
           style: {
             background: 'white',
-            border: '2px solid #e5e7eb',
-            borderRadius: '8px',
-            padding: '10px',
-            fontSize: '12px',
-            width: 180,
+            border: '3px solid #cbd5e0',
+            borderRadius: '12px',
+            padding: '16px',
+            fontSize: '14px',
+            width: 220,
             cursor: 'pointer',
+            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+            transition: 'all 0.3s ease',
           },
         });
 
@@ -195,7 +183,12 @@ const Library = () => {
           id: `edge-${keywordNodeId}-${paperNodeId}`,
           source: keywordNodeId,
           target: paperNodeId,
-          style: { stroke: '#10b981', strokeWidth: 1.5 },
+          animated: false,
+          style: { 
+            stroke: '#667eea', 
+            strokeWidth: 2.5,
+            strokeDasharray: '5,5'
+          },
         });
       });
     });
