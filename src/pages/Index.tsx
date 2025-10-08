@@ -2633,7 +2633,7 @@ const ResearchRecommendationAgent = () => {
           {/* Right Panel - 왼쪽/오른쪽 분할 */}
           <div className="xl:col-span-1">
             {!hasSearched && (
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div className="grid grid-cols-2 gap-6">
             {/* 오늘의 논문 - 왼쪽 */}
                 <div className="bg-white rounded-xl shadow-xl border">
                 <div className="p-3 border-b border-gray-200 bg-gradient-to-r from-emerald-600 to-emerald-700 rounded-t-xl">
@@ -2648,13 +2648,13 @@ const ResearchRecommendationAgent = () => {
                   <p className="text-xs text-emerald-100 mt-0.5">김연구님을 위한 추천</p>
                 </div>
               
-              <div className="p-4">
+              <div className="p-6">
                 <div className="flex space-x-4">
                   <a 
                     href={todayPaper.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="block w-64 bg-white rounded-lg flex-shrink-0 border-2 border-gray-200 shadow-sm p-4 flex flex-col justify-center items-center hover:border-blue-400 transition-colors" 
+                    className="block w-full max-w-[200px] bg-white rounded-lg flex-shrink-0 border-2 border-gray-200 shadow-sm p-4 flex flex-col justify-center items-center hover:border-blue-400 transition-colors" 
                     style={{aspectRatio: '1/1.414'}}
                   >
                     <div className="text-center">
@@ -2730,13 +2730,13 @@ const ResearchRecommendationAgent = () => {
                 <p className="text-xs text-slate-200 mt-0.5">HOT 논문 TOP 5</p>
               </div>
               
-              <div className="p-2">
+              <div className="p-4">
                 {trendingPapers.slice(0, 5).map((paper) => {
                   const rankChange = paper.prevRank - paper.rank;
                   return (
                   <div 
                     key={paper.id} 
-                    className="p-2 rounded-lg mb-1.5 last:mb-0 hover:bg-gray-50 transition-all duration-500"
+                    className="p-3 rounded-lg mb-2 last:mb-0 hover:bg-gray-50 transition-all duration-500"
                   >
                     <div className="flex items-start justify-between">
                       <div className="flex items-start space-x-2 flex-1">
@@ -2811,14 +2811,14 @@ const ResearchRecommendationAgent = () => {
         {/* 재미있는 논문 추천 롤링 배너 */}
         {!hasSearched && (
           <div className="mt-8 bg-gradient-to-r from-sky-50 via-blue-50 to-cyan-50 rounded-xl shadow-xl border border-sky-200 overflow-hidden">
-            <div className="p-4 border-b border-sky-200/50 bg-white/50">
+            <div className="p-6 border-b border-sky-200/50 bg-white/50">
               <div className="flex items-center space-x-2">
-                <h3 className="font-semibold text-gray-800">재미있는 논문 추천</h3>
+                <h3 className="font-semibold text-gray-800 text-base">재미있는 논문 추천</h3>
               </div>
-              <p className="text-xs text-gray-600 mt-1">특이하고 재미있는 주제의 연구들</p>
+              <p className="text-sm text-gray-600 mt-1">특이하고 재미있는 주제의 연구들</p>
             </div>
             
-            <div className="relative overflow-hidden py-4 md:py-6 bg-white/20">
+            <div className="relative overflow-hidden py-8 bg-white/20">
               <div className="flex animate-scroll-left whitespace-nowrap">
                 {funPapers.concat(funPapers).map((paper, index) => (
                   <a
@@ -2826,21 +2826,21 @@ const ResearchRecommendationAgent = () => {
                     href={paper.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-block mx-3 md:mx-4 bg-white rounded-lg p-3 md:p-4 shadow-md hover:shadow-xl transition-all hover:scale-105 w-72 md:w-80 flex-shrink-0"
+                    className="inline-block mx-4 bg-white rounded-lg p-5 shadow-md hover:shadow-xl transition-all hover:scale-105 w-80 flex-shrink-0"
                   >
                     <div className="space-y-2">
-                      <h4 className="font-bold text-gray-900 text-sm md:text-base leading-tight line-clamp-2" style={{fontFamily: 'Georgia, serif'}}>
+                      <h4 className="font-bold text-gray-900 text-base leading-tight line-clamp-2" style={{fontFamily: 'Georgia, serif'}}>
                         {paper.title}
                       </h4>
                       {paper.description && (
-                        <p className="text-xs text-gray-600 line-clamp-2" style={{fontFamily: 'Georgia, serif'}}>
+                        <p className="text-sm text-gray-600 line-clamp-2" style={{fontFamily: 'Georgia, serif'}}>
                           {paper.description}
                         </p>
                       )}
-                      <p className="text-xs md:text-sm text-gray-600" style={{fontFamily: 'Georgia, serif'}}>
+                      <p className="text-sm text-gray-600" style={{fontFamily: 'Georgia, serif'}}>
                         {paper.authors}
                       </p>
-                      <p className="text-xs md:text-sm text-gray-500 font-medium" style={{fontFamily: 'Georgia, serif'}}>
+                      <p className="text-sm text-gray-500 font-medium" style={{fontFamily: 'Georgia, serif'}}>
                         {paper.journal} • {paper.year}
                       </p>
                     </div>
