@@ -2500,7 +2500,7 @@ const ResearchRecommendationAgent = () => {
                   </h4>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                     <a 
-                      href={`https://paperswithcode.com/search?q=${encodeURIComponent(chatMessages.find(msg => msg.type === 'user')?.message || '')}`}
+                      href={`https://paperswithcode.com/search?q=${encodeURIComponent(chatMessages.filter(msg => msg.type === 'user').slice(-1)[0]?.message || '')}`}
                       target="_blank" 
                       rel="noopener noreferrer"
                       className="p-3 bg-slate-600/50 rounded-lg hover:bg-slate-600 transition-colors border border-slate-500"
@@ -2509,7 +2509,7 @@ const ResearchRecommendationAgent = () => {
                       <p className="text-xs text-slate-300">AI/ML 논문과 코드 구현</p>
                     </a>
                     <a 
-                      href={`https://datasetsearch.research.google.com/search?query=${encodeURIComponent(chatMessages.find(msg => msg.type === 'user')?.message || '')}`}
+                      href={`https://datasetsearch.research.google.com/search?query=${encodeURIComponent(chatMessages.filter(msg => msg.type === 'user').slice(-1)[0]?.message || '')}`}
                       target="_blank" 
                       rel="noopener noreferrer"
                       className="p-3 bg-slate-600/50 rounded-lg hover:bg-slate-600 transition-colors border border-slate-500"
@@ -2518,7 +2518,7 @@ const ResearchRecommendationAgent = () => {
                       <p className="text-xs text-slate-300">구글 데이터셋 검색</p>
                     </a>
                     <a 
-                      href={`https://www.kaggle.com/search?q=${encodeURIComponent(chatMessages.find(msg => msg.type === 'user')?.message || '')}`}
+                      href={`https://www.kaggle.com/search?q=${encodeURIComponent(chatMessages.filter(msg => msg.type === 'user').slice(-1)[0]?.message || '')}`}
                       target="_blank" 
                       rel="noopener noreferrer"
                       className="p-3 bg-slate-600/50 rounded-lg hover:bg-slate-600 transition-colors border border-slate-500"
@@ -2527,7 +2527,7 @@ const ResearchRecommendationAgent = () => {
                       <p className="text-xs text-slate-300">데이터 과학 경진대회 플랫폼</p>
                     </a>
                     <a 
-                      href={`https://huggingface.co/datasets?search=${encodeURIComponent(chatMessages.find(msg => msg.type === 'user')?.message || '')}`}
+                      href={`https://huggingface.co/datasets?search=${encodeURIComponent(chatMessages.filter(msg => msg.type === 'user').slice(-1)[0]?.message || '')}`}
                       target="_blank" 
                       rel="noopener noreferrer"
                       className="p-3 bg-slate-600/50 rounded-lg hover:bg-slate-600 transition-colors border border-slate-500"

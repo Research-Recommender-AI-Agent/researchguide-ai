@@ -371,10 +371,11 @@ serve(async (req) => {
 **중요 규칙:**
 1. 반드시 학술 논문(peer-reviewed academic papers)만 추천하세요
 2. 비공식 보고서, 블로그 글, 뉴스 기사, 기술 문서 등은 제외하세요
-3. 데이터셋을 추천할 경우 실제 존재하는 공식 데이터셋만 포함하세요
+3. 10개 중 최소 3개는 실제 존재하는 공식 데이터셋을 추천하세요 (Papers with Code, Kaggle, Hugging Face, Google Dataset Search 등)
 4. 모든 논문은 실제 존재하며 DOI나 arXiv URL로 접근 가능해야 합니다
+5. 데이터셋은 검색 쿼리와 직접적으로 관련된 것만 추천하세요
 
-정확히 10개의 논문만 추천하세요. JSON 배열 형식으로 응답하세요.
+정확히 10개 추천하세요 (논문 7개 + 데이터셋 3개). JSON 배열 형식으로 응답하세요.
 
 각 논문은 다음 형식을 따르세요:
 {
@@ -392,9 +393,27 @@ serve(async (req) => {
   "keywords": ["키워드1", "키워드2"]
 }
 
-중요: 정확히 10개만 생성하고, 올바른 JSON 형식을 유지하세요.`;
+각 데이터셋은 다음 형식을 따르세요:
+{
+  "type": "dataset",
+  "title": "데이터셋 제목",
+  "description": "한국어 설명 1-2문장",
+  "score": 0.88,
+  "level": "추천",
+  "reason": "추천 이유",
+  "url": "https://...",
+  "publisher": "제공 기관",
+  "year": 2024,
+  "dataSize": "크기",
+  "format": "형식",
+  "keywords": ["키워드1", "키워드2"]
+}
 
-    const userPrompt = `다음 주제에 대해 정확히 10개의 논문을 추천해주세요: "${searchQuery}"`;
+중요: 정확히 10개만 생성하고 (논문 7개 + 데이터셋 3개), 올바른 JSON 형식을 유지하세요.`;
+
+    const userPrompt = `다음 주제에 대해 정확히 10개 추천해주세요 (논문 7개 + 데이터셋 3개): "${searchQuery}"
+
+데이터셋은 "${searchQuery}"와 직접 관련된 실제 공개 데이터셋만 추천하세요.`;
 
     // 소규모 LLM 모델 사용
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
