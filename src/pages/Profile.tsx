@@ -5,7 +5,8 @@ import { toast } from 'sonner';
 import { ArrowLeft, User, Mail, Calendar, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Header from '@/components/Header';
-import scientistIcon from '@/assets/scientist-icon.png';
+import scientistIcon from '@/assets/scientist-profile.png';
+import engineerIcon from '@/assets/engineer-profile.png';
 
 const Profile = () => {
   const [user, setUser] = useState<any>(null);
@@ -45,7 +46,7 @@ const Profile = () => {
         const keywords = bookmarksRes.data?.flatMap((b: any) => b.keywords || []) || [];
         if (keywords.includes('climate') || keywords.includes('environment')) {
           setUserType('환경을 사랑하는 연구자');
-        } else if (keywords.includes('AI') || keywords.includes('machine learning') || keywords.includes('deep learning')) {
+        } else if (keywords.includes('AI') || keywords.includes('machine learning') || keywords.includes('deep learning') || keywords.includes('transformer')) {
           setUserType('현학적인 AI 공학자');
         } else if (keywords.includes('bio') || keywords.includes('medical')) {
           setUserType('생명을 구하는 의학자');
@@ -61,6 +62,13 @@ const Profile = () => {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const getProfileImage = () => {
+    if (userType.includes('공학자') || userType.includes('AI')) {
+      return engineerIcon;
+    }
+    return scientistIcon;
   };
 
   if (isLoading) {
@@ -95,8 +103,8 @@ const Profile = () => {
 
         <div className="bg-card rounded-xl border border-border p-8 shadow-lg">
           <div className="flex items-center gap-6 mb-8">
-            <div className="w-24 h-24 rounded-full overflow-hidden flex items-center justify-center">
-              <img src={scientistIcon} alt="Profile" className="w-full h-full object-cover" />
+            <div className="w-28 h-28 rounded-full overflow-hidden flex items-center justify-center bg-gradient-to-br from-purple-50 to-blue-50 border-4 border-purple-200">
+              <img src={getProfileImage()} alt="Profile" className="w-full h-full object-cover" />
             </div>
             <div>
               <div className="flex items-center gap-3">

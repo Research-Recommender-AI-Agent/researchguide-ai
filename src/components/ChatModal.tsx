@@ -54,11 +54,36 @@ const ChatModal: React.FC<ChatModalProps> = ({
     }
   }, [chatMessages]);
 
-  const trendingKeywords = [
-    { text: '기후변화 연구', change: Math.floor(Math.random() * 900) + 100, trend: 'up' as const },
-    { text: '인공지능 최신 동향', change: Math.floor(Math.random() * 900) + 100, trend: 'down' as const },
-    { text: '바이오 의료 기술', change: Math.floor(Math.random() * 900) + 100, trend: 'up' as const },
+  const allKeywords = [
+    { text: '기후변화 연구', trend: 'up' as const },
+    { text: '인공지능 최신 동향', trend: 'down' as const },
+    { text: '바이오 의료 기술', trend: 'up' as const },
+    { text: '양자 컴퓨팅', trend: 'up' as const },
+    { text: '신약 개발 AI', trend: 'hot' as const },
+    { text: '자율주행 기술', trend: 'down' as const },
   ];
+
+  const generateKeywords = () => {
+    return [...allKeywords]
+      .sort(() => Math.random() - 0.5)
+      .slice(0, 3)
+      .map(k => ({
+        ...k,
+        change: Math.floor(Math.random() * 900) + 100,
+        trend: Math.random() > 0.5 ? 'up' as const : 'down' as const
+      }));
+  };
+
+  const [trendingKeywords, setTrendingKeywords] = React.useState(generateKeywords());
+
+  // 5분마다 실시간 검색어 업데이트
+  React.useEffect(() => {
+    const interval = setInterval(() => {
+      setTrendingKeywords(generateKeywords());
+    }, 5 * 60 * 1000); // 5분
+
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <>

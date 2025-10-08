@@ -4,8 +4,6 @@ import Header from '@/components/Header';
 import ChatModal from '@/components/ChatModal';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import fireIcon from '@/assets/fire-3d-icon.png';
-import newBadgeIcon from '@/assets/new-badge-3d-icon.png';
 
 interface ChatMessage {
   type: 'user' | 'agent';
@@ -63,13 +61,143 @@ const ResearchRecommendationAgent = () => {
     }
   ]);
 
-  const [trendingPapers, setTrendingPapers] = useState([
-    { id: 1, rank: 1, prevRank: 5, rankChange: Math.floor(Math.random() * 900) + 100, title: 'Attention Is All You Need', author: 'Vaswani et al.', trend: 'hot', url: 'https://arxiv.org/abs/1706.03762' },
-    { id: 2, rank: 2, prevRank: 3, rankChange: Math.floor(Math.random() * 900) + 100, title: 'Deep Residual Learning for Image Recognition', author: 'He, K. et al.', trend: 'up', url: 'https://arxiv.org/abs/1512.03385' },
-    { id: 3, rank: 3, prevRank: 1, rankChange: -(Math.floor(Math.random() * 900) + 100), title: 'BERT: Pre-training of Deep Bidirectional Transformers', author: 'Devlin, J. et al.', trend: 'down', url: 'https://arxiv.org/abs/1810.04805' },
-    { id: 4, rank: 4, prevRank: 4, rankChange: 0, title: 'Generative Adversarial Networks', author: 'Goodfellow, I. et al.', trend: 'same', url: 'https://arxiv.org/abs/1406.2661' },
-    { id: 5, rank: 5, prevRank: 2, rankChange: -(Math.floor(Math.random() * 900) + 100), title: 'ImageNet Classification with Deep Convolutional Neural Networks', author: 'Krizhevsky, A. et al.', trend: 'down', url: 'https://papers.nips.cc/paper/2012/hash/c399862d3b9d6b76c8436e924a68c45b-Abstract.html' }
-  ]);
+  // 실시간 논문 트렌드 데이터
+  const allTrendingPapers = [
+    { id: 1, title: 'Attention Is All You Need', author: 'Vaswani et al.', url: 'https://arxiv.org/abs/1706.03762' },
+    { id: 2, title: 'Deep Residual Learning for Image Recognition', author: 'He, K. et al.', url: 'https://arxiv.org/abs/1512.03385' },
+    { id: 3, title: 'BERT: Pre-training of Deep Bidirectional Transformers', author: 'Devlin, J. et al.', url: 'https://arxiv.org/abs/1810.04805' },
+    { id: 4, title: 'Generative Adversarial Networks', author: 'Goodfellow, I. et al.', url: 'https://arxiv.org/abs/1406.2661' },
+    { id: 5, title: 'ImageNet Classification with Deep Convolutional Neural Networks', author: 'Krizhevsky, A. et al.', url: 'https://papers.nips.cc/paper/2012/hash/c399862d3b9d6b76c8436e924a68c45b-Abstract.html' },
+    { id: 6, title: 'Mastering the Game of Go with Deep Neural Networks', author: 'Silver, D. et al.', url: 'https://www.nature.com/articles/nature16961' },
+    { id: 7, title: 'Adam: A Method for Stochastic Optimization', author: 'Kingma, D.P. et al.', url: 'https://arxiv.org/abs/1412.6980' },
+    { id: 8, title: 'Batch Normalization: Accelerating Deep Network Training', author: 'Ioffe, S. et al.', url: 'https://arxiv.org/abs/1502.03167' },
+  ];
+
+  const generateTrendingPapers = () => {
+    const shuffled = [...allTrendingPapers].sort(() => Math.random() - 0.5).slice(0, 5);
+    return shuffled.map((paper, index) => {
+      const rank = index + 1;
+      const prevRank = Math.floor(Math.random() * 5) + 1;
+      const rankChange = prevRank - rank;
+      const trend = rankChange > 0 ? 'up' : rankChange < 0 ? 'down' : rankChange === 0 ? 'same' : 'hot';
+      return {
+        ...paper,
+        rank,
+        prevRank,
+        rankChange: Math.abs(rankChange) * (Math.floor(Math.random() * 300) + 100),
+        trend: index === 0 ? 'hot' : trend
+      };
+    });
+  };
+
+  const [trendingPapers, setTrendingPapers] = React.useState(generateTrendingPapers());
+
+  // 오늘의 논문 데이터
+  const allTodayPapers = [
+    {
+      title: 'Attention Is All You Need',
+      authors: 'Vaswani, A. et al.',
+      journal: 'NeurIPS',
+      year: 2017,
+      description: 'Transformer 아키텍처를 제안한 획기적인 논문으로, 현대 NLP의 기초가 되었습니다.',
+      reason: 'AI 분야의 최신 방법론과 실무 사례를 제공합니다.',
+      url: 'https://arxiv.org/abs/1706.03762'
+    },
+    {
+      title: 'Deep Residual Learning for Image Recognition',
+      authors: 'He, K. et al.',
+      journal: 'CVPR',
+      year: 2016,
+      description: '깊은 신경망 학습을 가능하게 한 ResNet 아키텍처를 소개합니다.',
+      reason: '컴퓨터 비전 분야의 혁신적 발전을 보여줍니다.',
+      url: 'https://arxiv.org/abs/1512.03385'
+    },
+    {
+      title: 'BERT: Pre-training of Deep Bidirectional Transformers',
+      authors: 'Devlin, J. et al.',
+      journal: 'NAACL',
+      year: 2019,
+      description: 'NLP 태스크에서 새로운 기준을 제시한 사전학습 모델입니다.',
+      reason: '언어 모델의 최신 기법과 응용 사례를 다룹니다.',
+      url: 'https://arxiv.org/abs/1810.04805'
+    },
+  ];
+
+  const getTodayPaper = () => {
+    const today = new Date();
+    const dayOfYear = Math.floor((today.getTime() - new Date(today.getFullYear(), 0, 0).getTime()) / (1000 * 60 * 60 * 24));
+    return allTodayPapers[dayOfYear % allTodayPapers.length];
+  };
+
+  const [todayPaper] = useState(getTodayPaper());
+
+  // 재미있는 논문 데이터
+  const allFunPapers = [
+    {
+      title: 'Attention Is All You Need',
+      authors: 'Vaswani, A. et al.',
+      year: 2017,
+      journal: 'NeurIPS',
+      url: 'https://arxiv.org/abs/1706.03762'
+    },
+    {
+      title: 'ImageNet Classification with Deep Convolutional Neural Networks',
+      authors: 'Krizhevsky, A. et al.',
+      year: 2012,
+      journal: 'NeurIPS',
+      url: 'https://papers.nips.cc/paper/2012/hash/c399862d3b9d6b76c8436e924a68c45b-Abstract.html'
+    },
+    {
+      title: 'Generative Adversarial Networks',
+      authors: 'Goodfellow, I. et al.',
+      year: 2014,
+      journal: 'NeurIPS',
+      url: 'https://arxiv.org/abs/1406.2661'
+    },
+    {
+      title: 'Deep Residual Learning for Image Recognition',
+      authors: 'He, K. et al.',
+      year: 2016,
+      journal: 'CVPR',
+      url: 'https://arxiv.org/abs/1512.03385'
+    },
+    {
+      title: 'BERT: Pre-training of Deep Bidirectional Transformers',
+      authors: 'Devlin, J. et al.',
+      year: 2019,
+      journal: 'NAACL',
+      url: 'https://arxiv.org/abs/1810.04805'
+    },
+    {
+      title: 'Mastering the Game of Go with Deep Neural Networks',
+      authors: 'Silver, D. et al.',
+      year: 2016,
+      journal: 'Nature',
+      url: 'https://www.nature.com/articles/nature16961'
+    }
+  ];
+
+  const getFunPapers = () => {
+    const today = new Date();
+    const dayOfYear = Math.floor((today.getTime() - new Date(today.getFullYear(), 0, 0).getTime()) / (1000 * 60 * 60 * 24));
+    const startIndex = dayOfYear % allFunPapers.length;
+    const papers = [];
+    for (let i = 0; i < 6; i++) {
+      papers.push(allFunPapers[(startIndex + i) % allFunPapers.length]);
+    }
+    return papers;
+  };
+
+  const [funPapers] = useState(getFunPapers());
+
+  // 5분마다 실시간 논문 트렌드 업데이트
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setTrendingPapers(generateTrendingPapers());
+    }, 5 * 60 * 1000); // 5분
+
+    return () => clearInterval(interval);
+  }, []);
 
   const mockRecommendations = [
     // 논문 20개
@@ -2384,71 +2512,73 @@ const ResearchRecommendationAgent = () => {
                   <p className="text-xs text-emerald-100 mt-0.5">김연구님을 위한 추천</p>
                 </div>
               
-              <div className="p-3">
-                <div className="flex space-x-2">
+              <div className="p-4">
+                <div className="flex space-x-4">
                   <a 
-                    href="https://www.nature.com/articles/s41558-019-0666-1"
+                    href={todayPaper.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="block w-20 bg-white rounded-lg flex-shrink-0 border-2 border-gray-200 shadow-sm p-1.5 flex flex-col justify-center items-center hover:border-blue-400 transition-colors" 
+                    className="block w-32 bg-white rounded-lg flex-shrink-0 border-2 border-gray-200 shadow-sm p-2 flex flex-col justify-center items-center hover:border-blue-400 transition-colors" 
                     style={{aspectRatio: '1/1.414'}}
                   >
                     <div className="text-center">
-                      <div className="text-[9px] font-bold text-gray-800 leading-tight mb-0.5" style={{fontFamily: 'Georgia, serif'}}>
-                        Machine Learning for Climate Science
+                      <div className="text-[11px] font-bold text-gray-800 leading-tight mb-1" style={{fontFamily: 'Georgia, serif'}}>
+                        {todayPaper.title.split(':')[0]}
                       </div>
-                      <div className="text-[8px] text-gray-600 mb-1" style={{fontFamily: 'Georgia, serif'}}>
-                        Advances and Applications
+                      <div className="text-[9px] text-gray-600 mb-1" style={{fontFamily: 'Georgia, serif'}}>
+                        {todayPaper.title.includes(':') ? todayPaper.title.split(':')[1] : ''}
                       </div>
-                      <div className="text-[8px] text-gray-500 font-medium" style={{fontFamily: 'Georgia, serif'}}>
-                        Nature Climate Change
+                      <div className="text-[9px] text-gray-500 font-medium" style={{fontFamily: 'Georgia, serif'}}>
+                        {todayPaper.journal}
                       </div>
-                      <div className="text-[7px] text-gray-400" style={{fontFamily: 'Georgia, serif'}}>
-                        2024
+                      <div className="text-[8px] text-gray-400" style={{fontFamily: 'Georgia, serif'}}>
+                        {todayPaper.year}
                       </div>
                     </div>
                   </a>
                   
-                  <div className="flex-1 min-w-0">
-                    <a 
-                      href="https://www.nature.com/articles/s41558-019-0666-1"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="block group"
-                    >
-                      <h4 className="font-semibold text-gray-900 text-sm leading-tight mb-0.5 group-hover:text-blue-600 transition-colors">
-                        Machine Learning for Climate Science
-                      </h4>
-                    </a>
-                    <div className="text-[10px] text-gray-600 mb-1" style={{fontFamily: 'Arial, sans-serif'}}>
-                      <p>Dr. Sarah Chen, Prof. Michael Johnson</p>
-                      <p>Nature Climate Change • 2024</p>
+                  <div className="flex-1 min-w-0 flex flex-col justify-between">
+                    <div>
+                      <a 
+                        href={todayPaper.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="block group"
+                      >
+                        <h4 className="font-bold text-gray-900 text-base leading-tight mb-2 group-hover:text-blue-600 transition-colors">
+                          {todayPaper.title}
+                        </h4>
+                      </a>
+                      <div className="text-xs text-gray-600 mb-2" style={{fontFamily: 'Arial, sans-serif'}}>
+                        <p>{todayPaper.authors}</p>
+                        <p>{todayPaper.journal} • {todayPaper.year}</p>
+                      </div>
+                      
+                      <p className="text-xs text-gray-700 mb-3 leading-relaxed">
+                        {todayPaper.description}
+                      </p>
                     </div>
                     
-                    <p className="text-[10px] text-gray-700 mb-1.5 leading-relaxed">
-                      기후 과학 분야에서 머신러닝 적용 사례와 최신 연구 동향을 종합적으로 다룬 리뷰 논문입니다.
-                    </p>
-                    
-                    <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-2 mb-1.5">
-                      <div className="space-y-1">
+                    <div>
+                      <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-2 mb-2">
                         <div className="flex items-start space-x-1">
-                          <div className="w-1 h-1 bg-emerald-500 rounded-full mt-1 flex-shrink-0"></div>
-                          <p className="text-[10px] text-emerald-800 leading-relaxed">
-                            <span className="font-medium">연구 적합성:</span> 기후변화와 AI 분야의 최신 방법론과 실무 사례를 제공합니다.
+                          <div className="w-1 h-1 bg-emerald-500 rounded-full mt-1.5 flex-shrink-0"></div>
+                          <p className="text-xs text-emerald-800 leading-relaxed">
+                            <span className="font-medium">연구 적합성:</span> {todayPaper.reason}
                           </p>
                         </div>
                       </div>
+                      
+                      <a 
+                        href={todayPaper.url} 
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center space-x-1 text-xs text-blue-600 hover:text-blue-800 font-medium"
+                      >
+                        <span>논문 보기</span>
+                        <ExternalLink size={10} />
+                      </a>
                     </div>
-                    
-                    <a 
-                      href="https://www.nature.com/articles/s41558-019-0666-1" 
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center space-x-1 text-[10px] text-blue-600 hover:text-blue-800 font-medium"
-                    >
-                      <span>논문 보기</span>
-                      <ExternalLink size={9} />
-                    </a>
                   </div>
                 </div>
               </div>
@@ -2492,7 +2622,7 @@ const ResearchRecommendationAgent = () => {
                               {paper.title}
                             </a>
                             {paper.trend === 'hot' && (
-                              <img src={fireIcon} alt="Hot" className="w-5 h-5 flex-shrink-0 animate-pulse" />
+                              <span className="text-2xl animate-pulse flex-shrink-0">🔥</span>
                             )}
                             {paper.trend === 'up' && (
                               <ArrowUp size={20} className="text-emerald-500 flex-shrink-0 font-bold" />
@@ -2501,7 +2631,9 @@ const ResearchRecommendationAgent = () => {
                               <ArrowDown size={20} className="text-red-500 flex-shrink-0 font-bold" />
                             )}
                             {paper.trend === 'hot' && (
-                              <img src={newBadgeIcon} alt="NEW" className="w-8 h-8 flex-shrink-0" />
+                              <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-red-100 text-red-700 border border-red-300 flex-shrink-0">
+                                NEW
+                              </span>
                             )}
                             {paper.rankChange !== 0 && (
                               <span className={`text-lg font-black ${paper.rankChange > 0 ? 'text-emerald-600' : 'text-red-600'} flex-shrink-0`}>
@@ -2525,8 +2657,8 @@ const ResearchRecommendationAgent = () => {
                 <div className="flex items-center justify-center space-x-2 text-xs text-gray-500">
                   <div className="w-2 h-2 bg-orange-500 rounded-full animate-pulse"></div>
                 </div>
-              </div>
-            </div>
+               </div>
+             </div>
               </div>
             )}
           </div>
@@ -2544,117 +2676,9 @@ const ResearchRecommendationAgent = () => {
             
             <div className="relative overflow-hidden py-6 bg-white/20">
               <div className="flex animate-scroll-left whitespace-nowrap">
-                {[
-                  {
-                    title: "Attention Is All You Need",
-                    authors: "Vaswani, A. et al.",
-                    year: 2017,
-                    journal: "NeurIPS",
-                    url: "https://arxiv.org/abs/1706.03762"
-                  },
-                  {
-                    title: "ImageNet Classification with Deep Convolutional Neural Networks",
-                    authors: "Krizhevsky, A. et al.",
-                    year: 2012,
-                    journal: "NeurIPS",
-                    url: "https://papers.nips.cc/paper/2012/hash/c399862d3b9d6b76c8436e924a68c45b-Abstract.html"
-                  },
-                  {
-                    title: "Generative Adversarial Networks",
-                    authors: "Goodfellow, I. et al.",
-                    year: 2014,
-                    journal: "NeurIPS",
-                    url: "https://arxiv.org/abs/1406.2661"
-                  },
-                  {
-                    title: "Deep Residual Learning for Image Recognition",
-                    authors: "He, K. et al.",
-                    year: 2016,
-                    journal: "CVPR",
-                    url: "https://arxiv.org/abs/1512.03385"
-                  },
-                  {
-                    title: "BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding",
-                    authors: "Devlin, J. et al.",
-                    year: 2019,
-                    journal: "NAACL",
-                    url: "https://arxiv.org/abs/1810.04805"
-                  },
-                  {
-                    title: "Mastering the Game of Go with Deep Neural Networks and Tree Search",
-                    authors: "Silver, D. et al.",
-                    year: 2016,
-                    journal: "Nature",
-                    url: "https://www.nature.com/articles/nature16961"
-                  }
-                ].map((paper, index) => (
+                {funPapers.concat(funPapers).map((paper, index) => (
                   <a
                     key={index}
-                    href={paper.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-block mx-4 bg-white rounded-lg p-4 shadow-md hover:shadow-xl transition-all hover:scale-105 w-80 flex-shrink-0"
-                  >
-                    <div className="space-y-2">
-                      <h4 className="font-bold text-gray-900 text-base leading-tight line-clamp-2" style={{fontFamily: 'Georgia, serif'}}>
-                        {paper.title}
-                      </h4>
-                      <p className="text-sm text-gray-600" style={{fontFamily: 'Georgia, serif'}}>
-                        {paper.authors}
-                      </p>
-                      <p className="text-sm text-gray-500 font-medium" style={{fontFamily: 'Georgia, serif'}}>
-                        {paper.journal} • {paper.year}
-                      </p>
-                    </div>
-                  </a>
-                ))}
-                {/* 반복을 위한 복제 */}
-                {[
-                  {
-                    title: "Attention Is All You Need",
-                    authors: "Vaswani, A. et al.",
-                    year: 2017,
-                    journal: "NeurIPS",
-                    url: "https://arxiv.org/abs/1706.03762"
-                  },
-                  {
-                    title: "ImageNet Classification with Deep Convolutional Neural Networks",
-                    authors: "Krizhevsky, A. et al.",
-                    year: 2012,
-                    journal: "NeurIPS",
-                    url: "https://papers.nips.cc/paper/2012/hash/c399862d3b9d6b76c8436e924a68c45b-Abstract.html"
-                  },
-                  {
-                    title: "Generative Adversarial Networks",
-                    authors: "Goodfellow, I. et al.",
-                    year: 2014,
-                    journal: "NeurIPS",
-                    url: "https://arxiv.org/abs/1406.2661"
-                  },
-                  {
-                    title: "Deep Residual Learning for Image Recognition",
-                    authors: "He, K. et al.",
-                    year: 2016,
-                    journal: "CVPR",
-                    url: "https://arxiv.org/abs/1512.03385"
-                  },
-                  {
-                    title: "BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding",
-                    authors: "Devlin, J. et al.",
-                    year: 2019,
-                    journal: "NAACL",
-                    url: "https://arxiv.org/abs/1810.04805"
-                  },
-                  {
-                    title: "Mastering the Game of Go with Deep Neural Networks and Tree Search",
-                    authors: "Silver, D. et al.",
-                    year: 2016,
-                    journal: "Nature",
-                    url: "https://www.nature.com/articles/nature16961"
-                  }
-                ].map((paper, index) => (
-                  <a
-                    key={`duplicate-${index}`}
                     href={paper.url}
                     target="_blank"
                     rel="noopener noreferrer"
