@@ -14,6 +14,7 @@ interface ChatModalProps {
   chatInput: string;
   onInputChange: (value: string) => void;
   onSubmit: () => void;
+  onTrendingKeywordClick?: (keyword: string) => void;
 }
 
 const ChatModal: React.FC<ChatModalProps> = ({
@@ -23,6 +24,7 @@ const ChatModal: React.FC<ChatModalProps> = ({
   chatInput,
   onInputChange,
   onSubmit,
+  onTrendingKeywordClick,
 }) => {
   // localStorage에서 대화 내용 로드
   React.useEffect(() => {
@@ -150,8 +152,12 @@ const ChatModal: React.FC<ChatModalProps> = ({
                 <button
                   key={index}
                   onClick={() => {
-                    onInputChange(item.text);
-                    setTimeout(() => onSubmit(), 100); // 입력 값이 업데이트된 후 실행
+                    if (onTrendingKeywordClick) {
+                      onTrendingKeywordClick(item.text);
+                    } else {
+                      onInputChange(item.text);
+                      setTimeout(() => onSubmit(), 100);
+                    }
                   }}
                   className="w-full px-3 py-2 bg-white text-gray-600 rounded-lg text-xs hover:bg-gray-200 hover:text-gray-800 transition-colors flex items-center justify-between border border-gray-200 group"
                 >

@@ -108,15 +108,15 @@ function generateFallbackRecommendations(query: string, papersData: any[] = []):
     };
   }).filter(p => calculateBM25Score(p, queryKeywords) > 0)
     .sort((a, b) => b.score - a.score)
-    .slice(0, 30);
+    .slice(0, 50);
   
   if (scoredPapers.length > 0) {
     return scoredPapers;
   }
   
-  // 데이터가 없을 경우 기본 추천 (상위 30개)
+  // 데이터가 없을 경우 기본 추천 (상위 50개)
   const defaultRecommendations = [];
-  for (let i = 0; i < Math.min(30, papersData.length); i++) {
+  for (let i = 0; i < Math.min(50, papersData.length); i++) {
     const paper = papersData[i];
     defaultRecommendations.push({
       type: 'paper',
@@ -310,7 +310,7 @@ serve(async (req) => {
     // 소규모 LLM을 사용한 추천 시스템 프롬프트
     const systemPrompt = `당신은 연구 논문 및 데이터셋 추천 AI 에이전트입니다.
 
-사용자의 쿼리를 분석하고, 관련성이 높은 학술 논문과 데이터셋 30개를 추천해야 합니다.
+사용자의 쿼리를 분석하고, 관련성이 높은 학술 논문과 데이터셋 50개를 추천해야 합니다.
 
 추천 규칙:
 1. 쿼리와의 관련성을 정확하게 평가하세요
@@ -340,7 +340,7 @@ serve(async (req) => {
   ]
 }`;
 
-    const userPrompt = `다음 주제에 대해 30개의 논문/데이터셋을 추천해주세요: "${searchQuery}"
+const userPrompt = `다음 주제에 대해 50개의 논문/데이터셋을 추천해주세요: "${searchQuery}"
 
 JSON 형식으로만 응답해주세요.`;
 
@@ -358,7 +358,7 @@ JSON 형식으로만 응답해주세요.`;
           { role: "user", content: userPrompt }
         ],
         temperature: 0.7,
-        max_tokens: 4000
+        max_tokens: 8000
       }),
     });
 

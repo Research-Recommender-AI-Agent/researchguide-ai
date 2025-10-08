@@ -56,10 +56,11 @@ const ResearchRecommendationAgent = () => {
     }
   }, []);
 
+  const [userName, setUserName] = useState<string>('연구자');
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([
     { 
       type: 'agent', 
-      message: '김연구님 안녕하세요! 궁금한 내용을 설명해주시면 논문이나 데이터를 추천해드릴게요', 
+      message: '안녕하세요! 궁금한 내용을 설명해주시면 논문이나 데이터를 추천해드릴게요', 
       time: new Date().toLocaleTimeString() 
     }
   ]);
@@ -249,7 +250,7 @@ const ResearchRecommendationAgent = () => {
         keywordMatch: 0.89,
         citationRelevance: 0.92,
         recencyScore: 0.88,
-        explanation: '김연구님의 연구 데이터와 94%의 의미적 유사도를 보이며, 핵심 키워드 매칭률 89%를 기록했습니다.'
+        explanation: `${userName}님의 연구 데이터와 94%의 의미적 유사도를 보이며, 핵심 키워드 매칭률 89%를 기록했습니다.`
       },
       url: 'https://arxiv.org/abs/1706.03762',
       journal: 'NeurIPS',
@@ -691,7 +692,7 @@ const ResearchRecommendationAgent = () => {
         keywordMatch: 0.87,
         citationRelevance: 0.85,
         recencyScore: 0.95,
-        explanation: '김연구님의 연구 주제와 91%의 의미적 연관성을 가진 최신 데이터셋입니다.'
+        explanation: `${userName}님의 연구 주제와 91%의 의미적 연관성을 가진 최신 데이터셋입니다.`
       },
       url: 'https://www.ncdc.noaa.gov/data-access',
       publisher: 'World Meteorological Organization',
@@ -1793,11 +1794,12 @@ const ResearchRecommendationAgent = () => {
   }, []);
 
   useEffect(() => {
-    // 사용자 인증 확인 및 북마크 로드
+    // 사용자 인증 확인 및 북마크/프로필 로드
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null);
       if (session?.user) {
         loadBookmarks(session.user.id);
+        loadUserProfile(session.user.id);
       }
     });
 
@@ -1807,9 +1809,11 @@ const ResearchRecommendationAgent = () => {
         if (session?.user) {
           setTimeout(() => {
             loadBookmarks(session.user.id);
+            loadUserProfile(session.user.id);
           }, 0);
         } else {
           setBookmarkedIds(new Set());
+          setUserName('연구자');
         }
       }
     );
@@ -1831,6 +1835,32 @@ const ResearchRecommendationAgent = () => {
       setBookmarkedPapers(data || []);
     } catch (error) {
       console.error('북마크 로드 실패:', error);
+    }
+  };
+
+  const loadUserProfile = async (userId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('full_name')
+        .eq('user_id', userId)
+        .single();
+
+      if (error) throw error;
+      
+      if (data && data.full_name) {
+        setUserName(data.full_name);
+        // 채팅 메시지의 첫 메시지도 업데이트
+        setChatMessages([
+          { 
+            type: 'agent', 
+            message: `${data.full_name}님 안녕하세요! 궁금한 내용을 설명해주시면 논문이나 데이터를 추천해드릴게요`, 
+            time: new Date().toLocaleTimeString() 
+          }
+        ]);
+      }
+    } catch (error) {
+      console.error('프로필 로드 실패:', error);
     }
   };
 
@@ -2003,7 +2033,7 @@ const ResearchRecommendationAgent = () => {
           description: `${recentBookmark.title}와 유사한 연구 방법론을 다룬 최신 논문입니다.`,
           score: 0.92,
           level: '가장 추천',
-          reason: `김연구님이 북마크하신 "${recentBookmark.title}" 논문과 유사한 주제를 다루는 연구입니다.`,
+          reason: `${userName}님이 북마크하신 "${recentBookmark.title}" 논문과 유사한 주제를 다루는 연구입니다.`,
           detailedReason: {
             semanticSimilarity: 0.92,
             keywordMatch: 0.88,
@@ -2037,7 +2067,7 @@ const ResearchRecommendationAgent = () => {
             keywordMatch: 0.91,
             citationRelevance: 0.92,
             recencyScore: 0.88,
-            explanation: '입력하신 "기후변화" 키워드와 94%의 의미적 유사도를 달성했으며, 키워드 매칭률 91%로 매우 높은 관련성을 보입니다. 위성 데이터 활용 방법론이 김연구님의 연구와 직접적으로 연결되며, 최근 1년간 127회 인용으로 학계의 높은 주목을 받고 있습니다.'
+            explanation: `입력하신 "기후변화" 키워드와 94%의 의미적 유사도를 달성했으며, 키워드 매칭률 91%로 매우 높은 관련성을 보입니다. 위성 데이터 활용 방법론이 ${userName}님의 연구와 직접적으로 연결되며, 최근 1년간 127회 인용으로 학계의 높은 주목을 받고 있습니다.`
           },
           url: 'https://scienceon.kisti.re.kr/paper/12345',
           journal: 'Nature Climate Change',
@@ -2059,7 +2089,7 @@ const ResearchRecommendationAgent = () => {
             keywordMatch: 0.89,
             citationRelevance: 0.88,
             recencyScore: 0.96,
-            explanation: '김연구님의 검색어와 91%의 의미 일치도를 보이며, 키워드 매칭 89%로 연구 목적에 최적화된 데이터입니다. 2024년 최신 버전으로 실시간 API 제공(96% 최신성 점수)되어 즉시 연구에 활용 가능합니다. 127GB 규모의 포괄적 데이터로 장기 연구에 적합합니다.'
+            explanation: `${userName}님의 검색어와 91%의 의미 일치도를 보이며, 키워드 매칭 89%로 연구 목적에 최적화된 데이터입니다. 2024년 최신 버전으로 실시간 API 제공(96% 최신성 점수)되어 즉시 연구에 활용 가능합니다. 127GB 규모의 포괄적 데이터로 장기 연구에 적합합니다.`
           },
           url: 'https://dataon.kisti.re.kr/dataset/67890',
           publisher: 'World Meteorological Organization',
@@ -2081,7 +2111,7 @@ const ResearchRecommendationAgent = () => {
             keywordMatch: 0.85,
             citationRelevance: 0.84,
             recencyScore: 0.92,
-            explanation: '김연구님의 연구와 87%의 의미적 연관성을 가지며, 키워드 매칭 85%로 보완적 연구 자료로 활용 가능합니다. 환경 영향 평가에 대한 실무 적용 사례가 풍부하여 실질적 연구 방법론을 제공하며, 2024년 최신 연구로 최근 트렌드를 반영합니다.'
+            explanation: `${userName}님의 연구와 87%의 의미적 연관성을 가지며, 키워드 매칭 85%로 보완적 연구 자료로 활용 가능합니다. 환경 영향 평가에 대한 실무 적용 사례가 풍부하여 실질적 연구 방법론을 제공하며, 2024년 최신 연구로 최근 트렌드를 반영합니다.`
           },
           url: 'https://scienceon.kisti.re.kr/paper/33333',
           journal: 'Environmental Science & Technology',
@@ -2623,7 +2653,7 @@ const ResearchRecommendationAgent = () => {
                     </div>
                     <h3 className="font-semibold text-white text-sm">오늘의 논문</h3>
                   </div>
-                  <p className="text-xs text-emerald-100 mt-0.5">김연구님을 위한 추천</p>
+                  <p className="text-xs text-emerald-100 mt-0.5">{userName}님을 위한 추천</p>
                 </div>
               
               <div className="p-4">
@@ -2833,6 +2863,10 @@ const ResearchRecommendationAgent = () => {
         chatInput={chatInput}
         onInputChange={setChatInput}
         onSubmit={() => handleChatSubmit()}
+        onTrendingKeywordClick={(keyword) => {
+          setChatInput(keyword);
+          setTimeout(() => handleChatSubmit(), 100);
+        }}
       />
     </div>
   );
