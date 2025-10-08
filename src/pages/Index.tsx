@@ -2314,43 +2314,43 @@ const ResearchRecommendationAgent = () => {
         onToggleMetrics={() => setShowMetrics(!showMetrics)}
       />
 
-      <div className="max-w-7xl mx-auto px-6 py-8">
+      <div className="max-w-7xl mx-auto px-4 md:px-6 py-4 md:py-8">
         {/* Performance Metrics */}
         {showMetrics && (
           <div className="bg-white rounded-xl shadow-lg border p-6 mb-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">시스템 성능 및 특징</h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              <div className="bg-gradient-to-br from-emerald-600 to-emerald-700 p-4 rounded-lg shadow-lg">
+            <h3 className="text-base md:text-lg font-semibold text-gray-900 mb-3 md:mb-4">시스템 성능 및 특징</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
+              <div className="bg-gradient-to-br from-emerald-600 to-emerald-700 p-3 md:p-4 rounded-lg shadow-lg">
                 <div className="flex items-center space-x-2 mb-2">
-                  <Clock size={16} className="text-emerald-200" />
-                  <span className="font-medium text-white">응답 시간</span>
+                  <Clock size={14} className="text-emerald-200 md:w-4 md:h-4" />
+                  <span className="text-sm md:text-base font-medium text-white">응답 시간</span>
                 </div>
-                <div className="text-2xl font-bold text-white">5초 미만</div>
-                <div className="text-sm text-emerald-100">중저사양 H/W 최적화</div>
+                <div className="text-xl md:text-2xl font-bold text-white">5초 미만</div>
+                <div className="text-xs md:text-sm text-emerald-100">중저사양 H/W 최적화</div>
               </div>
-              <div className="bg-gradient-to-br from-blue-600 to-blue-700 p-4 rounded-lg shadow-lg">
+              <div className="bg-gradient-to-br from-blue-600 to-blue-700 p-3 md:p-4 rounded-lg shadow-lg">
                 <div className="flex items-center space-x-2 mb-2">
-                  <Target size={16} className="text-blue-200" />
-                  <span className="font-medium text-white">추천 정확도</span>
+                  <Target size={14} className="text-blue-200 md:w-4 md:h-4" />
+                  <span className="text-sm md:text-base font-medium text-white">추천 정확도</span>
                 </div>
-                <div className="text-2xl font-bold text-white">90% 이상</div>
-                <div className="text-sm text-blue-100">의미적 연관성 기반</div>
+                <div className="text-xl md:text-2xl font-bold text-white">90% 이상</div>
+                <div className="text-xs md:text-sm text-blue-100">의미적 연관성 기반</div>
               </div>
-              <div className="bg-gradient-to-br from-slate-700 to-slate-800 p-4 rounded-lg shadow-lg">
+              <div className="bg-gradient-to-br from-slate-700 to-slate-800 p-3 md:p-4 rounded-lg shadow-lg">
                 <div className="flex items-center space-x-2 mb-2">
-                  <Brain size={16} className="text-slate-200" />
-                  <span className="font-medium text-white">LLM 모델</span>
+                  <Brain size={14} className="text-slate-200 md:w-4 md:h-4" />
+                  <span className="text-sm md:text-base font-medium text-white">LLM 모델</span>
                 </div>
-                <div className="text-lg font-bold text-white">소규모</div>
-                <div className="text-sm text-slate-100">Qwen3-14B 기반</div>
+                <div className="text-base md:text-lg font-bold text-white">소규모</div>
+                <div className="text-xs md:text-sm text-slate-100">Gemini-2.5-flash</div>
               </div>
-              <div className="bg-gradient-to-br from-orange-600 to-orange-700 p-4 rounded-lg shadow-lg">
+              <div className="bg-gradient-to-br from-orange-600 to-orange-700 p-3 md:p-4 rounded-lg shadow-lg">
                 <div className="flex items-center space-x-2 mb-2">
-                  <Star size={16} className="text-orange-200" />
-                  <span className="font-medium text-white">추천 결과</span>
+                  <Star size={14} className="text-orange-200 md:w-4 md:h-4" />
+                  <span className="text-sm md:text-base font-medium text-white">추천 결과</span>
                 </div>
-                <div className="text-2xl font-bold text-white">3-5건</div>
-                <div className="text-sm text-orange-100">논문 + 데이터셋</div>
+                <div className="text-xl md:text-2xl font-bold text-white">50개+</div>
+                <div className="text-xs md:text-sm text-orange-100">실제 존재하는 논문</div>
               </div>
             </div>
           </div>
@@ -2361,23 +2361,23 @@ const ResearchRecommendationAgent = () => {
           <div className="lg:col-span-2 xl:col-span-3 space-y-6">
             {/* Clarify Options */}
             {clarifyOptions && clarifyOptions.length > 0 && !isLoading && (
-              <div className="bg-gradient-to-br from-blue-800 to-indigo-800 rounded-xl shadow-xl border border-blue-600 p-6">
-            <h3 className="text-lg font-semibold text-white mb-4 flex items-center">
-              <Brain size={20} className="mr-2" />
-              {clarifyQuestion}
-            </h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="bg-gradient-to-br from-blue-800 to-indigo-800 rounded-xl shadow-xl border border-blue-600 p-4 md:p-6">
+                <h3 className="text-base md:text-lg font-semibold text-white mb-3 md:mb-4 flex items-center">
+                  <Brain size={18} className="mr-2 md:w-5 md:h-5" />
+                  {clarifyQuestion}
+                </h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 md:gap-3">
                   {clarifyOptions.map((option, index) => (
                     <button
                       key={index}
                       onClick={() => handleChatSubmit(option)}
-                      className="bg-white/10 hover:bg-white/20 border border-white/20 hover:border-white/40 text-white px-6 py-4 rounded-lg font-medium transition-all text-left hover:scale-105 hover:shadow-xl"
+                      className="bg-white/10 hover:bg-white/20 border border-white/20 hover:border-white/40 text-white px-4 md:px-6 py-3 md:py-4 rounded-lg text-sm md:text-base font-medium transition-all text-left hover:scale-105 hover:shadow-xl"
                     >
                       <div className="flex items-center space-x-2">
-                        <span className="w-6 h-6 rounded-full bg-blue-500 text-white flex items-center justify-center text-sm font-bold flex-shrink-0">
+                        <span className="w-5 h-5 md:w-6 md:h-6 rounded-full bg-blue-500 text-white flex items-center justify-center text-xs md:text-sm font-bold flex-shrink-0">
                           {index + 1}
                         </span>
-                        <span>{option}</span>
+                        <span className="text-sm md:text-base">{option}</span>
                       </div>
                     </button>
                   ))}
@@ -2387,10 +2387,10 @@ const ResearchRecommendationAgent = () => {
 
             {/* Empty State */}
             {recommendations.length === 0 && !isLoading && !clarifyOptions && (
-              <div className="bg-gradient-to-br from-slate-800 to-blue-800 rounded-xl shadow-xl border border-slate-600 p-4 text-center">
-                <Brain size={24} className="text-slate-400 mx-auto mb-2" />
-                <h3 className="text-sm font-semibold text-white mb-1">하단에서 논문·연구데이터 정보를 입력해주세요</h3>
-                <p className="text-slate-300 text-xs">AI 채팅창이나 실시간 검색어를 클릭하여 추천을 받아보세요.</p>
+              <div className="bg-gradient-to-br from-slate-800 to-blue-800 rounded-xl shadow-xl border border-slate-600 p-6 md:p-8 text-center">
+                <Brain size={32} className="text-slate-400 mx-auto mb-3 md:mb-4 md:w-10 md:h-10" />
+                <h3 className="text-base md:text-lg font-semibold text-white mb-2">하단에서 논문·연구데이터 정보를 입력해주세요</h3>
+                <p className="text-slate-300 text-sm md:text-base">AI 채팅창이나 실시간 검색어를 클릭하여 추천을 받아보세요.</p>
               </div>
             )}
 

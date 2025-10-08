@@ -5,6 +5,8 @@ import { toast } from 'sonner';
 import { ArrowLeft, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Header from '@/components/Header';
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { LibrarySidebar } from '@/components/LibrarySidebar';
 import ReactFlow, {
   MiniMap,
   Controls,
@@ -43,6 +45,7 @@ const Library = () => {
   const [user, setUser] = useState<any>(null);
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -181,19 +184,19 @@ const Library = () => {
       return;
     }
 
-    // 각 키워드를 독립적인 마인드맵의 중심으로 설정
-    const keywordArray = Array.from(keywordGroups.keys());
-    const mapsPerRow = 3; // 한 행에 3개의 마인드맵
-    const mapSpacing = 600; // 마인드맵 간 간격
-    const verticalSpacing = 500; // 수직 간격
+    // 각 키워드를 독립적인 마인드맵의 중심으로 설정 (간결하게)
+    const keywordArray = Array.from(keywordGroups.keys()).slice(0, 12); // 최대 12개만 표시
+    const mapsPerRow = 4; // 한 행에 4개로 증가
+    const mapSpacing = 450; // 간격 축소
+    const verticalSpacing = 350; // 수직 간격 축소
 
     keywordArray.forEach((keyword, keywordIndex) => {
       const row = Math.floor(keywordIndex / mapsPerRow);
       const col = keywordIndex % mapsPerRow;
-      const centerX = col * mapSpacing + 300;
-      const centerY = row * verticalSpacing + 200;
+      const centerX = col * mapSpacing + 200;
+      const centerY = row * verticalSpacing + 150;
 
-      // 키워드(중심) 노드
+      // 키워드(중심) 노드 - 더 작고 간결하게
       const keywordNodeId = `keyword-${keyword}`;
       newNodes.push({
         id: keywordNodeId,
@@ -202,23 +205,23 @@ const Library = () => {
         style: {
           background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
           color: 'white',
-          border: '3px solid #5a67d8',
-          borderRadius: '16px',
-          padding: '20px 32px',
-          fontSize: '20px',
+          border: '2px solid #5a67d8',
+          borderRadius: '12px',
+          padding: '12px 20px',
+          fontSize: '16px',
           fontWeight: 'bold',
-          minWidth: 180,
-          boxShadow: '0 10px 25px rgba(102, 126, 234, 0.3)',
+          minWidth: 120,
+          boxShadow: '0 6px 15px rgba(102, 126, 234, 0.25)',
         },
       });
 
-      // 각 키워드의 북마크 노드들을 원형으로 배치
-      const papers = keywordGroups.get(keyword) || [];
-      const radius = 250;
+      // 각 키워드의 북마크 노드들을 원형으로 배치 (최대 6개만)
+      const papers = (keywordGroups.get(keyword) || []).slice(0, 6);
+      const radius = 180; // 반지름 축소
       const angleStep = (2 * Math.PI) / papers.length;
 
       papers.forEach((paper, paperIndex) => {
-        const angle = paperIndex * angleStep - Math.PI / 2; // -90도에서 시작
+        const angle = paperIndex * angleStep - Math.PI / 2;
         const paperX = centerX + radius * Math.cos(angle);
         const paperY = centerY + radius * Math.sin(angle);
 
@@ -228,27 +231,26 @@ const Library = () => {
           data: {
             label: (
               <div className="text-left">
-                <div className="font-bold text-sm mb-2 line-clamp-2 leading-tight">{paper.title}</div>
-                <div className="text-xs opacity-90 mb-1">{paper.authors?.[0] || 'Unknown'}</div>
-                <div className="text-xs opacity-75">{paper.year}</div>
+                <div className="font-semibold text-xs mb-1 line-clamp-2 leading-tight">{paper.title}</div>
+                <div className="text-[10px] opacity-75">{paper.year}</div>
               </div>
             ),
           },
           position: { x: paperX, y: paperY },
           style: {
             background: 'white',
-            border: '3px solid #cbd5e0',
-            borderRadius: '12px',
-            padding: '16px',
-            fontSize: '14px',
-            width: 220,
+            border: '2px solid #cbd5e0',
+            borderRadius: '8px',
+            padding: '10px',
+            fontSize: '12px',
+            width: 160,
             cursor: 'pointer',
-            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
-            transition: 'all 0.3s ease',
+            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
+            transition: 'all 0.2s ease',
           },
         });
 
-        // 키워드에서 논문으로 엣지
+        // 키워드에서 논문으로 엣지 - 더 얇고 간결하게
         newEdges.push({
           id: `edge-${keywordNodeId}-${paperNodeId}`,
           source: keywordNodeId,
@@ -256,8 +258,7 @@ const Library = () => {
           animated: false,
           style: { 
             stroke: '#667eea', 
-            strokeWidth: 2.5,
-            strokeDasharray: '5,5'
+            strokeWidth: 1.5,
           },
         });
       });
@@ -289,61 +290,70 @@ const Library = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
-      <Header responseTime={null} showMetrics={false} onToggleMetrics={() => {}} />
-      
-      <div className="h-[calc(100vh-80px)]">
-        <div className="absolute top-24 left-6 z-10 bg-card rounded-xl border border-border p-4 shadow-lg">
-          <div className="flex items-center gap-4 mb-2">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => navigate('/')}
-            >
-              <ArrowLeft className="h-5 w-5" />
-            </Button>
-            <div>
-              <h1 className="text-2xl font-bold text-foreground">내 라이브러리</h1>
-              <p className="text-sm text-muted-foreground mt-1">
-                {bookmarks.length}개의 북마크
-              </p>
+    <SidebarProvider>
+      <div className="min-h-screen bg-background flex w-full">
+        <LibrarySidebar bookmarks={bookmarks} onCategoryClick={setSelectedCategory} />
+        
+        <div className="flex-1 flex flex-col">
+          <Header responseTime={null} showMetrics={false} onToggleMetrics={() => {}} />
+          
+          <div className="h-[calc(100vh-80px)] relative">
+            <div className="absolute top-4 left-4 z-10 flex items-center gap-2">
+              <SidebarTrigger />
+              <div className="bg-card rounded-xl border border-border px-4 py-2 shadow-lg">
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => navigate('/')}
+                  >
+                    <ArrowLeft className="h-5 w-5" />
+                  </Button>
+                  <div>
+                    <h1 className="text-xl font-bold text-foreground">내 라이브러리</h1>
+                    <p className="text-xs text-muted-foreground">
+                      {bookmarks.length}개의 북마크
+                      {selectedCategory && ` • ${selectedCategory}`}
+                    </p>
+                  </div>
+                </div>
+              </div>
             </div>
+
+            {bookmarks.length === 0 ? (
+              <div className="flex items-center justify-center h-full">
+                <div className="text-center">
+                  <p className="text-muted-foreground mb-4">
+                    아직 북마크한 논문이 없습니다.
+                  </p>
+                  <Button onClick={() => navigate('/')}>논문 찾아보기</Button>
+                </div>
+              </div>
+            ) : (
+              <ReactFlow
+                nodes={nodes}
+                edges={edges}
+                onNodesChange={onNodesChange}
+                onEdgesChange={onEdgesChange}
+                onNodeClick={onNodeClick}
+                fitView
+                attributionPosition="bottom-left"
+              >
+                <Controls />
+                <MiniMap 
+                  nodeColor={(node) => {
+                    if (node.id.startsWith('keyword')) return '#667eea';
+                    return '#e5e7eb';
+                  }}
+                  style={{ background: '#f9fafb' }}
+                />
+                <Background variant={BackgroundVariant.Dots} gap={12} size={1} />
+              </ReactFlow>
+            )}
           </div>
         </div>
-
-        {bookmarks.length === 0 ? (
-          <div className="flex items-center justify-center h-full">
-            <div className="text-center">
-              <p className="text-muted-foreground mb-4">
-                아직 북마크한 논문이 없습니다.
-              </p>
-              <Button onClick={() => navigate('/')}>논문 찾아보기</Button>
-            </div>
-          </div>
-        ) : (
-          <ReactFlow
-            nodes={nodes}
-            edges={edges}
-            onNodesChange={onNodesChange}
-            onEdgesChange={onEdgesChange}
-            onNodeClick={onNodeClick}
-            fitView
-            attributionPosition="bottom-left"
-          >
-            <Controls />
-            <MiniMap 
-              nodeColor={(node) => {
-                if (node.id === 'root') return '#3b82f6';
-                if (node.id.startsWith('keyword')) return '#10b981';
-                return '#e5e7eb';
-              }}
-              style={{ background: '#f9fafb' }}
-            />
-            <Background variant={BackgroundVariant.Dots} gap={12} size={1} />
-          </ReactFlow>
-        )}
       </div>
-    </div>
+    </SidebarProvider>
   );
 };
 
