@@ -107,7 +107,7 @@ export function LibrarySidebar({ bookmarks, onCategoryClick }: LibrarySidebarPro
                           toggleCategory(category);
                           onCategoryClick(category);
                         }}
-                        className="w-full justify-between hover:bg-accent"
+                        className="w-full justify-between hover:bg-sky-100/50 hover:text-black"
                       >
                         <div className="flex items-center gap-2 flex-1 min-w-0">
                           <FolderOpen className="w-4 h-4 flex-shrink-0 text-primary" />
@@ -134,7 +134,7 @@ export function LibrarySidebar({ bookmarks, onCategoryClick }: LibrarySidebarPro
                           {papers.slice(0, 5).map(paper => (
                             <div
                               key={paper.id}
-                              className="text-xs text-muted-foreground py-1.5 px-2 hover:bg-accent rounded-md cursor-pointer flex items-start gap-2"
+                              className="text-xs text-muted-foreground py-1.5 px-2 hover:bg-sky-100/50 hover:text-black rounded-md cursor-pointer flex items-start gap-2"
                             >
                               <FileText className="w-3 h-3 mt-0.5 flex-shrink-0" />
                               <span className="line-clamp-2 leading-tight">{paper.title}</span>
