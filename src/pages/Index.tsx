@@ -167,7 +167,7 @@ const ResearchRecommendationAgent = () => {
 
   const [todayPaper] = useState(getTodayPaper());
 
-  // 재미있는 논문 데이터
+  // 재미있는 논문 데이터 (실제 존재하는 논문)
   const allFunPapers = [
     {
       title: 'On the Reception and Detection of Pseudo-Profound Bullshit',
@@ -177,25 +177,11 @@ const ResearchRecommendationAgent = () => {
       url: 'https://doi.org/10.1017/S1930297500006999'
     },
     {
-      title: 'Will Work for Praise: The Impact of Verbal Social Stimuli on Effort Provision',
-      authors: 'Bradler, C. et al.',
-      year: 2016,
-      journal: 'Journal of Economic Psychology',
-      url: 'https://doi.org/10.1016/j.joep.2016.07.003'
-    },
-    {
       title: 'Sword Swallowing and Its Side Effects',
       authors: 'Witcombe, B. & Meyer, D.',
       year: 2006,
       journal: 'BMJ',
       url: 'https://www.bmj.com/content/333/7582/1285'
-    },
-    {
-      title: 'Fart Proudly: Writings of Benjamin Franklin You Never Read in School',
-      authors: 'Franklin, B.',
-      year: 1781,
-      journal: 'Historical Letter',
-      url: 'https://founders.archives.gov/documents/Franklin/01-37-02-0109'
     },
     {
       title: 'The Case of the Disappearing Teaspoons: Longitudinal Cohort Study of the Displacement of Teaspoons in an Australian Research Institute',
@@ -210,6 +196,20 @@ const ResearchRecommendationAgent = () => {
       year: 2003,
       journal: 'Polar Biology',
       url: 'https://doi.org/10.1007/s00300-003-0563-3'
+    },
+    {
+      title: 'The Effect of Country Music on Suicide',
+      authors: 'Stack, S. & Gundlach, J.',
+      year: 1992,
+      journal: 'Social Forces',
+      url: 'https://doi.org/10.1093/sf/71.1.211'
+    },
+    {
+      title: 'Are Full or Empty Beer Bottles Sturdier and Does Their Fracture-Threshold Suffice to Break the Human Skull?',
+      authors: 'Bolliger, S.A. et al.',
+      year: 2009,
+      journal: 'Journal of Forensic and Legal Medicine',
+      url: 'https://doi.org/10.1016/j.jflm.2008.07.013'
     }
   ];
 
@@ -2865,6 +2865,13 @@ const ResearchRecommendationAgent = () => {
         onSubmit={() => handleChatSubmit()}
         onTrendingKeywordClick={(keyword) => {
           setChatInput(keyword);
+          // 대화 기록에 사용자 메시지 추가
+          const userMessage: ChatMessage = {
+            type: 'user',
+            message: keyword,
+            time: new Date().toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' })
+          };
+          setChatMessages(prev => [...prev, userMessage]);
           setTimeout(() => handleChatSubmit(), 100);
         }}
       />

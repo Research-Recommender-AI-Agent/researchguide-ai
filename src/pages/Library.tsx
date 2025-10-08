@@ -292,7 +292,7 @@ const Library = () => {
     <div className="min-h-screen bg-background">
       <Header responseTime={null} showMetrics={false} onToggleMetrics={() => {}} />
       
-      <div className="flex h-[calc(100vh-80px)] pt-20">
+      <div className="flex h-[calc(100vh-80px)]">
         {/* 왼쪽 카테고리 패널 */}
         <div className="w-64 bg-white border-r border-border overflow-y-auto shadow-lg">
           <div className="p-4">
@@ -308,23 +308,99 @@ const Library = () => {
             
             <h2 className="text-lg font-bold mb-4">카테고리</h2>
             
-            {/* 키워드별 카테고리 */}
+            {/* 키워드별 카테고리 (한국어 번역 포함) */}
             {Array.from(new Set(bookmarks.flatMap(b => b.keywords || []))).map((keyword, idx) => {
               const papersInCategory = bookmarks.filter(b => b.keywords?.includes(keyword));
+              // 키워드 번역
+              const keywordTranslation: Record<string, string> = {
+                'machine learning': '머신러닝',
+                'deep learning': '딥러닝',
+                'artificial intelligence': '인공지능',
+                'AI': '인공지능',
+                'climate change': '기후변화',
+                'quantum computing': '양자 컴퓨팅',
+                'blockchain': '블록체인',
+                'cryptocurrency': '암호화폐',
+                'renewable energy': '재생에너지',
+                'CRISPR': 'CRISPR',
+                'gene editing': '유전자 편집',
+                'neural networks': '신경망',
+                'computer vision': '컴퓨터 비전',
+                'NLP': '자연어 처리',
+                'reinforcement learning': '강화학습',
+                'robotics': '로봇공학',
+                'transformer': '트랜스포머',
+                'attention mechanism': '어텐션 메커니즘',
+              };
+              const translatedKeyword = keywordTranslation[keyword] || keyword;
+              
+              const [isOpen, setIsOpen] = React.useState(false);
+              
               return (
                 <div key={idx} className="mb-2">
-                  <button className="w-full text-left px-3 py-2 rounded-lg hover:bg-sky-100 hover:text-black transition-colors text-sm font-medium">
-                    {keyword} ({papersInCategory.length})
+                  <button 
+                    onClick={() => setIsOpen(!isOpen)}
+                    className="w-full text-left px-3 py-2 rounded-lg hover:bg-sky-100 hover:text-black transition-colors text-sm font-medium flex items-center justify-between"
+                  >
+                    <span>{translatedKeyword} ({papersInCategory.length})</span>
+                    <span className="text-xs">{isOpen ? '▼' : '▶'}</span>
                   </button>
+                  
+                  {isOpen && (
+                    <div className="ml-4 mt-1 space-y-1">
+                      {papersInCategory.map((paper, pidx) => (
+                        <a
+                          key={pidx}
+                          href={paper.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="block px-3 py-1.5 text-xs hover:bg-sky-50 hover:text-black rounded transition-colors truncate"
+                          title={paper.title}
+                        >
+                          {paper.title}
+                        </a>
+                      ))}
+                    </div>
+                  )}
                 </div>
               );
             })}
             
             {bookmarks.filter(b => !b.keywords || b.keywords.length === 0).length > 0 && (
               <div className="mb-2">
-                <button className="w-full text-left px-3 py-2 rounded-lg hover:bg-sky-100 hover:text-black transition-colors text-sm font-medium">
-                  기타 ({bookmarks.filter(b => !b.keywords || b.keywords.length === 0).length})
-                </button>
+                {(() => {
+                  const [isOpen, setIsOpen] = React.useState(false);
+                  const uncategorizedPapers = bookmarks.filter(b => !b.keywords || b.keywords.length === 0);
+                  
+                  return (
+                    <>
+                      <button 
+                        onClick={() => setIsOpen(!isOpen)}
+                        className="w-full text-left px-3 py-2 rounded-lg hover:bg-sky-100 hover:text-black transition-colors text-sm font-medium flex items-center justify-between"
+                      >
+                        <span>기타 ({uncategorizedPapers.length})</span>
+                        <span className="text-xs">{isOpen ? '▼' : '▶'}</span>
+                      </button>
+                      
+                      {isOpen && (
+                        <div className="ml-4 mt-1 space-y-1">
+                          {uncategorizedPapers.map((paper, pidx) => (
+                            <a
+                              key={pidx}
+                              href={paper.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="block px-3 py-1.5 text-xs hover:bg-sky-50 hover:text-black rounded transition-colors truncate"
+                              title={paper.title}
+                            >
+                              {paper.title}
+                            </a>
+                          ))}
+                        </div>
+                      )}
+                    </>
+                  );
+                })()}
               </div>
             )}
             
