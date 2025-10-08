@@ -86,15 +86,34 @@ const Library = () => {
     const newNodes: Node[] = [];
     const newEdges: Edge[] = [];
 
-    // 키워드별로 북마크 그룹화
+    // 키워드별로 북마크 그룹화 (한국어 번역 포함)
+    const keywordTranslation: Record<string, string> = {
+      'climate': '기후',
+      'climate change': '기후변화',
+      'deep learning': '딥러닝',
+      'machine learning': '머신러닝',
+      'satellite data': '위성 데이터',
+      'AI': '인공지능',
+      'quantum computing': '양자 컴퓨팅',
+      'biotechnology': '생명공학',
+      'CRISPR': '유전자 편집',
+      'gene editing': '유전자 편집',
+      'neural networks': '신경망',
+      'computer vision': '컴퓨터 비전',
+      'NLP': '자연어 처리',
+      'reinforcement learning': '강화학습',
+      'robotics': '로봇공학',
+    };
+
     const keywordGroups = new Map<string, Bookmark[]>();
     bookmarks.forEach(bookmark => {
       if (bookmark.keywords && bookmark.keywords.length > 0) {
         bookmark.keywords.forEach(keyword => {
-          if (!keywordGroups.has(keyword)) {
-            keywordGroups.set(keyword, []);
+          const translatedKeyword = keywordTranslation[keyword] || keyword;
+          if (!keywordGroups.has(translatedKeyword)) {
+            keywordGroups.set(translatedKeyword, []);
           }
-          keywordGroups.get(keyword)!.push(bookmark);
+          keywordGroups.get(translatedKeyword)!.push(bookmark);
         });
       } else {
         if (!keywordGroups.has('기타')) {

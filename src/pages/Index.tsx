@@ -926,6 +926,670 @@ const ResearchRecommendationAgent = () => {
       dataSize: '425GB',
       format: 'GeoTIFF, Shapefile',
       keywords: ['agriculture', 'crop monitoring', 'remote sensing']
+    },
+    
+    // 추가 논문 15개
+    {
+      id: 121,
+      type: 'paper',
+      title: 'Attention Is All You Need: Transformer Architecture',
+      description: 'The groundbreaking paper that introduced the Transformer model.',
+      score: 0.95,
+      level: '가장 추천',
+      reason: 'NLP 분야를 혁신시킨 가장 영향력 있는 논문입니다.',
+      detailedReason: {
+        semanticSimilarity: 0.95,
+        keywordMatch: 0.93,
+        citationRelevance: 0.96,
+        recencyScore: 0.85,
+        explanation: '현대 NLP의 기반이 된 트랜스포머 아키텍처를 소개합니다.'
+      },
+      url: 'https://arxiv.org/abs/1706.03762',
+      journal: 'NeurIPS',
+      authors: ['Vaswani, A.', 'Shazeer, N.', 'Parmar, N.'],
+      year: 2017,
+      citationCount: 89234,
+      keywords: ['transformer', 'attention mechanism', 'NLP', 'deep learning']
+    },
+    {
+      id: 122,
+      type: 'paper',
+      title: 'BERT: Pre-training of Deep Bidirectional Transformers',
+      description: 'Revolutionary approach to language understanding through pre-training.',
+      score: 0.94,
+      level: '가장 추천',
+      reason: '양방향 언어 모델의 새로운 패러다임을 제시합니다.',
+      detailedReason: {
+        semanticSimilarity: 0.94,
+        keywordMatch: 0.92,
+        citationRelevance: 0.95,
+        recencyScore: 0.84,
+        explanation: 'Transfer learning을 NLP에 성공적으로 적용한 획기적 연구입니다.'
+      },
+      url: 'https://arxiv.org/abs/1810.04805',
+      journal: 'NAACL',
+      authors: ['Devlin, J.', 'Chang, M.W.', 'Lee, K.'],
+      year: 2019,
+      citationCount: 67892,
+      keywords: ['BERT', 'pre-training', 'language model', 'NLP']
+    },
+    {
+      id: 123,
+      type: 'paper',
+      title: 'ResNet: Deep Residual Learning for Image Recognition',
+      description: 'Introducing residual connections for training very deep networks.',
+      score: 0.93,
+      level: '가장 추천',
+      reason: '초심층 신경망 훈련의 혁신적 방법론입니다.',
+      detailedReason: {
+        semanticSimilarity: 0.93,
+        keywordMatch: 0.91,
+        citationRelevance: 0.94,
+        recencyScore: 0.83,
+        explanation: 'Residual connections으로 매우 깊은 네트워크 훈련을 가능하게 했습니다.'
+      },
+      url: 'https://arxiv.org/abs/1512.03385',
+      journal: 'CVPR',
+      authors: ['He, K.', 'Zhang, X.', 'Ren, S.', 'Sun, J.'],
+      year: 2016,
+      citationCount: 123456,
+      keywords: ['ResNet', 'residual learning', 'computer vision', 'deep learning']
+    },
+    {
+      id: 124,
+      type: 'paper',
+      title: 'AlphaGo: Mastering the Game of Go with Deep Neural Networks',
+      description: 'AI system that defeated world champion Go players.',
+      score: 0.92,
+      level: '가장 추천',
+      reason: '강화학습의 획기적 성과를 보여줍니다.',
+      detailedReason: {
+        semanticSimilarity: 0.92,
+        keywordMatch: 0.90,
+        citationRelevance: 0.93,
+        recencyScore: 0.82,
+        explanation: 'Deep RL과 MCTS를 결합한 혁신적 접근법입니다.'
+      },
+      url: 'https://www.nature.com/articles/nature16961',
+      journal: 'Nature',
+      authors: ['Silver, D.', 'Huang, A.', 'Maddison, C.J.'],
+      year: 2016,
+      citationCount: 23456,
+      keywords: ['AlphaGo', 'reinforcement learning', 'Monte Carlo tree search', 'game AI']
+    },
+    {
+      id: 125,
+      type: 'paper',
+      title: 'Generative Adversarial Networks',
+      description: 'Novel framework for generative models through adversarial training.',
+      score: 0.94,
+      level: '가장 추천',
+      reason: '생성 모델의 새로운 시대를 연 기념비적 논문입니다.',
+      detailedReason: {
+        semanticSimilarity: 0.94,
+        keywordMatch: 0.92,
+        citationRelevance: 0.95,
+        recencyScore: 0.81,
+        explanation: 'Generator와 Discriminator의 대립을 통한 학습 방법을 제안합니다.'
+      },
+      url: 'https://arxiv.org/abs/1406.2661',
+      journal: 'NeurIPS',
+      authors: ['Goodfellow, I.', 'Pouget-Abadie, J.', 'Mirza, M.'],
+      year: 2014,
+      citationCount: 45678,
+      keywords: ['GAN', 'generative models', 'adversarial training', 'deep learning']
+    },
+    {
+      id: 126,
+      type: 'paper',
+      title: 'YOLO: You Only Look Once - Real-Time Object Detection',
+      description: 'Unified real-time object detection system.',
+      score: 0.91,
+      level: '가장 추천',
+      reason: '실시간 객체 탐지의 표준을 제시합니다.',
+      detailedReason: {
+        semanticSimilarity: 0.91,
+        keywordMatch: 0.89,
+        citationRelevance: 0.92,
+        recencyScore: 0.86,
+        explanation: '단일 네트워크로 빠르고 정확한 객체 탐지를 구현합니다.'
+      },
+      url: 'https://arxiv.org/abs/1506.02640',
+      journal: 'CVPR',
+      authors: ['Redmon, J.', 'Divvala, S.', 'Girshick, R.', 'Farhadi, A.'],
+      year: 2016,
+      citationCount: 34567,
+      keywords: ['YOLO', 'object detection', 'real-time', 'computer vision']
+    },
+    {
+      id: 127,
+      type: 'paper',
+      title: 'U-Net: Convolutional Networks for Biomedical Image Segmentation',
+      description: 'Architecture for precise localization in biomedical images.',
+      score: 0.90,
+      level: '추천',
+      reason: '의료 영상 분할의 대표적 네트워크 구조입니다.',
+      detailedReason: {
+        semanticSimilarity: 0.90,
+        keywordMatch: 0.88,
+        citationRelevance: 0.91,
+        recencyScore: 0.80,
+        explanation: 'Encoder-Decoder 구조로 정밀한 세그멘테이션을 가능하게 합니다.'
+      },
+      url: 'https://arxiv.org/abs/1505.04597',
+      journal: 'MICCAI',
+      authors: ['Ronneberger, O.', 'Fischer, P.', 'Brox, T.'],
+      year: 2015,
+      citationCount: 56789,
+      keywords: ['U-Net', 'segmentation', 'biomedical imaging', 'deep learning']
+    },
+    {
+      id: 128,
+      type: 'paper',
+      title: 'EfficientNet: Rethinking Model Scaling',
+      description: 'Systematic study of neural network scaling methods.',
+      score: 0.89,
+      level: '추천',
+      reason: '효율적인 모델 스케일링 방법을 제시합니다.',
+      detailedReason: {
+        semanticSimilarity: 0.89,
+        keywordMatch: 0.87,
+        citationRelevance: 0.90,
+        recencyScore: 0.88,
+        explanation: 'Depth, width, resolution을 균형있게 스케일링하는 방법을 제안합니다.'
+      },
+      url: 'https://arxiv.org/abs/1905.11946',
+      journal: 'ICML',
+      authors: ['Tan, M.', 'Le, Q.V.'],
+      year: 2019,
+      citationCount: 12345,
+      keywords: ['EfficientNet', 'model scaling', 'neural architecture', 'efficiency']
+    },
+    {
+      id: 129,
+      type: 'paper',
+      title: 'GPT-3: Language Models are Few-Shot Learners',
+      description: 'Demonstration of few-shot learning capabilities in large language models.',
+      score: 0.96,
+      level: '가장 추천',
+      reason: 'LLM의 능력을 극적으로 보여준 획기적 연구입니다.',
+      detailedReason: {
+        semanticSimilarity: 0.96,
+        keywordMatch: 0.94,
+        citationRelevance: 0.97,
+        recencyScore: 0.89,
+        explanation: '175B 파라미터 모델의 놀라운 few-shot 능력을 입증했습니다.'
+      },
+      url: 'https://arxiv.org/abs/2005.14165',
+      journal: 'NeurIPS',
+      authors: ['Brown, T.B.', 'Mann, B.', 'Ryder, N.'],
+      year: 2020,
+      citationCount: 23456,
+      keywords: ['GPT-3', 'few-shot learning', 'large language model', 'NLP']
+    },
+    {
+      id: 130,
+      type: 'paper',
+      title: 'Dropout: A Simple Way to Prevent Neural Networks from Overfitting',
+      description: 'Regularization technique that has become standard in deep learning.',
+      score: 0.88,
+      level: '추천',
+      reason: '과적합 방지의 간단하면서도 효과적인 방법입니다.',
+      detailedReason: {
+        semanticSimilarity: 0.88,
+        keywordMatch: 0.86,
+        citationRelevance: 0.89,
+        recencyScore: 0.78,
+        explanation: '학습 중 랜덤하게 뉴런을 제거하여 과적합을 방지합니다.'
+      },
+      url: 'https://jmlr.org/papers/v15/srivastava14a.html',
+      journal: 'JMLR',
+      authors: ['Srivastava, N.', 'Hinton, G.', 'Krizhevsky, A.'],
+      year: 2014,
+      citationCount: 45678,
+      keywords: ['dropout', 'regularization', 'overfitting', 'deep learning']
+    },
+    {
+      id: 131,
+      type: 'paper',
+      title: 'Batch Normalization: Accelerating Deep Network Training',
+      description: 'Technique to reduce internal covariate shift in neural networks.',
+      score: 0.89,
+      level: '추천',
+      reason: '딥러닝 훈련을 안정화하고 가속화합니다.',
+      detailedReason: {
+        semanticSimilarity: 0.89,
+        keywordMatch: 0.87,
+        citationRelevance: 0.90,
+        recencyScore: 0.79,
+        explanation: '각 레이어의 입력을 정규화하여 학습 속도를 크게 향상시킵니다.'
+      },
+      url: 'https://arxiv.org/abs/1502.03167',
+      journal: 'ICML',
+      authors: ['Ioffe, S.', 'Szegedy, C.'],
+      year: 2015,
+      citationCount: 78901,
+      keywords: ['batch normalization', 'training acceleration', 'deep learning']
+    },
+    {
+      id: 132,
+      type: 'paper',
+      title: 'MobileNet: Efficient Convolutional Neural Networks',
+      description: 'Efficient architectures for mobile and embedded vision applications.',
+      score: 0.87,
+      level: '추천',
+      reason: '모바일 디바이스에 최적화된 효율적 네트워크입니다.',
+      detailedReason: {
+        semanticSimilarity: 0.87,
+        keywordMatch: 0.85,
+        citationRelevance: 0.88,
+        recencyScore: 0.85,
+        explanation: 'Depthwise separable convolution으로 파라미터 수를 대폭 감소시켰습니다.'
+      },
+      url: 'https://arxiv.org/abs/1704.04861',
+      journal: 'arXiv',
+      authors: ['Howard, A.G.', 'Zhu, M.', 'Chen, B.'],
+      year: 2017,
+      citationCount: 23456,
+      keywords: ['MobileNet', 'efficient networks', 'mobile AI', 'computer vision']
+    },
+    {
+      id: 133,
+      type: 'paper',
+      title: 'Word2Vec: Efficient Estimation of Word Representations',
+      description: 'Learning high-quality word vectors from large amounts of text.',
+      score: 0.90,
+      level: '추천',
+      reason: 'NLP의 기초가 되는 단어 임베딩 방법입니다.',
+      detailedReason: {
+        semanticSimilarity: 0.90,
+        keywordMatch: 0.88,
+        citationRelevance: 0.91,
+        recencyScore: 0.75,
+        explanation: 'Skip-gram과 CBOW 모델로 의미있는 단어 벡터를 학습합니다.'
+      },
+      url: 'https://arxiv.org/abs/1301.3781',
+      journal: 'ICLR Workshop',
+      authors: ['Mikolov, T.', 'Chen, K.', 'Corrado, G.', 'Dean, J.'],
+      year: 2013,
+      citationCount: 89012,
+      keywords: ['Word2Vec', 'word embeddings', 'NLP', 'representation learning']
+    },
+    {
+      id: 134,
+      type: 'paper',
+      title: 'CLIP: Learning Transferable Visual Models From Natural Language',
+      description: 'Connecting vision and language through contrastive learning.',
+      score: 0.93,
+      level: '가장 추천',
+      reason: '비전과 언어를 연결하는 혁신적 접근법입니다.',
+      detailedReason: {
+        semanticSimilarity: 0.93,
+        keywordMatch: 0.91,
+        citationRelevance: 0.94,
+        recencyScore: 0.91,
+        explanation: '대규모 이미지-텍스트 쌍으로 강력한 멀티모달 모델을 학습합니다.'
+      },
+      url: 'https://arxiv.org/abs/2103.00020',
+      journal: 'ICML',
+      authors: ['Radford, A.', 'Kim, J.W.', 'Hallacy, C.'],
+      year: 2021,
+      citationCount: 12345,
+      keywords: ['CLIP', 'multimodal', 'vision-language', 'contrastive learning']
+    },
+    {
+      id: 135,
+      type: 'paper',
+      title: 'Stable Diffusion: High-Resolution Image Synthesis',
+      description: 'Latent diffusion models for high-quality image generation.',
+      score: 0.92,
+      level: '가장 추천',
+      reason: '고품질 이미지 생성의 최신 기술입니다.',
+      detailedReason: {
+        semanticSimilarity: 0.92,
+        keywordMatch: 0.90,
+        citationRelevance: 0.93,
+        recencyScore: 0.96,
+        explanation: 'Latent space에서 효율적으로 고해상도 이미지를 생성합니다.'
+      },
+      url: 'https://arxiv.org/abs/2112.10752',
+      journal: 'CVPR',
+      authors: ['Rombach, R.', 'Blattmann, A.', 'Lorenz, D.'],
+      year: 2022,
+      citationCount: 8901,
+      keywords: ['diffusion models', 'image synthesis', 'generative AI', 'latent diffusion']
+    },
+
+    // 추가 데이터셋 15개
+    {
+      id: 136,
+      type: 'dataset',
+      title: 'COCO: Common Objects in Context',
+      description: 'Large-scale object detection, segmentation, and captioning dataset.',
+      score: 0.94,
+      level: '가장 추천',
+      reason: '컴퓨터 비전의 표준 벤치마크 데이터셋입니다.',
+      detailedReason: {
+        semanticSimilarity: 0.94,
+        keywordMatch: 0.92,
+        citationRelevance: 0.95,
+        recencyScore: 0.82,
+        explanation: '33만 장 이상의 이미지와 250만 개의 인스턴스 레이블을 포함합니다.'
+      },
+      url: 'https://cocodataset.org/',
+      publisher: 'Microsoft Research',
+      year: 2014,
+      dataSize: '25GB',
+      format: 'JPEG, JSON',
+      keywords: ['object detection', 'segmentation', 'image captioning', 'benchmark']
+    },
+    {
+      id: 137,
+      type: 'dataset',
+      title: 'Wikipedia Dump: Complete Text Data',
+      description: 'Full text of Wikipedia in multiple languages.',
+      score: 0.90,
+      level: '추천',
+      reason: 'NLP 연구의 대표적인 텍스트 코퍼스입니다.',
+      detailedReason: {
+        semanticSimilarity: 0.90,
+        keywordMatch: 0.88,
+        citationRelevance: 0.89,
+        recencyScore: 0.95,
+        explanation: '300개 이상 언어의 위키피디아 전체 텍스트를 제공합니다.'
+      },
+      url: 'https://dumps.wikimedia.org/',
+      publisher: 'Wikimedia Foundation',
+      year: 2024,
+      dataSize: '20TB',
+      format: 'XML, SQL',
+      keywords: ['Wikipedia', 'text corpus', 'NLP', 'knowledge base']
+    },
+    {
+      id: 138,
+      type: 'dataset',
+      title: 'Kaggle Datasets Collection',
+      description: 'Community-driven collection of diverse datasets.',
+      score: 0.88,
+      level: '추천',
+      reason: '다양한 분야의 실무 데이터를 제공합니다.',
+      detailedReason: {
+        semanticSimilarity: 0.88,
+        keywordMatch: 0.86,
+        citationRelevance: 0.87,
+        recencyScore: 0.93,
+        explanation: '100만 개 이상의 데이터셋으로 실전 경험을 쌓을 수 있습니다.'
+      },
+      url: 'https://www.kaggle.com/datasets',
+      publisher: 'Kaggle',
+      year: 2024,
+      dataSize: 'Variable',
+      format: 'Various',
+      keywords: ['machine learning', 'data science', 'competitions', 'diverse datasets']
+    },
+    {
+      id: 139,
+      type: 'dataset',
+      title: 'OpenStreetMap: Global Map Data',
+      description: 'Collaborative mapping data of the entire world.',
+      score: 0.87,
+      level: '추천',
+      reason: '위치 기반 연구의 필수 데이터입니다.',
+      detailedReason: {
+        semanticSimilarity: 0.87,
+        keywordMatch: 0.85,
+        citationRelevance: 0.86,
+        recencyScore: 0.94,
+        explanation: '전 세계 도로, 건물, 지형 정보를 포함한 오픈 소스 지도 데이터입니다.'
+      },
+      url: 'https://www.openstreetmap.org/',
+      publisher: 'OpenStreetMap Foundation',
+      year: 2024,
+      dataSize: '1.5TB',
+      format: 'XML, PBF',
+      keywords: ['maps', 'GIS', 'location data', 'open source']
+    },
+    {
+      id: 140,
+      type: 'dataset',
+      title: 'Million Song Dataset',
+      description: 'Audio features and metadata for a million songs.',
+      score: 0.85,
+      level: '참고',
+      reason: '음악 정보 검색 연구의 대표 데이터셋입니다.',
+      detailedReason: {
+        semanticSimilarity: 0.85,
+        keywordMatch: 0.83,
+        citationRelevance: 0.84,
+        recencyScore: 0.80,
+        explanation: '100만 곡의 오디오 특징과 메타데이터를 제공합니다.'
+      },
+      url: 'http://millionsongdataset.com/',
+      publisher: 'Columbia University',
+      year: 2011,
+      dataSize: '280GB',
+      format: 'HDF5',
+      keywords: ['music', 'audio analysis', 'recommendation', 'information retrieval']
+    },
+    {
+      id: 141,
+      type: 'dataset',
+      title: 'MS MARCO: Machine Reading Comprehension',
+      description: 'Large-scale dataset for question answering and passage ranking.',
+      score: 0.91,
+      level: '가장 추천',
+      reason: '정보 검색과 QA 연구의 표준 데이터셋입니다.',
+      detailedReason: {
+        semanticSimilarity: 0.91,
+        keywordMatch: 0.89,
+        citationRelevance: 0.90,
+        recencyScore: 0.88,
+        explanation: '실제 Bing 검색 쿼리 기반의 100만 개 이상 질문-답변 쌍을 포함합니다.'
+      },
+      url: 'https://microsoft.github.io/msmarco/',
+      publisher: 'Microsoft AI',
+      year: 2016,
+      dataSize: '150GB',
+      format: 'JSON, TSV',
+      keywords: ['question answering', 'information retrieval', 'NLP', 'reading comprehension']
+    },
+    {
+      id: 142,
+      type: 'dataset',
+      title: 'Cityscapes: Semantic Urban Scene Understanding',
+      description: 'Large-scale dataset for semantic segmentation of urban street scenes.',
+      score: 0.89,
+      level: '추천',
+      reason: '자율주행과 도시 장면 이해 연구에 필수적입니다.',
+      detailedReason: {
+        semanticSimilarity: 0.89,
+        keywordMatch: 0.87,
+        citationRelevance: 0.88,
+        recencyScore: 0.84,
+        explanation: '50개 도시의 정밀한 픽셀 단위 레이블이 있는 고해상도 이미지를 제공합니다.'
+      },
+      url: 'https://www.cityscapes-dataset.com/',
+      publisher: 'Daimler AG',
+      year: 2016,
+      dataSize: '11GB',
+      format: 'PNG, JSON',
+      keywords: ['semantic segmentation', 'autonomous driving', 'urban scenes', 'computer vision']
+    },
+    {
+      id: 143,
+      type: 'dataset',
+      title: 'MIMIC-III: Medical Information Mart',
+      description: 'De-identified health data from ICU patients.',
+      score: 0.92,
+      level: '가장 추천',
+      reason: '의료 AI 연구의 대표적 공개 데이터셋입니다.',
+      detailedReason: {
+        semanticSimilarity: 0.92,
+        keywordMatch: 0.90,
+        citationRelevance: 0.91,
+        recencyScore: 0.86,
+        explanation: '4만 명 이상 중환자의 비식별화된 의료 기록을 포함합니다.'
+      },
+      url: 'https://mimic.mit.edu/',
+      publisher: 'MIT',
+      year: 2016,
+      dataSize: '47GB',
+      format: 'CSV, SQL',
+      keywords: ['healthcare', 'medical records', 'ICU', 'clinical data']
+    },
+    {
+      id: 144,
+      type: 'dataset',
+      title: 'Kitti Vision Benchmark',
+      description: 'Autonomous driving benchmark with stereo, optical flow, visual odometry.',
+      score: 0.90,
+      level: '추천',
+      reason: '자율주행 알고리즘 평가의 표준 벤치마크입니다.',
+      detailedReason: {
+        semanticSimilarity: 0.90,
+        keywordMatch: 0.88,
+        citationRelevance: 0.89,
+        recencyScore: 0.83,
+        explanation: '실제 주행 환경의 다양한 컴퓨터 비전 작업을 위한 데이터를 제공합니다.'
+      },
+      url: 'http://www.cvlibs.net/datasets/kitti/',
+      publisher: 'Karlsruhe Institute of Technology',
+      year: 2012,
+      dataSize: '175GB',
+      format: 'PNG, Velodyne, Oxts',
+      keywords: ['autonomous driving', 'stereo vision', 'object detection', 'benchmark']
+    },
+    {
+      id: 145,
+      type: 'dataset',
+      title: 'Twitter Sentiment Analysis Dataset',
+      description: 'Large collection of tweets with sentiment labels.',
+      score: 0.86,
+      level: '참고',
+      reason: '소셜 미디어 감성 분석 연구에 유용합니다.',
+      detailedReason: {
+        semanticSimilarity: 0.86,
+        keywordMatch: 0.84,
+        citationRelevance: 0.85,
+        recencyScore: 0.87,
+        explanation: '160만 개의 레이블된 트윗으로 감성 분류 모델을 훈련할 수 있습니다.'
+      },
+      url: 'http://help.sentiment140.com/for-students',
+      publisher: 'Stanford University',
+      year: 2009,
+      dataSize: '77MB',
+      format: 'CSV',
+      keywords: ['sentiment analysis', 'Twitter', 'social media', 'NLP']
+    },
+    {
+      id: 146,
+      type: 'dataset',
+      title: 'Flickr30k: Image-Caption Pairs',
+      description: 'Images paired with human-written descriptive captions.',
+      score: 0.88,
+      level: '추천',
+      reason: '이미지 캡셔닝 연구의 표준 데이터셋입니다.',
+      detailedReason: {
+        semanticSimilarity: 0.88,
+        keywordMatch: 0.86,
+        citationRelevance: 0.87,
+        recencyScore: 0.81,
+        explanation: '31,783개 이미지와 각 5개의 캡션으로 총 158,915개 캡션을 포함합니다.'
+      },
+      url: 'http://shannon.cs.illinois.edu/DenotationGraph/',
+      publisher: 'University of Illinois',
+      year: 2014,
+      dataSize: '18GB',
+      format: 'JPEG, TXT',
+      keywords: ['image captioning', 'vision-language', 'multimodal', 'computer vision']
+    },
+    {
+      id: 147,
+      type: 'dataset',
+      title: 'UCI Machine Learning Repository',
+      description: 'Collection of databases, domain theories, and data generators.',
+      score: 0.87,
+      level: '추천',
+      reason: '교육과 연구를 위한 다양한 ML 데이터셋을 제공합니다.',
+      detailedReason: {
+        semanticSimilarity: 0.87,
+        keywordMatch: 0.85,
+        citationRelevance: 0.86,
+        recencyScore: 0.90,
+        explanation: '600개 이상의 다양한 분야 데이터셋으로 ML 알고리즘을 테스트할 수 있습니다.'
+      },
+      url: 'https://archive.ics.uci.edu/ml/',
+      publisher: 'UC Irvine',
+      year: 2024,
+      dataSize: 'Variable',
+      format: 'Various',
+      keywords: ['machine learning', 'classification', 'regression', 'benchmark']
+    },
+    {
+      id: 148,
+      type: 'dataset',
+      title: 'LAION-5B: Large-Scale Vision-Language Dataset',
+      description: 'Massive dataset of image-text pairs from the internet.',
+      score: 0.93,
+      level: '가장 추천',
+      reason: '대규모 멀티모달 모델 학습의 핵심 데이터셋입니다.',
+      detailedReason: {
+        semanticSimilarity: 0.93,
+        keywordMatch: 0.91,
+        citationRelevance: 0.92,
+        recencyScore: 0.95,
+        explanation: '58억 개의 CLIP 필터링된 이미지-텍스트 쌍을 제공합니다.'
+      },
+      url: 'https://laion.ai/blog/laion-5b/',
+      publisher: 'LAION',
+      year: 2022,
+      dataSize: '240TB',
+      format: 'Parquet',
+      keywords: ['vision-language', 'CLIP', 'large-scale', 'multimodal']
+    },
+    {
+      id: 149,
+      type: 'dataset',
+      title: 'Yelp Open Dataset',
+      description: 'Business, review, and user data from Yelp.',
+      score: 0.85,
+      level: '참고',
+      reason: '추천 시스템과 NLP 연구에 활용됩니다.',
+      detailedReason: {
+        semanticSimilarity: 0.85,
+        keywordMatch: 0.83,
+        citationRelevance: 0.84,
+        recencyScore: 0.89,
+        explanation: '수백만 개의 리뷰와 비즈니스 정보로 실제 추천 시스템을 구축할 수 있습니다.'
+      },
+      url: 'https://www.yelp.com/dataset',
+      publisher: 'Yelp Inc.',
+      year: 2024,
+      dataSize: '10GB',
+      format: 'JSON',
+      keywords: ['recommendation', 'NLP', 'sentiment analysis', 'reviews']
+    },
+    {
+      id: 150,
+      type: 'dataset',
+      title: 'Open Images: Annotated Image Dataset',
+      description: 'Large-scale dataset with image-level labels and object bounding boxes.',
+      score: 0.91,
+      level: '가장 추천',
+      reason: '대규모 객체 인식 연구의 필수 데이터셋입니다.',
+      detailedReason: {
+        semanticSimilarity: 0.91,
+        keywordMatch: 0.89,
+        citationRelevance: 0.90,
+        recencyScore: 0.92,
+        explanation: '900만 장의 이미지와 1,600만 개의 바운딩 박스를 포함합니다.'
+      },
+      url: 'https://storage.googleapis.com/openimages/web/index.html',
+      publisher: 'Google AI',
+      year: 2018,
+      dataSize: '500GB',
+      format: 'JPEG, CSV',
+      keywords: ['object detection', 'image classification', 'computer vision', 'large-scale']
     }
   ];
 
@@ -1844,23 +2508,22 @@ const ResearchRecommendationAgent = () => {
         
         {/* 재미있는 논문 추천 롤링 배너 */}
         {!hasSearched && (
-          <div className="mt-8 bg-gradient-to-r from-purple-600 to-pink-600 rounded-xl shadow-xl border border-purple-400 overflow-hidden">
-            <div className="p-4 border-b border-purple-400/30">
+          <div className="mt-8 bg-gradient-to-r from-pink-100 via-purple-100 to-blue-100 rounded-xl shadow-xl border border-purple-200 overflow-hidden">
+            <div className="p-4 border-b border-purple-200/50 bg-white/50">
               <div className="flex items-center space-x-2">
-                <span className="text-2xl">🎉</span>
-                <h3 className="font-semibold text-white">재미있는 논문 추천</h3>
+                <h3 className="font-semibold text-gray-800">재미있는 논문 추천</h3>
               </div>
-              <p className="text-xs text-purple-100 mt-1">특이하고 재미있는 주제의 연구들</p>
+              <p className="text-xs text-gray-600 mt-1">특이하고 재미있는 주제의 연구들</p>
             </div>
             
-            <div className="relative overflow-hidden py-6 bg-white/10">
+            <div className="relative overflow-hidden py-6 bg-white/20">
               <div className="flex animate-scroll-left whitespace-nowrap">
                 {[
                   {
-                    title: "Can a Dog Predict Earthquakes?",
+                    title: "Can a Dog Predict Earthquakes? Behavioral Analysis",
                     authors: "Smith, J. et al.",
                     year: 2023,
-                    journal: "Unusual Science Quarterly",
+                    journal: "Journal of Unusual Science",
                     url: "https://www.nature.com/articles/nature12345"
                   },
                   {
@@ -1871,7 +2534,7 @@ const ResearchRecommendationAgent = () => {
                     url: "https://arxiv.org/abs/2301.12345"
                   },
                   {
-                    title: "Why Do Cats Always Land on Their Feet?",
+                    title: "Why Do Cats Always Land on Their Feet? Physics Explained",
                     authors: "Chen, L. & Park, K.",
                     year: 2023,
                     journal: "Feline Physics Review",
@@ -1904,11 +2567,18 @@ const ResearchRecommendationAgent = () => {
                     href={paper.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-block mx-4 bg-white rounded-lg p-4 shadow-lg hover:shadow-2xl transition-all hover:scale-105 w-72 flex-shrink-0"
+                    className="inline-block mx-4 bg-white rounded-lg p-4 shadow-md hover:shadow-xl transition-all hover:scale-105 w-80 flex-shrink-0"
                   >
                     <div className="flex space-x-3">
-                      <div className="w-16 h-20 bg-gradient-to-br from-purple-200 to-pink-200 rounded flex-shrink-0 border-2 border-purple-300 flex items-center justify-center">
-                        <span className="text-3xl">📚</span>
+                      <div className="w-20 bg-gradient-to-br from-pink-50 to-purple-50 rounded flex-shrink-0 border-2 border-purple-200 flex flex-col items-center justify-center p-2" style={{aspectRatio: '1/1.414'}}>
+                        <div className="text-center">
+                          <div className="text-[10px] font-bold text-gray-800 leading-tight mb-1 line-clamp-3" style={{fontFamily: 'Georgia, serif'}}>
+                            {paper.title.substring(0, 40)}...
+                          </div>
+                          <div className="text-[8px] text-gray-500" style={{fontFamily: 'Georgia, serif'}}>
+                            {paper.year}
+                          </div>
+                        </div>
                       </div>
                       <div className="flex-1 min-w-0">
                         <h4 className="font-bold text-gray-900 text-sm leading-tight mb-1 line-clamp-2" style={{fontFamily: 'Georgia, serif'}}>
@@ -1927,10 +2597,10 @@ const ResearchRecommendationAgent = () => {
                 {/* 반복을 위한 복제 */}
                 {[
                   {
-                    title: "Can a Dog Predict Earthquakes?",
+                    title: "Can a Dog Predict Earthquakes? Behavioral Analysis",
                     authors: "Smith, J. et al.",
                     year: 2023,
-                    journal: "Unusual Science Quarterly",
+                    journal: "Journal of Unusual Science",
                     url: "https://www.nature.com/articles/nature12345"
                   },
                   {
@@ -1941,7 +2611,7 @@ const ResearchRecommendationAgent = () => {
                     url: "https://arxiv.org/abs/2301.12345"
                   },
                   {
-                    title: "Why Do Cats Always Land on Their Feet?",
+                    title: "Why Do Cats Always Land on Their Feet? Physics Explained",
                     authors: "Chen, L. & Park, K.",
                     year: 2023,
                     journal: "Feline Physics Review",
@@ -1974,11 +2644,18 @@ const ResearchRecommendationAgent = () => {
                     href={paper.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-block mx-4 bg-white rounded-lg p-4 shadow-lg hover:shadow-2xl transition-all hover:scale-105 w-72 flex-shrink-0"
+                    className="inline-block mx-4 bg-white rounded-lg p-4 shadow-md hover:shadow-xl transition-all hover:scale-105 w-80 flex-shrink-0"
                   >
                     <div className="flex space-x-3">
-                      <div className="w-16 h-20 bg-gradient-to-br from-purple-200 to-pink-200 rounded flex-shrink-0 border-2 border-purple-300 flex items-center justify-center">
-                        <span className="text-3xl">📚</span>
+                      <div className="w-20 bg-gradient-to-br from-pink-50 to-purple-50 rounded flex-shrink-0 border-2 border-purple-200 flex flex-col items-center justify-center p-2" style={{aspectRatio: '1/1.414'}}>
+                        <div className="text-center">
+                          <div className="text-[10px] font-bold text-gray-800 leading-tight mb-1 line-clamp-3" style={{fontFamily: 'Georgia, serif'}}>
+                            {paper.title.substring(0, 40)}...
+                          </div>
+                          <div className="text-[8px] text-gray-500" style={{fontFamily: 'Georgia, serif'}}>
+                            {paper.year}
+                          </div>
+                        </div>
                       </div>
                       <div className="flex-1 min-w-0">
                         <h4 className="font-bold text-gray-900 text-sm leading-tight mb-1 line-clamp-2" style={{fontFamily: 'Georgia, serif'}}>

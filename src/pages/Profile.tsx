@@ -5,10 +5,13 @@ import { toast } from 'sonner';
 import { ArrowLeft, User, Mail, Calendar, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Header from '@/components/Header';
+import scientistIcon from '@/assets/scientist-icon.png';
 
 const Profile = () => {
   const [user, setUser] = useState<any>(null);
   const [profile, setProfile] = useState<any>(null);
+  const [bookmarks, setBookmarks] = useState<any[]>([]);
+  const [userType, setUserType] = useState('호기심 많은 과학자');
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
 
@@ -28,14 +31,30 @@ const Profile = () => {
 
   const loadProfile = async (userId: string) => {
     try {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('user_id', userId)
-        .single();
+      const [profileRes, bookmarksRes] = await Promise.all([
+        supabase.from('profiles').select('*').eq('user_id', userId).single(),
+        supabase.from('bookmarks').select('*').eq('user_id', userId)
+      ]);
 
-      if (error) throw error;
-      setProfile(data);
+      if (profileRes.error) throw profileRes.error;
+      setProfile(profileRes.data);
+      
+      if (!bookmarksRes.error) {
+        setBookmarks(bookmarksRes.data || []);
+        // 북마크 기반으로 회원 유형 결정
+        const keywords = bookmarksRes.data?.flatMap((b: any) => b.keywords || []) || [];
+        if (keywords.includes('climate') || keywords.includes('environment')) {
+          setUserType('환경을 사랑하는 연구자');
+        } else if (keywords.includes('AI') || keywords.includes('machine learning') || keywords.includes('deep learning')) {
+          setUserType('현학적인 AI 공학자');
+        } else if (keywords.includes('bio') || keywords.includes('medical')) {
+          setUserType('생명을 구하는 의학자');
+        } else if (keywords.includes('quantum')) {
+          setUserType('미래를 보는 물리학자');
+        } else {
+          setUserType('호기심 많은 과학자');
+        }
+      }
     } catch (error: any) {
       toast.error('프로필을 불러오는데 실패했습니다.');
       console.error(error);
@@ -76,12 +95,17 @@ const Profile = () => {
 
         <div className="bg-card rounded-xl border border-border p-8 shadow-lg">
           <div className="flex items-center gap-6 mb-8">
-            <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center">
-              <User className="h-10 w-10 text-primary" />
+            <div className="w-24 h-24 rounded-full overflow-hidden flex items-center justify-center">
+              <img src={scientistIcon} alt="Profile" className="w-full h-full object-cover" />
             </div>
             <div>
-              <h2 className="text-2xl font-bold text-foreground">{profile?.full_name || '연구자'}</h2>
-              <p className="text-muted-foreground">회원</p>
+              <div className="flex items-center gap-3">
+                <h2 className="text-2xl font-bold text-foreground">{profile?.full_name || '연구자'}</h2>
+                <span className="px-3 py-1 bg-gradient-to-r from-purple-100 to-blue-100 text-purple-700 rounded-full text-sm font-medium border border-purple-200">
+                  {userType}
+                </span>
+              </div>
+              <p className="text-muted-foreground mt-1">연구를 사랑하는 회원</p>
             </div>
           </div>
 
