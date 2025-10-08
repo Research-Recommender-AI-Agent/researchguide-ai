@@ -26,6 +26,9 @@ const ResearchRecommendationAgent = () => {
   const [hasSearched, setHasSearched] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10);
+  const [clarifyOptions, setClarifyOptions] = useState<string[] | null>(null);
+  const [clarifyQuestion, setClarifyQuestion] = useState<string | null>(null);
+  const [pendingQuery, setPendingQuery] = useState<string>('');
 
   // localStorage에서 대화 내용 로드
   useEffect(() => {
@@ -76,7 +79,7 @@ const ResearchRecommendationAgent = () => {
   const generateTrendingPapers = () => {
     const shuffled = [...allTrendingPapers].sort(() => Math.random() - 0.5).slice(0, 5);
     
-    // 하나만 하강, 나머지는 상승
+    // 정확히 하나만 하강, 나머지는 상승
     const downIndex = Math.floor(Math.random() * 4) + 1; // 1~4 중 하나 (0번은 hot)
     
     return shuffled.map((paper, index) => {
@@ -84,38 +87,38 @@ const ResearchRecommendationAgent = () => {
       
       // 첫 번째는 항상 hot
       if (index === 0) {
+        const prevRank = rank + Math.floor(Math.random() * 3) + 1;
+        const rankChange = prevRank - rank;
         return {
           ...paper,
           rank,
-          prevRank: rank + 2,
-          rankChange: 2 * (Math.floor(Math.random() * 300) + 100),
+          prevRank,
+          rankChange: Math.floor(Math.random() * 900) + 100, // 100-999
           trend: 'hot' as const
         };
       }
       
-      // 선택된 인덱스만 하강, 나머지는 상승
+      // 선택된 인덱스만 하강 (-숫자), 나머지는 상승 (+숫자)
       const isDown = index === downIndex;
       
       if (isDown) {
         // 하강: prevRank가 더 높음 (작은 숫자)
         const prevRank = Math.max(1, rank - Math.floor(Math.random() * 2) - 1);
-        const rankChange = rank - prevRank; // 양수 (순위 하락)
         return {
           ...paper,
           rank,
           prevRank,
-          rankChange: rankChange * (Math.floor(Math.random() * 300) + 100),
+          rankChange: Math.floor(Math.random() * 900) + 100, // 100-999
           trend: 'down' as const
         };
       } else {
         // 상승: prevRank가 더 낮음 (큰 숫자)
-        const prevRank = Math.min(8, rank + Math.floor(Math.random() * 2) + 1);
-        const rankChange = prevRank - rank; // 양수 (순위 상승)
+        const prevRank = Math.min(8, rank + Math.floor(Math.random() * 3) + 1);
         return {
           ...paper,
           rank,
           prevRank,
-          rankChange: rankChange * (Math.floor(Math.random() * 300) + 100),
+          rankChange: Math.floor(Math.random() * 900) + 100, // 100-999
           trend: 'up' as const
         };
       }
@@ -1900,21 +1903,35 @@ const ResearchRecommendationAgent = () => {
     }, 2000);
   };
 
-  const handleChatSubmit = async () => {
-    if (!chatInput.trim()) return;
+  const handleChatSubmit = async (selectedOption?: string) => {
+    const queryToSearch = selectedOption || chatInput.trim();
+    if (!queryToSearch) return;
     
-    const userMessage: ChatMessage = {
-      type: 'user',
-      message: chatInput,
-      time: new Date().toLocaleTimeString()
-    };
+    // Clarify 옵션 선택 시
+    if (selectedOption && pendingQuery) {
+      const userMessage: ChatMessage = {
+        type: 'user',
+        message: `${selectedOption}를 선택했습니다`,
+        time: new Date().toLocaleTimeString()
+      };
+      setChatMessages(prev => [...prev, userMessage]);
+    } else {
+      // 새 검색 시작
+      const userMessage: ChatMessage = {
+        type: 'user',
+        message: chatInput,
+        time: new Date().toLocaleTimeString()
+      };
+      setChatMessages(prev => [...prev, userMessage]);
+    }
     
-    setChatMessages(prev => [...prev, userMessage]);
-    const searchQuery = chatInput;
+    const searchQuery = selectedOption ? pendingQuery : chatInput;
     setChatInput('');
     setHasSearched(true);
     setIsLoading(true);
     setRecommendations([]);
+    setClarifyOptions(null);
+    setClarifyQuestion(null);
     
     const agentResponse: ChatMessage = {
       type: 'agent',
@@ -1927,7 +1944,10 @@ const ResearchRecommendationAgent = () => {
       const startTime = Date.now();
       
       const { data, error } = await supabase.functions.invoke('recommend-papers', {
-        body: { query: searchQuery }
+        body: { 
+          query: searchQuery,
+          selectedOption: selectedOption || null
+        }
       });
       
       if (error) {
@@ -1937,9 +1957,27 @@ const ResearchRecommendationAgent = () => {
         return;
       }
       
+      // Clarify 필요 시
+      if (data && data.needsClarify) {
+        setClarifyQuestion(data.question);
+        setClarifyOptions(data.options);
+        setPendingQuery(searchQuery);
+        
+        const clarifyMessage: ChatMessage = {
+          type: 'agent',
+          message: data.question,
+          time: new Date().toLocaleTimeString()
+        };
+        setChatMessages(prev => [...prev, clarifyMessage]);
+        setIsLoading(false);
+        return;
+      }
+      
+      // 정상 추천 결과
       if (data && data.recommendations) {
         setRecommendations(data.recommendations);
         setResponseTime(Date.now() - startTime);
+        setPendingQuery('');
       }
     } catch (error) {
       console.error('Error in handleChatSubmit:', error);
@@ -2299,8 +2337,34 @@ const ResearchRecommendationAgent = () => {
         {/* Main Content */}
         <div className="grid grid-cols-1 xl:grid-cols-4 gap-6">
           <div className="xl:col-span-3 space-y-6">
+            {/* Clarify Options */}
+            {clarifyOptions && clarifyOptions.length > 0 && !isLoading && (
+              <div className="bg-gradient-to-br from-blue-800 to-indigo-800 rounded-xl shadow-xl border border-blue-600 p-6">
+                <h3 className="text-lg font-semibold text-white mb-4 flex items-center">
+                  <Brain size={20} className="mr-2" />
+                  {clarifyQuestion}
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  {clarifyOptions.map((option, index) => (
+                    <button
+                      key={index}
+                      onClick={() => handleChatSubmit(option)}
+                      className="bg-white/10 hover:bg-white/20 border border-white/20 hover:border-white/40 text-white px-6 py-4 rounded-lg font-medium transition-all text-left hover:scale-105 hover:shadow-xl"
+                    >
+                      <div className="flex items-center space-x-2">
+                        <span className="w-6 h-6 rounded-full bg-blue-500 text-white flex items-center justify-center text-sm font-bold flex-shrink-0">
+                          {index + 1}
+                        </span>
+                        <span>{option}</span>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {/* Empty State */}
-            {recommendations.length === 0 && !isLoading && (
+            {recommendations.length === 0 && !isLoading && !clarifyOptions && (
               <div className="bg-gradient-to-br from-slate-800 to-blue-800 rounded-xl shadow-xl border border-slate-600 p-4 text-center">
                 <Brain size={24} className="text-slate-400 mx-auto mb-2" />
                 <h3 className="text-sm font-semibold text-white mb-1">하단에서 논문·연구데이터 정보를 입력해주세요</h3>
