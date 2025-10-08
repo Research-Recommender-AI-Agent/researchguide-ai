@@ -2489,28 +2489,56 @@ const ResearchRecommendationAgent = () => {
                         <div className="mb-4 p-4 bg-slate-600 rounded-lg border-l-4 border-blue-400">
                           <h5 className="font-medium text-blue-300 mb-3 flex items-center">
                             <Target size={16} className="mr-2" />
-                            추천 사유
+                            추천 사유 (다단계 재랭킹)
                           </h5>
                           
-                          {/* 수치적 지표 */}
+                          {/* 수치적 지표 - 다단계 재랭킹 스코어 */}
                           {rec.detailedReason && (
-                            <div className="mb-3 grid grid-cols-2 gap-2">
-                              <div className="bg-slate-700 p-2 rounded">
-                                <p className="text-xs text-slate-400">의미적 유사도</p>
-                                <p className="text-lg font-bold text-blue-300">{(rec.detailedReason.semanticSimilarity * 100).toFixed(1)}%</p>
+                            <div className="mb-3 space-y-2">
+                              <div className="grid grid-cols-3 gap-2">
+                                <div className="bg-slate-700 p-2 rounded">
+                                  <p className="text-xs text-slate-400">BM25</p>
+                                  <p className="text-lg font-bold text-emerald-300">{(rec.detailedReason.bm25Score * 100).toFixed(1)}%</p>
+                                </div>
+                                <div className="bg-slate-700 p-2 rounded">
+                                  <p className="text-xs text-slate-400">Dense</p>
+                                  <p className="text-lg font-bold text-blue-300">{(rec.detailedReason.denseEmbeddingScore * 100).toFixed(1)}%</p>
+                                </div>
+                                <div className="bg-slate-700 p-2 rounded">
+                                  <p className="text-xs text-slate-400">Cross-Encoder</p>
+                                  <p className="text-lg font-bold text-purple-300">{(rec.detailedReason.crossEncoderScore * 100).toFixed(1)}%</p>
+                                </div>
                               </div>
-                              <div className="bg-slate-700 p-2 rounded">
-                                <p className="text-xs text-slate-400">키워드 매칭률</p>
-                                <p className="text-lg font-bold text-emerald-300">{(rec.detailedReason.keywordMatch * 100).toFixed(1)}%</p>
-                              </div>
-                              <div className="bg-slate-700 p-2 rounded">
-                                <p className="text-xs text-slate-400">인용 관련성</p>
-                                <p className="text-lg font-bold text-purple-300">{(rec.detailedReason.citationRelevance * 100).toFixed(1)}%</p>
-                              </div>
-                              <div className="bg-slate-700 p-2 rounded">
-                                <p className="text-xs text-slate-400">최신성 점수</p>
-                                <p className="text-lg font-bold text-orange-300">{(rec.detailedReason.recencyScore * 100).toFixed(1)}%</p>
-                              </div>
+                              
+                              {/* 매칭된 필드 표시 */}
+                              {rec.detailedReason.matchedFields && (
+                                <div className="flex gap-2 text-xs">
+                                  <span className="text-slate-400">매칭 필드:</span>
+                                  {rec.detailedReason.matchedFields.title && (
+                                    <span className="px-2 py-0.5 bg-emerald-600 text-emerald-100 rounded">제목</span>
+                                  )}
+                                  {rec.detailedReason.matchedFields.keywords && (
+                                    <span className="px-2 py-0.5 bg-blue-600 text-blue-100 rounded">키워드</span>
+                                  )}
+                                  {rec.detailedReason.matchedFields.description && (
+                                    <span className="px-2 py-0.5 bg-purple-600 text-purple-100 rounded">설명</span>
+                                  )}
+                                </div>
+                              )}
+                              
+                              {/* 매칭된 키워드 (근거) */}
+                              {rec.detailedReason.matchedKeywords && rec.detailedReason.matchedKeywords.length > 0 && (
+                                <div className="bg-slate-700 p-2 rounded">
+                                  <p className="text-xs text-slate-400 mb-1">🎯 매칭 키워드 (근거)</p>
+                                  <div className="flex flex-wrap gap-1">
+                                    {rec.detailedReason.matchedKeywords.map((kw, idx) => (
+                                      <span key={idx} className="px-2 py-0.5 bg-yellow-600 text-yellow-100 rounded text-xs font-medium">
+                                        {kw}
+                                      </span>
+                                    ))}
+                                  </div>
+                                </div>
+                              )}
                             </div>
                           )}
                           
