@@ -108,15 +108,15 @@ function generateFallbackRecommendations(query: string, papersData: any[] = []):
     };
   }).filter(p => calculateBM25Score(p, queryKeywords) > 0)
     .sort((a, b) => b.score - a.score)
-    .slice(0, 60); // 최소 50개 이상 반환
+    .slice(0, 30);
   
   if (scoredPapers.length > 0) {
     return scoredPapers;
   }
   
-  // 데이터가 없을 경우 기본 추천 (상위 60개)
+  // 데이터가 없을 경우 기본 추천 (상위 30개)
   const defaultRecommendations = [];
-  for (let i = 0; i < Math.min(60, papersData.length); i++) {
+  for (let i = 0; i < Math.min(30, papersData.length); i++) {
     const paper = papersData[i];
     defaultRecommendations.push({
       type: 'paper',
@@ -310,16 +310,15 @@ serve(async (req) => {
     // 소규모 LLM을 사용한 추천 시스템 프롬프트
     const systemPrompt = `당신은 연구 논문 및 데이터셋 추천 AI 에이전트입니다.
 
-사용자의 쿼리를 분석하고, 관련성이 높은 학술 논문과 데이터셋을 최소 60개 이상 추천해야 합니다.
+사용자의 쿼리를 분석하고, 관련성이 높은 학술 논문과 데이터셋 30개를 추천해야 합니다.
 
 추천 규칙:
 1. 쿼리와의 관련성을 정확하게 평가하세요
-2. 논문 70%, 데이터셋 30% 비율로 추천
+2. 논문 60%, 데이터셋 40% 비율로 추천
 3. 점수(score)는 0.55~0.99 사이, 관련성이 높을수록 높은 점수
 4. level: "가장 추천" (≥0.90), "추천" (0.85-0.89), "참고" (0.55-0.84)
 5. 한국어로 설명과 이유를 작성
 6. 실제 존재하는 논문/데이터셋만 추천
-7. 다양한 저널과 출판 연도의 논문을 포함하세요
 
 출력 형식:
 {
@@ -341,7 +340,7 @@ serve(async (req) => {
   ]
 }`;
 
-    const userPrompt = `다음 주제에 대해 최소 60개 이상의 논문/데이터셋을 추천해주세요: "${searchQuery}"
+    const userPrompt = `다음 주제에 대해 30개의 논문/데이터셋을 추천해주세요: "${searchQuery}"
 
 JSON 형식으로만 응답해주세요.`;
 

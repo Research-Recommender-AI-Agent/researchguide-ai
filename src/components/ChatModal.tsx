@@ -104,9 +104,9 @@ const ChatModal: React.FC<ChatModalProps> = ({
         </button>
       )}
 
-      {/* Chat Modal - 반응형 디자인 */}
+      {/* Chat Modal */}
       {isOpen && (
-        <div className="fixed bottom-4 right-4 md:bottom-6 md:right-6 w-[calc(100vw-2rem)] md:w-96 h-[calc(100vh-8rem)] md:h-[700px] max-h-[700px] bg-white rounded-2xl shadow-2xl border border-gray-200 z-50 flex flex-col">
+        <div className="fixed bottom-6 right-6 w-96 h-[700px] bg-white rounded-2xl shadow-2xl border border-gray-200 z-50 flex flex-col">
           {/* Header */}
           <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-4 rounded-t-2xl flex items-center justify-between">
             <div className="flex items-center space-x-3">
@@ -151,7 +151,7 @@ const ChatModal: React.FC<ChatModalProps> = ({
                   key={index}
                   onClick={() => {
                     onInputChange(item.text);
-                    setTimeout(() => onSubmit(), 50);
+                    setTimeout(() => onSubmit(), 100); // 입력 값이 업데이트된 후 실행
                   }}
                   className="w-full px-3 py-2 bg-white text-gray-600 rounded-lg text-xs hover:bg-gray-200 hover:text-gray-800 transition-colors flex items-center justify-between border border-gray-200 group"
                 >

@@ -166,87 +166,49 @@ const ResearchRecommendationAgent = () => {
 
   const [todayPaper] = useState(getTodayPaper());
 
-  // 재미있는 논문 데이터 - 실제로 특이하고 재미있는 논문들
+  // 재미있는 논문 데이터
   const allFunPapers = [
     {
-      title: 'Can a Biologist Fix a Radio?—Or, What I Learned while Studying Apoptosis',
-      authors: 'Lazebnik, Y.',
-      year: 2002,
-      journal: 'Cancer Cell',
-      url: 'https://www.cell.com/cancer-cell/fulltext/S1535-6108(02)00133-2',
-      description: '생물학자가 라디오를 고칠 수 있을까? 세포 사멸 연구에서 얻은 통찰을 재치있게 풀어낸 논문'
+      title: 'Attention Is All You Need',
+      authors: 'Vaswani, A. et al.',
+      year: 2017,
+      journal: 'NeurIPS',
+      url: 'https://arxiv.org/abs/1706.03762'
     },
     {
-      title: 'On the Reception and Detection of Pseudo-Profound Bullshit',
-      authors: 'Pennycook, G. et al.',
-      year: 2015,
-      journal: 'Judgment and Decision Making',
-      url: 'http://journal.sjdm.org/15/15923a/jdm15923a.pdf',
-      description: '심오한 척하는 헛소리를 어떻게 감지하는가? 인지 과학의 재미있는 연구'
+      title: 'ImageNet Classification with Deep Convolutional Neural Networks',
+      authors: 'Krizhevsky, A. et al.',
+      year: 2012,
+      journal: 'NeurIPS',
+      url: 'https://papers.nips.cc/paper/2012/hash/c399862d3b9d6b76c8436e924a68c45b-Abstract.html'
     },
     {
-      title: 'Pressures Produced When Penguins Pooh—Calculations on Avian Defaecation',
-      authors: 'Meyer-Rochow, V.B. & Gal, J.',
-      year: 2003,
-      journal: 'Polar Biology',
-      url: 'https://link.springer.com/article/10.1007/s00300-003-0563-3',
-      description: '펭귄의 배변 시 압력을 계산한 독특한 생물학 연구'
+      title: 'Generative Adversarial Networks',
+      authors: 'Goodfellow, I. et al.',
+      year: 2014,
+      journal: 'NeurIPS',
+      url: 'https://arxiv.org/abs/1406.2661'
     },
     {
-      title: 'Effects of Cocaine on Bee Behavior',
-      authors: 'Barron, A.B. et al.',
-      year: 2009,
-      journal: 'Journal of Experimental Biology',
-      url: 'https://journals.biologists.com/jeb/article/212/2/163/17817/Effects-of-cocaine-on-honey-bee-dance-behaviour',
-      description: '코카인이 꿀벌의 행동에 미치는 영향을 연구한 이그노벨상 수상 논문'
+      title: 'Deep Residual Learning for Image Recognition',
+      authors: 'He, K. et al.',
+      year: 2016,
+      journal: 'CVPR',
+      url: 'https://arxiv.org/abs/1512.03385'
     },
     {
-      title: 'Sword Swallowing and Its Side Effects',
-      authors: 'Witcombe, B. & Meyer, D.',
-      year: 2006,
-      journal: 'BMJ',
-      url: 'https://www.bmj.com/content/333/7582/1285',
-      description: '칼 삼키기의 부작용을 조사한 의학 연구로 이그노벨상 수상'
+      title: 'BERT: Pre-training of Deep Bidirectional Transformers',
+      authors: 'Devlin, J. et al.',
+      year: 2019,
+      journal: 'NAACL',
+      url: 'https://arxiv.org/abs/1810.04805'
     },
     {
-      title: 'The Unsuccessful Self-Treatment of a Case of "Writer\'s Block"',
-      authors: 'Upper, D.',
-      year: 1974,
-      journal: 'Journal of Applied Behavior Analysis',
-      url: 'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1311997/',
-      description: '빈 페이지만 있는 유명한 논문 - 작가의 블록을 표현'
-    },
-    {
-      title: 'Gorillas in Our Midst: Sustained Inattentional Blindness for Dynamic Events',
-      authors: 'Simons, D.J. & Chabris, C.F.',
-      year: 1999,
-      journal: 'Perception',
-      url: 'https://journals.sagepub.com/doi/10.1068/p281059',
-      description: '보이지 않는 고릴라 실험 - 우리가 무엇을 보지 못하는지에 대한 연구'
-    },
-    {
-      title: 'The Influence of Arbitrary Anchors on Willingness to Pay',
-      authors: 'Ariely, D. et al.',
-      year: 2003,
-      journal: 'Quarterly Journal of Economics',
-      url: 'https://academic.oup.com/qje/article/118/1/73/1917051',
-      description: '사회보장번호가 와인 가격에 영향을 미치는 이상한 행동경제학 실험'
-    },
-    {
-      title: 'Unicorns Are Real: A Multimethod Exploration of Idealists',
-      authors: 'Snyder, R.A. et al.',
-      year: 2018,
-      journal: 'Journal of Happiness Studies',
-      url: 'https://link.springer.com/article/10.1007/s10902-018-0049-1',
-      description: '유니콘은 진짜다? 이상주의자들의 특성을 연구한 심리학 논문'
-    },
-    {
-      title: 'An Acute Increase in Urinary Bladder Pressure Activates the Sympathoadrenal System',
-      authors: 'Tsuji, H. et al.',
-      year: 1991,
-      journal: 'Journal of Autonomic Nervous System',
-      url: 'https://pubmed.ncbi.nlm.nih.gov/1765618/',
-      description: '방광이 차면 교감신경이 활성화된다는 생리학 연구 - 참는게 과학적으로 증명됨'
+      title: 'Mastering the Game of Go with Deep Neural Networks',
+      authors: 'Silver, D. et al.',
+      year: 2016,
+      journal: 'Nature',
+      url: 'https://www.nature.com/articles/nature16961'
     }
   ];
 
@@ -2335,11 +2297,11 @@ const ResearchRecommendationAgent = () => {
         {showMetrics && (
           <div className="bg-white rounded-xl shadow-lg border p-6 mb-6">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">시스템 성능 및 특징</h3>
-            <div className="grid grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               <div className="bg-gradient-to-br from-emerald-600 to-emerald-700 p-4 rounded-lg shadow-lg">
                 <div className="flex items-center space-x-2 mb-2">
                   <Clock size={16} className="text-emerald-200" />
-                  <span className="text-base font-medium text-white">응답 시간</span>
+                  <span className="font-medium text-white">응답 시간</span>
                 </div>
                 <div className="text-2xl font-bold text-white">5초 미만</div>
                 <div className="text-sm text-emerald-100">중저사양 H/W 최적화</div>
@@ -2347,7 +2309,7 @@ const ResearchRecommendationAgent = () => {
               <div className="bg-gradient-to-br from-blue-600 to-blue-700 p-4 rounded-lg shadow-lg">
                 <div className="flex items-center space-x-2 mb-2">
                   <Target size={16} className="text-blue-200" />
-                  <span className="text-base font-medium text-white">추천 정확도</span>
+                  <span className="font-medium text-white">추천 정확도</span>
                 </div>
                 <div className="text-2xl font-bold text-white">90% 이상</div>
                 <div className="text-sm text-blue-100">의미적 연관성 기반</div>
@@ -2355,25 +2317,26 @@ const ResearchRecommendationAgent = () => {
               <div className="bg-gradient-to-br from-slate-700 to-slate-800 p-4 rounded-lg shadow-lg">
                 <div className="flex items-center space-x-2 mb-2">
                   <Brain size={16} className="text-slate-200" />
-                  <span className="text-base font-medium text-white">LLM 모델</span>
+                  <span className="font-medium text-white">LLM 모델</span>
                 </div>
                 <div className="text-lg font-bold text-white">소규모</div>
-                <div className="text-sm text-slate-100">Gemini-2.5-flash</div>
+                <div className="text-sm text-slate-100">Qwen3-14B 기반</div>
               </div>
               <div className="bg-gradient-to-br from-orange-600 to-orange-700 p-4 rounded-lg shadow-lg">
                 <div className="flex items-center space-x-2 mb-2">
                   <Star size={16} className="text-orange-200" />
-                  <span className="text-base font-medium text-white">추천 결과</span>
+                  <span className="font-medium text-white">추천 결과</span>
                 </div>
-                <div className="text-2xl font-bold text-white">50개+</div>
-                <div className="text-sm text-orange-100">실제 존재하는 논문</div>
+                <div className="text-2xl font-bold text-white">3-5건</div>
+                <div className="text-sm text-orange-100">논문 + 데이터셋</div>
               </div>
             </div>
           </div>
         )}
 
         {/* Main Content */}
-        <div className="space-y-6">
+        <div className="grid grid-cols-1 xl:grid-cols-4 gap-6">
+          <div className="xl:col-span-3 space-y-6">
             {/* Clarify Options */}
             {clarifyOptions && clarifyOptions.length > 0 && !isLoading && (
               <div className="bg-gradient-to-br from-blue-800 to-indigo-800 rounded-xl shadow-xl border border-blue-600 p-6">
@@ -2381,12 +2344,12 @@ const ResearchRecommendationAgent = () => {
                   <Brain size={20} className="mr-2" />
                   {clarifyQuestion}
                 </h3>
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                   {clarifyOptions.map((option, index) => (
                     <button
                       key={index}
                       onClick={() => handleChatSubmit(option)}
-                      className="bg-white/10 hover:bg-white/20 border border-white/20 hover:border-white/40 text-white px-6 py-4 rounded-lg text-base font-medium transition-all text-left hover:scale-105 hover:shadow-xl"
+                      className="bg-white/10 hover:bg-white/20 border border-white/20 hover:border-white/40 text-white px-6 py-4 rounded-lg font-medium transition-all text-left hover:scale-105 hover:shadow-xl"
                     >
                       <div className="flex items-center space-x-2">
                         <span className="w-6 h-6 rounded-full bg-blue-500 text-white flex items-center justify-center text-sm font-bold flex-shrink-0">
@@ -2402,183 +2365,11 @@ const ResearchRecommendationAgent = () => {
 
             {/* Empty State */}
             {recommendations.length === 0 && !isLoading && !clarifyOptions && (
-              <>
-                <div className="bg-gradient-to-br from-slate-800 to-blue-800 rounded-xl shadow-xl border border-slate-600 p-8 text-center">
-                  <Brain size={40} className="text-slate-400 mx-auto mb-4" />
-                  <h3 className="text-lg font-semibold text-white mb-2">하단에서 논문·연구데이터 정보를 입력해주세요</h3>
-                  <p className="text-slate-300">AI 채팅창이나 실시간 검색어를 클릭하여 추천을 받아보세요.</p>
-                </div>
-
-                {/* 오늘의 논문 & 실시간 트렌드 */}
-                <div className="grid grid-cols-2 gap-6 mt-6">
-                  {/* 오늘의 논문 - 왼쪽 */}
-                  <div className="bg-white rounded-xl shadow-xl border">
-                    <div className="p-4 border-b border-gray-200 bg-gradient-to-r from-emerald-600 to-emerald-700 rounded-t-xl">
-                      <div className="flex items-center space-x-2">
-                        <div className="text-yellow-300 fill-current">
-                          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-                          </svg>
-                        </div>
-                        <h3 className="font-semibold text-white text-sm">오늘의 논문</h3>
-                      </div>
-                      <p className="text-xs text-emerald-100 mt-0.5">김연구님을 위한 추천</p>
-                    </div>
-                  
-                    <div className="p-6">
-                      <div className="flex space-x-4">
-                        <a 
-                          href={todayPaper.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="block w-full max-w-[180px] bg-white rounded-lg flex-shrink-0 border-2 border-gray-200 shadow-sm p-4 flex flex-col justify-center items-center hover:border-blue-400 transition-colors" 
-                          style={{aspectRatio: '1/1.414'}}
-                        >
-                          <div className="text-center">
-                            <div className="text-[13px] font-bold text-gray-800 leading-tight mb-2" style={{fontFamily: 'Georgia, serif'}}>
-                              {todayPaper.title.split(':')[0]}
-                            </div>
-                            <div className="text-[11px] text-gray-600 mb-2" style={{fontFamily: 'Georgia, serif'}}>
-                              {todayPaper.title.includes(':') ? todayPaper.title.split(':')[1] : ''}
-                            </div>
-                            <div className="text-[10px] text-gray-500 font-medium mb-1" style={{fontFamily: 'Georgia, serif'}}>
-                              {todayPaper.journal}
-                            </div>
-                            <div className="text-[9px] text-gray-400" style={{fontFamily: 'Georgia, serif'}}>
-                              {todayPaper.year}
-                            </div>
-                          </div>
-                        </a>
-                        
-                        <div className="flex-1 min-w-0 flex flex-col justify-center">
-                          <div>
-                            <a 
-                              href={todayPaper.url}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="block group"
-                            >
-                              <h4 className="font-bold text-gray-900 text-base leading-tight mb-3 group-hover:text-blue-600 transition-colors">
-                                {todayPaper.title}
-                              </h4>
-                            </a>
-                            <div className="text-xs text-gray-600 mb-3" style={{fontFamily: 'Arial, sans-serif'}}>
-                              <p>{todayPaper.authors}</p>
-                              <p>{todayPaper.journal} • {todayPaper.year}</p>
-                            </div>
-                            
-                            <p className="text-xs text-gray-700 mb-3 leading-relaxed">
-                              {todayPaper.description}
-                            </p>
-                          </div>
-                          
-                          <div>
-                            <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-3 mb-3">
-                              <div className="flex items-start space-x-2">
-                                <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full mt-1.5 flex-shrink-0"></div>
-                                <p className="text-xs text-emerald-800 leading-relaxed">
-                                  <span className="font-medium">연구 적합성:</span> {todayPaper.reason}
-                                </p>
-                              </div>
-                            </div>
-                            
-                            <a 
-                              href={todayPaper.url} 
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="inline-flex items-center space-x-1 text-xs text-blue-600 hover:text-blue-800 font-medium"
-                            >
-                              <span>논문 보기</span>
-                              <ExternalLink size={11} />
-                            </a>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* 실시간 논문 트렌드 - 오른쪽 */}
-                  <div className="bg-white rounded-xl shadow-xl border">
-                    <div className="p-4 border-b border-gray-200 bg-gradient-to-r from-slate-700 to-slate-900 rounded-t-xl">
-                      <div className="flex items-center space-x-2">
-                        <TrendingUp size={18} className="text-slate-100" />
-                        <h3 className="font-semibold text-white text-sm">실시간 논문 트렌드</h3>
-                      </div>
-                      <p className="text-xs text-slate-200 mt-0.5">HOT 논문 TOP 5</p>
-                    </div>
-                    
-                    <div className="p-4">
-                      {trendingPapers.slice(0, 5).map((paper) => {
-                        const rankChange = paper.prevRank - paper.rank;
-                        return (
-                        <div 
-                          key={paper.id} 
-                          className="p-3 rounded-lg mb-2 last:mb-0 hover:bg-gray-50 transition-all duration-500"
-                        >
-                          <div className="flex items-start justify-between">
-                            <div className="flex items-start space-x-2 flex-1">
-                              <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold transition-all duration-300 ${
-                                paper.rank === 1 ? 'bg-gradient-to-r from-yellow-400 to-orange-500 text-white shadow-md transform scale-110' :
-                                paper.rank === 2 ? 'bg-gradient-to-r from-gray-300 to-gray-400 text-white' :
-                                'bg-gradient-to-r from-yellow-600 to-yellow-700 text-white'
-                              }`}>
-                                {paper.rank}
-                              </div>
-                              <div className="flex-1 min-w-0">
-                                <div className="flex items-center gap-1.5 mb-0.5 overflow-hidden">
-                                  <a 
-                                    href={paper.url}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="text-sm font-bold text-gray-900 hover:text-blue-600 leading-tight transition-colors flex-1 truncate"
-                                    title={paper.title}
-                                  >
-                                    {paper.title.length > 45 ? `${paper.title.substring(0, 45)}...` : paper.title}
-                                  </a>
-                                  <div className="flex items-center gap-1 flex-shrink-0">
-                                    {paper.trend === 'hot' && (
-                                      <span className="text-2xl animate-pulse">🔥</span>
-                                    )}
-                                    {paper.trend === 'up' && (
-                                      <ArrowUp size={20} className="text-emerald-500 font-bold" />
-                                    )}
-                                    {paper.trend === 'down' && (
-                                      <ArrowDown size={20} className="text-red-500 font-bold" />
-                                    )}
-                                    {paper.trend === 'hot' && (
-                                      <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-red-100 text-red-700 border border-red-300 whitespace-nowrap">
-                                        NEW
-                                      </span>
-                                    )}
-                                    {paper.rankChange > 0 && paper.trend === 'up' && (
-                                      <span className="text-lg font-black whitespace-nowrap text-emerald-600">
-                                        +{paper.rankChange}
-                                      </span>
-                                    )}
-                                    {paper.rankChange > 0 && paper.trend === 'down' && (
-                                      <span className="text-lg font-black whitespace-nowrap text-red-600">
-                                        -{paper.rankChange}
-                                      </span>
-                                    )}
-                                  </div>
-                                </div>
-                                <p className="text-[10px] text-gray-500 truncate">{paper.author}</p>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        );
-                      })}
-                    </div>
-                    
-                    <div className="p-2 bg-gray-50 rounded-b-xl">
-                      <div className="flex items-center justify-center space-x-2 text-xs text-gray-500">
-                        <div className="w-2 h-2 bg-orange-500 rounded-full animate-pulse"></div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </>
+              <div className="bg-gradient-to-br from-slate-800 to-blue-800 rounded-xl shadow-xl border border-slate-600 p-4 text-center">
+                <Brain size={24} className="text-slate-400 mx-auto mb-2" />
+                <h3 className="text-sm font-semibold text-white mb-1">하단에서 논문·연구데이터 정보를 입력해주세요</h3>
+                <p className="text-slate-300 text-xs">AI 채팅창이나 실시간 검색어를 클릭하여 추천을 받아보세요.</p>
+              </div>
             )}
 
             {/* Results Section */}
@@ -2617,25 +2408,25 @@ const ResearchRecommendationAgent = () => {
                   {paginatedRecommendations.map((rec, index) => (
                     <div key={rec.id} className="bg-slate-700 border border-slate-600 rounded-lg hover:shadow-xl hover:border-slate-500 transition-all">
                       <div className="p-5">
-                       <div className="flex items-start justify-between mb-4">
-                        <div className="flex items-start space-x-4 flex-1">
-                          <div className="flex items-center space-x-2 flex-shrink-0">
-                            <span className="text-xl font-bold text-slate-400">#{index + 1}</span>
-                            <div className={`p-2 rounded-lg ${rec.type === 'paper' ? 'bg-emerald-600' : 'bg-blue-600'}`}>
-                              {rec.type === 'paper' ? <FileText size={18} className="text-white" /> : <Database size={18} className="text-white" />}
+                        <div className="flex items-start justify-between mb-4">
+                          <div className="flex items-start space-x-4 flex-1">
+                            <div className="flex items-center space-x-2">
+                              <span className="text-xl font-bold text-slate-400">#{index + 1}</span>
+                              <div className={`p-2 rounded-lg ${rec.type === 'paper' ? 'bg-emerald-600' : 'bg-blue-600'}`}>
+                                {rec.type === 'paper' ? <FileText size={18} className="text-white" /> : <Database size={18} className="text-white" />}
+                              </div>
                             </div>
-                          </div>
-                          <div className="flex-1 min-w-0">
+                            <div className="flex-1">
                             <div className="flex items-start gap-2 mb-2">
-                            <a 
-                              href={rec.url}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="flex-1 min-w-0"
-                            >
-                              <h4 className="font-semibold text-white text-lg hover:text-blue-400 transition-colors break-words line-clamp-2">{rec.title}</h4>
-                            </a>
-                            <div className="flex items-center gap-2 flex-shrink-0">
+                              <a 
+                                href={rec.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="flex-1 min-w-0"
+                              >
+                                <h4 className="font-semibold text-white text-lg hover:text-blue-400 transition-colors break-words">{rec.title}</h4>
+                              </a>
+                              <div className="flex items-center gap-2 flex-shrink-0">
                                 <span className={`px-2 py-1 rounded text-xs font-bold whitespace-nowrap ${
                                   rec.type === 'paper' ? 'bg-emerald-500 text-white' : 'bg-purple-500 text-white'
                                 }`}>
@@ -2656,7 +2447,7 @@ const ResearchRecommendationAgent = () => {
                                 </span>
                               </div>
                             </div>
-                              <div className="flex items-center flex-wrap gap-4 text-sm text-slate-300 mb-3">
+                              <div className="flex items-center space-x-4 text-sm text-slate-300 mb-3">
                                 {rec.type === 'paper' ? (
                                   <>
                                     <span>{rec.journal}</span>
@@ -2705,17 +2496,17 @@ const ResearchRecommendationAgent = () => {
                           {rec.detailedReason && (
                             <div className="mb-3 space-y-2">
                               <div className="grid grid-cols-3 gap-2">
-                                <div className="bg-slate-700 p-1.5 md:p-2 rounded">
-                                  <p className="text-[10px] md:text-xs text-slate-400">BM25</p>
-                                  <p className="text-base md:text-lg font-bold text-emerald-300">{(rec.detailedReason.bm25Score * 100).toFixed(1)}%</p>
+                                <div className="bg-slate-700 p-2 rounded">
+                                  <p className="text-xs text-slate-400">BM25</p>
+                                  <p className="text-lg font-bold text-emerald-300">{(rec.detailedReason.bm25Score * 100).toFixed(1)}%</p>
                                 </div>
-                                <div className="bg-slate-700 p-1.5 md:p-2 rounded">
-                                  <p className="text-[10px] md:text-xs text-slate-400">Dense</p>
-                                  <p className="text-base md:text-lg font-bold text-blue-300">{(rec.detailedReason.denseEmbeddingScore * 100).toFixed(1)}%</p>
+                                <div className="bg-slate-700 p-2 rounded">
+                                  <p className="text-xs text-slate-400">Dense</p>
+                                  <p className="text-lg font-bold text-blue-300">{(rec.detailedReason.denseEmbeddingScore * 100).toFixed(1)}%</p>
                                 </div>
-                                <div className="bg-slate-700 p-1.5 md:p-2 rounded">
-                                  <p className="text-[10px] md:text-xs text-slate-400">Cross-Encoder</p>
-                                  <p className="text-base md:text-lg font-bold text-purple-300">{(rec.detailedReason.crossEncoderScore * 100).toFixed(1)}%</p>
+                                <div className="bg-slate-700 p-2 rounded">
+                                  <p className="text-xs text-slate-400">Cross-Encoder</p>
+                                  <p className="text-lg font-bold text-purple-300">{(rec.detailedReason.crossEncoderScore * 100).toFixed(1)}%</p>
                                 </div>
                               </div>
                               
@@ -2815,19 +2606,197 @@ const ResearchRecommendationAgent = () => {
                 </div>
               </div>
             )}
+          </div>
+
+          {/* Right Panel - 왼쪽/오른쪽 분할 */}
+          <div className="xl:col-span-1">
+            {!hasSearched && (
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* 오늘의 논문 - 왼쪽 */}
+                <div className="bg-white rounded-xl shadow-xl border">
+                <div className="p-3 border-b border-gray-200 bg-gradient-to-r from-emerald-600 to-emerald-700 rounded-t-xl">
+                  <div className="flex items-center space-x-2">
+                    <div className="text-yellow-300 fill-current">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                      </svg>
+                    </div>
+                    <h3 className="font-semibold text-white text-sm">오늘의 논문</h3>
+                  </div>
+                  <p className="text-xs text-emerald-100 mt-0.5">김연구님을 위한 추천</p>
+                </div>
+              
+              <div className="p-4">
+                <div className="flex space-x-4">
+                  <a 
+                    href={todayPaper.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block w-64 bg-white rounded-lg flex-shrink-0 border-2 border-gray-200 shadow-sm p-4 flex flex-col justify-center items-center hover:border-blue-400 transition-colors" 
+                    style={{aspectRatio: '1/1.414'}}
+                  >
+                    <div className="text-center">
+                      <div className="text-[13px] font-bold text-gray-800 leading-tight mb-2" style={{fontFamily: 'Georgia, serif'}}>
+                        {todayPaper.title.split(':')[0]}
+                      </div>
+                      <div className="text-[11px] text-gray-600 mb-2" style={{fontFamily: 'Georgia, serif'}}>
+                        {todayPaper.title.includes(':') ? todayPaper.title.split(':')[1] : ''}
+                      </div>
+                      <div className="text-[10px] text-gray-500 font-medium mb-1" style={{fontFamily: 'Georgia, serif'}}>
+                        {todayPaper.journal}
+                      </div>
+                      <div className="text-[9px] text-gray-400" style={{fontFamily: 'Georgia, serif'}}>
+                        {todayPaper.year}
+                      </div>
+                    </div>
+                  </a>
+                  
+                  <div className="flex-1 min-w-0 flex flex-col justify-center">
+                    <div>
+                      <a 
+                        href={todayPaper.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="block group"
+                      >
+                        <h4 className="font-bold text-gray-900 text-base leading-tight mb-3 group-hover:text-blue-600 transition-colors">
+                          {todayPaper.title}
+                        </h4>
+                      </a>
+                      <div className="text-xs text-gray-600 mb-3" style={{fontFamily: 'Arial, sans-serif'}}>
+                        <p>{todayPaper.authors}</p>
+                        <p>{todayPaper.journal} • {todayPaper.year}</p>
+                      </div>
+                      
+                      <p className="text-xs text-gray-700 mb-3 leading-relaxed">
+                        {todayPaper.description}
+                      </p>
+                    </div>
+                    
+                    <div>
+                      <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-3 mb-3">
+                        <div className="flex items-start space-x-2">
+                          <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full mt-1.5 flex-shrink-0"></div>
+                          <p className="text-xs text-emerald-800 leading-relaxed">
+                            <span className="font-medium">연구 적합성:</span> {todayPaper.reason}
+                          </p>
+                        </div>
+                      </div>
+                      
+                      <a 
+                        href={todayPaper.url} 
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center space-x-1 text-xs text-blue-600 hover:text-blue-800 font-medium"
+                      >
+                        <span>논문 보기</span>
+                        <ExternalLink size={11} />
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* 실시간 논문 트렌드 - 오른쪽 */}
+            <div className="bg-white rounded-xl shadow-xl border">
+              <div className="p-3 border-b border-gray-200 bg-gradient-to-r from-slate-700 to-slate-900 rounded-t-xl">
+                <div className="flex items-center space-x-2">
+                  <TrendingUp size={18} className="text-slate-100" />
+                  <h3 className="font-semibold text-white text-sm">실시간 논문 트렌드</h3>
+                </div>
+                <p className="text-xs text-slate-200 mt-0.5">HOT 논문 TOP 5</p>
+              </div>
+              
+              <div className="p-2">
+                {trendingPapers.slice(0, 5).map((paper) => {
+                  const rankChange = paper.prevRank - paper.rank;
+                  return (
+                  <div 
+                    key={paper.id} 
+                    className="p-2 rounded-lg mb-1.5 last:mb-0 hover:bg-gray-50 transition-all duration-500"
+                  >
+                    <div className="flex items-start justify-between">
+                      <div className="flex items-start space-x-2 flex-1">
+                        <div className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold transition-all duration-300 ${
+                          paper.rank === 1 ? 'bg-gradient-to-r from-yellow-400 to-orange-500 text-white shadow-md transform scale-110' :
+                          paper.rank === 2 ? 'bg-gradient-to-r from-gray-300 to-gray-400 text-white' :
+                          'bg-gradient-to-r from-yellow-600 to-yellow-700 text-white'
+                        }`}>
+                          {paper.rank}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-1.5 mb-0.5 overflow-hidden">
+                            <a 
+                              href={paper.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-sm font-bold text-gray-900 hover:text-blue-600 leading-tight transition-colors flex-1 truncate"
+                              title={paper.title}
+                            >
+                              {paper.title.length > 45 ? `${paper.title.substring(0, 45)}...` : paper.title}
+                            </a>
+                            <div className="flex items-center gap-1 flex-shrink-0">
+                              {paper.trend === 'hot' && (
+                                <span className="text-2xl animate-pulse">🔥</span>
+                              )}
+                              {paper.trend === 'up' && (
+                                <ArrowUp size={20} className="text-emerald-500 font-bold" />
+                              )}
+                              {paper.trend === 'down' && (
+                                <ArrowDown size={20} className="text-red-500 font-bold" />
+                              )}
+                              {paper.trend === 'hot' && (
+                                <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-red-100 text-red-700 border border-red-300 whitespace-nowrap">
+                                  NEW
+                                </span>
+                              )}
+                              {paper.rankChange > 0 && paper.trend === 'up' && (
+                                <span className="text-lg font-black whitespace-nowrap text-emerald-600">
+                                  +{paper.rankChange}
+                                </span>
+                              )}
+                              {paper.rankChange > 0 && paper.trend === 'down' && (
+                                <span className="text-lg font-black whitespace-nowrap text-red-600">
+                                  -{paper.rankChange}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                          <p className="text-[10px] text-gray-500 truncate">{paper.author}</p>
+                        </div>
+                      </div>
+                      
+                      <div className="ml-2">
+                      </div>
+                    </div>
+                  </div>
+                  );
+                })}
+              </div>
+              
+              <div className="p-2 bg-gray-50 rounded-b-xl">
+                <div className="flex items-center justify-center space-x-2 text-xs text-gray-500">
+                  <div className="w-2 h-2 bg-orange-500 rounded-full animate-pulse"></div>
+                </div>
+               </div>
+             </div>
+              </div>
+            )}
+          </div>
         </div>
         
         {/* 재미있는 논문 추천 롤링 배너 */}
         {!hasSearched && (
           <div className="mt-8 bg-gradient-to-r from-sky-50 via-blue-50 to-cyan-50 rounded-xl shadow-xl border border-sky-200 overflow-hidden">
-            <div className="p-6 border-b border-sky-200/50 bg-white/50">
+            <div className="p-4 border-b border-sky-200/50 bg-white/50">
               <div className="flex items-center space-x-2">
-                <h3 className="font-semibold text-gray-800 text-base">재미있는 논문 추천</h3>
+                <h3 className="font-semibold text-gray-800">재미있는 논문 추천</h3>
               </div>
-              <p className="text-sm text-gray-600 mt-1">특이하고 재미있는 주제의 연구들</p>
+              <p className="text-xs text-gray-600 mt-1">특이하고 재미있는 주제의 연구들</p>
             </div>
             
-            <div className="relative overflow-hidden py-8 bg-white/20">
+            <div className="relative overflow-hidden py-6 bg-white/20">
               <div className="flex animate-scroll-left whitespace-nowrap">
                 {funPapers.concat(funPapers).map((paper, index) => (
                   <a
@@ -2835,17 +2804,12 @@ const ResearchRecommendationAgent = () => {
                     href={paper.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-block mx-4 bg-white rounded-lg p-5 shadow-md hover:shadow-xl transition-all hover:scale-105 w-80 flex-shrink-0"
+                    className="inline-block mx-4 bg-white rounded-lg p-4 shadow-md hover:shadow-xl transition-all hover:scale-105 w-80 flex-shrink-0"
                   >
                     <div className="space-y-2">
                       <h4 className="font-bold text-gray-900 text-base leading-tight line-clamp-2" style={{fontFamily: 'Georgia, serif'}}>
                         {paper.title}
                       </h4>
-                      {paper.description && (
-                        <p className="text-sm text-gray-600 line-clamp-2" style={{fontFamily: 'Georgia, serif'}}>
-                          {paper.description}
-                        </p>
-                      )}
                       <p className="text-sm text-gray-600" style={{fontFamily: 'Georgia, serif'}}>
                         {paper.authors}
                       </p>
