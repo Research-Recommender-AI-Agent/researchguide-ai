@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Database, FileText, ExternalLink, BarChart3, ChevronDown, ChevronUp, Target, TrendingUp, ArrowUp, ArrowDown, Minus, Star, Brain, Clock } from 'lucide-react';
+import { Database, FileText, ExternalLink, BarChart3, ChevronDown, ChevronUp, Target, TrendingUp, ArrowUp, ArrowDown, Minus, Star, Brain, Clock, Sparkles, X } from 'lucide-react';
 import Header from '@/components/Header';
 import ChatModal from '@/components/ChatModal';
 import { supabase } from '@/integrations/supabase/client';
@@ -2365,12 +2365,20 @@ const ResearchRecommendationAgent = () => {
     }
   };
 
+  const handleLogoClick = () => {
+    setRecommendations([]);
+    setClarifyQuestion(null);
+    setClarifyOptions([]);
+    setHasSearched(false);
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 pb-8">
       <Header 
         responseTime={responseTime}
         showMetrics={showMetrics}
         onToggleMetrics={() => setShowMetrics(!showMetrics)}
+        onLogoClick={handleLogoClick}
       />
 
       <div className="max-w-7xl mx-auto px-6 py-8">
@@ -2497,13 +2505,6 @@ const ResearchRecommendationAgent = () => {
                     </div>
                   </div>
                 </div>
-                
-                <div className="bg-purple-500/10 border border-purple-500/30 rounded-lg p-3">
-                  <p className="text-xs text-purple-200 text-center">
-                    💡 <span className="font-semibold">Agent-level AI</span>는 단순 검색이 아닌, 
-                    <span className="font-semibold"> 연구 맥락을 이해하고 능동적으로 지원</span>하는 시스템입니다
-                  </p>
-                </div>
               </div>
             )}
 
@@ -2536,6 +2537,52 @@ const ResearchRecommendationAgent = () => {
                         {filter.label} ({filter.count})
                       </button>
                     ))}
+                  </div>
+                </div>
+
+                {/* 관련 데이터셋 섹션 */}
+                <div className="mb-6 bg-slate-700/50 rounded-lg border border-slate-600 p-4">
+                  <h4 className="text-base font-semibold mb-3 flex items-center gap-2 text-white">
+                    <Database className="w-4 h-4 text-blue-400" />
+                    관련 데이터셋
+                  </h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <a 
+                      href="https://paperswithcode.com/datasets" 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="p-3 bg-slate-600/50 rounded-lg hover:bg-slate-600 transition-colors border border-slate-500"
+                    >
+                      <h5 className="font-semibold text-sm mb-1 text-white">Papers with Code Datasets</h5>
+                      <p className="text-xs text-slate-300">연구 논문과 연결된 실제 데이터셋 모음</p>
+                    </a>
+                    <a 
+                      href="https://datasetsearch.research.google.com/" 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="p-3 bg-slate-600/50 rounded-lg hover:bg-slate-600 transition-colors border border-slate-500"
+                    >
+                      <h5 className="font-semibold text-sm mb-1 text-white">Google Dataset Search</h5>
+                      <p className="text-xs text-slate-300">구글의 데이터셋 검색 엔진</p>
+                    </a>
+                    <a 
+                      href="https://www.kaggle.com/datasets" 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="p-3 bg-slate-600/50 rounded-lg hover:bg-slate-600 transition-colors border border-slate-500"
+                    >
+                      <h5 className="font-semibold text-sm mb-1 text-white">Kaggle Datasets</h5>
+                      <p className="text-xs text-slate-300">실전 데이터 과학 데이터셋 플랫폼</p>
+                    </a>
+                    <a 
+                      href="https://huggingface.co/datasets" 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="p-3 bg-slate-600/50 rounded-lg hover:bg-slate-600 transition-colors border border-slate-500"
+                    >
+                      <h5 className="font-semibold text-sm mb-1 text-white">Hugging Face Datasets</h5>
+                      <p className="text-xs text-slate-300">머신러닝 및 NLP 데이터셋</p>
+                    </a>
                   </div>
                 </div>
 
@@ -2982,49 +3029,60 @@ const ResearchRecommendationAgent = () => {
         }}
       />
       
-      {/* Agent AI 제안 패널 */}
+      {/* Agent AI 제안 버튼/패널 */}
       {user && agentSuggestions.length > 0 && (
-        <div className="fixed bottom-24 right-24 w-80 bg-gradient-to-br from-purple-600 to-blue-600 text-white rounded-2xl shadow-2xl p-4 animate-fade-in z-40">
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center gap-2">
-              <Brain size={20} className="animate-pulse" />
-              <h3 className="font-bold text-sm">AI Agent 제안</h3>
-              <span className="text-xs bg-white/20 px-2 py-0.5 rounded-full">
-                {researchPhase}
-              </span>
-            </div>
-            <button 
-              onClick={() => setShowAgentPanel(!showAgentPanel)}
-              className="text-white/80 hover:text-white"
-            >
-              {showAgentPanel ? '−' : '+'}
-            </button>
-          </div>
-          
-          {showAgentPanel && (
-            <div className="space-y-2 animate-accordion-down">
-              <p className="text-xs opacity-90 mb-2">
-                연구 패턴을 분석하여 다음 단계를 제안합니다:
-              </p>
-              {agentSuggestions.map((suggestion, idx) => (
-                <button
-                  key={idx}
-                  onClick={() => {
-                    setChatInput(suggestion);
-                    setIsChatOpen(true);
-                    setTimeout(() => handleChatSubmit(), 100);
-                  }}
-                  className="w-full text-left px-3 py-2 bg-white/10 hover:bg-white/20 rounded-lg text-xs transition-all backdrop-blur-sm border border-white/20"
+        <div className={`fixed bottom-24 right-6 z-40 transition-all duration-300 ${showAgentPanel ? 'w-80' : 'w-auto'}`}>
+          {showAgentPanel ? (
+            <div className="bg-gradient-to-br from-purple-600 to-blue-600 text-white rounded-2xl shadow-2xl p-4 animate-fade-in">
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center gap-2">
+                  <Sparkles size={20} className="text-white" />
+                  <h3 className="font-bold text-sm">AI Agent 제안</h3>
+                  <span className="text-xs bg-white/20 px-2 py-0.5 rounded-full">
+                    {researchPhase}
+                  </span>
+                </div>
+                <button 
+                  onClick={() => setShowAgentPanel(false)}
+                  className="text-white/80 hover:text-white"
                 >
-                  💡 {suggestion}
+                  <X size={18} />
                 </button>
-              ))}
-              <div className="mt-3 pt-3 border-t border-white/20">
-                <p className="text-xs opacity-75">
-                  <span className="font-semibold">자율적 학습:</span> {bookmarkedPapers.length}개 논문 분석 완료
+              </div>
+              
+              <div className="space-y-2">
+                <p className="text-xs opacity-90 mb-2">
+                  연구 패턴을 분석하여 다음 단계를 제안합니다:
                 </p>
+                {agentSuggestions.map((suggestion, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => {
+                      setChatInput(suggestion);
+                      setIsChatOpen(true);
+                      setShowAgentPanel(false);
+                      setTimeout(() => handleChatSubmit(), 100);
+                    }}
+                    className="w-full text-left px-3 py-2 bg-white/10 hover:bg-white/20 rounded-lg text-xs transition-all backdrop-blur-sm border border-white/20"
+                  >
+                    💡 {suggestion}
+                  </button>
+                ))}
+                <div className="mt-3 pt-3 border-t border-white/20">
+                  <p className="text-xs opacity-75">
+                    <span className="font-semibold">자율적 학습:</span> {bookmarkedPapers.length}개 논문 분석 완료
+                  </p>
+                </div>
               </div>
             </div>
+          ) : (
+            <button
+              onClick={() => setShowAgentPanel(true)}
+              className="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-4 py-3 rounded-full shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-2 text-sm font-semibold"
+            >
+              <Sparkles className="w-4 h-4" />
+              <span>AI Agent 제안</span>
+            </button>
           )}
         </div>
       )}

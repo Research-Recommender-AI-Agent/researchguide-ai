@@ -8,9 +8,10 @@ interface HeaderProps {
   responseTime: number | null;
   showMetrics: boolean;
   onToggleMetrics: () => void;
+  onLogoClick?: () => void;
 }
 
-const Header: React.FC<HeaderProps> = ({ responseTime, showMetrics, onToggleMetrics }) => {
+const Header: React.FC<HeaderProps> = ({ responseTime, showMetrics, onToggleMetrics, onLogoClick }) => {
   const [user, setUser] = useState<any>(null);
   const [profile, setProfile] = useState<any>(null);
   const navigate = useNavigate();
@@ -71,7 +72,10 @@ const Header: React.FC<HeaderProps> = ({ responseTime, showMetrics, onToggleMetr
       <div className="max-w-7xl mx-auto px-6 py-4">
         <div className="flex items-center justify-between">
           <button 
-            onClick={() => navigate('/')}
+            onClick={() => {
+              if (onLogoClick) onLogoClick();
+              navigate('/');
+            }}
             className="flex items-center space-x-4 hover:opacity-80 transition-opacity"
           >
             <div className="p-2 bg-gradient-to-r from-slate-700 to-blue-800 rounded-lg shadow-lg">
@@ -80,7 +84,7 @@ const Header: React.FC<HeaderProps> = ({ responseTime, showMetrics, onToggleMetr
             <div>
               <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
                 연구의 등불
-                <span className="text-xs font-semibold px-2 py-1 bg-gradient-to-r from-purple-500 to-blue-500 text-white rounded-full animate-pulse">
+                <span className="text-xs font-semibold px-2 py-1 bg-gradient-to-r from-purple-500 to-blue-500 text-white rounded-full">
                   AI Agent
                 </span>
               </h1>
