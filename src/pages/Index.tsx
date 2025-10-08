@@ -227,8 +227,11 @@ const ResearchRecommendationAgent = () => {
   const [funPapers] = useState(getFunPapers());
 
   // 5분마다 실시간 논문 트렌드 업데이트
+  const [trendingKey, setTrendingKey] = useState(0);
+  
   useEffect(() => {
     const interval = setInterval(() => {
+      setTrendingKey(prev => prev + 1);
       setTrendingPapers(generateTrendingPapers());
     }, 5 * 60 * 1000); // 5분
 
@@ -2739,12 +2742,13 @@ const ResearchRecommendationAgent = () => {
               </div>
               
               <div className="p-2">
-                {trendingPapers.slice(0, 5).map((paper) => {
+                {trendingPapers.slice(0, 5).map((paper, index) => {
                   const rankChange = paper.prevRank - paper.rank;
                   return (
                   <div 
-                    key={paper.id} 
-                    className="p-2 rounded-lg mb-1.5 last:mb-0 hover:bg-gray-50 transition-all duration-500"
+                    key={`${trendingKey}-${paper.id}`}
+                    className="p-2 rounded-lg mb-1.5 last:mb-0 hover:bg-gray-50 transition-all duration-500 animate-fade-in"
+                    style={{ animationDelay: `${index * 100}ms` }}
                   >
                     <div className="flex items-start justify-between">
                       <div className="flex items-start space-x-2 flex-1">

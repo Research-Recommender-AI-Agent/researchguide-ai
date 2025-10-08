@@ -70,14 +70,13 @@ const CategoryItem: React.FC<{
     <div className="mb-2">
       <button 
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full text-left px-3 py-2 rounded-lg hover:bg-sky-100 hover:text-black transition-colors text-sm font-medium flex items-center justify-between"
+        className="w-full text-left px-3 py-2 rounded-lg hover:bg-sky-100 hover:text-black transition-colors text-sm font-medium"
       >
-        <span>{translatedKeyword} ({papers.length})</span>
-        <span className="text-xs">{isOpen ? '▼' : '▶'}</span>
+        {translatedKeyword} ({papers.length})
       </button>
       
       {isOpen && (
-        <div className="ml-4 mt-1 space-y-1">
+        <div className="ml-4 mt-1 space-y-1 animate-accordion-down">
           {papers.map((paper, pidx) => (
             <a
               key={pidx}
@@ -269,6 +268,10 @@ const Library = () => {
           fontWeight: 'bold',
           minWidth: 180,
           boxShadow: '0 10px 25px rgba(102, 126, 234, 0.3)',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          textAlign: 'center',
         },
       });
 
@@ -287,7 +290,7 @@ const Library = () => {
           id: paperNodeId,
           data: {
             label: (
-              <div className="text-left">
+              <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', textAlign: 'center', height: '100%' }}>
                 <div className="font-bold text-sm mb-2 line-clamp-2 leading-tight">{paper.title}</div>
                 <div className="text-xs opacity-90 mb-1">{paper.authors?.[0] || 'Unknown'}</div>
                 <div className="text-xs opacity-75">{paper.year}</div>
@@ -305,6 +308,9 @@ const Library = () => {
             cursor: 'pointer',
             boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
             transition: 'all 0.3s ease',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
           },
           className: 'hover:border-sky-300 hover:shadow-lg',
         });
@@ -360,7 +366,7 @@ const Library = () => {
               variant="ghost"
               size="sm"
               onClick={() => navigate('/')}
-              className="mb-4 w-full justify-start"
+              className="mb-4 w-full justify-start hover:bg-sky-100 hover:text-black"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
               돌아가기

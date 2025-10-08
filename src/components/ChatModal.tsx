@@ -84,10 +84,12 @@ const ChatModal: React.FC<ChatModalProps> = ({
   };
 
   const [trendingKeywords, setTrendingKeywords] = React.useState(generateKeywords());
+  const [keywordKey, setKeywordKey] = React.useState(0);
 
   // 5분마다 실시간 검색어 업데이트
   React.useEffect(() => {
     const interval = setInterval(() => {
+      setKeywordKey(prev => prev + 1);
       setTrendingKeywords(generateKeywords());
     }, 5 * 60 * 1000); // 5분
 
@@ -150,7 +152,7 @@ const ChatModal: React.FC<ChatModalProps> = ({
             <div className="space-y-2">
               {trendingKeywords.map((item, index) => (
                 <button
-                  key={index}
+                  key={`${keywordKey}-${index}`}
                   onClick={() => {
                     if (onTrendingKeywordClick) {
                       onTrendingKeywordClick(item.text);
@@ -159,7 +161,8 @@ const ChatModal: React.FC<ChatModalProps> = ({
                       setTimeout(() => onSubmit(), 100);
                     }
                   }}
-                  className="w-full px-3 py-2 bg-white text-gray-600 rounded-lg text-xs hover:bg-gray-200 hover:text-gray-800 transition-colors flex items-center justify-between border border-gray-200 group"
+                  className="w-full px-3 py-2 bg-white text-gray-600 rounded-lg text-xs hover:bg-gray-200 hover:text-gray-800 transition-colors flex items-center justify-between border border-gray-200 group animate-fade-in"
+                  style={{ animationDelay: `${index * 100}ms` }}
                 >
                   <div className="flex items-center space-x-2">
                     <span className="font-bold text-blue-600 text-sm">{index + 1}</span>
