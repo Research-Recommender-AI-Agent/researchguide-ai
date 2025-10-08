@@ -1,5 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Database, FileText, ExternalLink, BarChart3, ChevronDown, ChevronUp, Brain, Clock, Target, Send, TrendingUp, ArrowUp, ArrowDown, Minus, Flame, Star } from 'lucide-react';
+import { Database, FileText, ExternalLink, BarChart3, ChevronDown, ChevronUp, Target, TrendingUp, ArrowUp, ArrowDown, Minus, Star, Brain, Clock } from 'lucide-react';
+import Header from '@/components/Header';
+import ChatModal from '@/components/ChatModal';
+
+interface ChatMessage {
+  type: 'user' | 'agent';
+  message: string;
+  time: string;
+}
 
 const ResearchRecommendationAgent = () => {
   const [recommendations, setRecommendations] = useState([]);
@@ -11,7 +19,7 @@ const ResearchRecommendationAgent = () => {
   const [chatInput, setChatInput] = useState('');
   const [isChatOpen, setIsChatOpen] = useState(false);
 
-  const [chatMessages, setChatMessages] = useState([
+  const [chatMessages, setChatMessages] = useState<ChatMessage[]>([
     { 
       type: 'agent', 
       message: '김연구님 안녕하세요! 궁금한 내용을 설명해주시면 논문이나 데이터를 추천해드릴게요', 
@@ -36,6 +44,13 @@ const ResearchRecommendationAgent = () => {
       score: 0.94,
       level: '가장 추천',
       reason: '입력된 연구데이터와 높은 의미적 연관성을 보입니다.',
+      detailedReason: {
+        semanticSimilarity: 0.94,
+        keywordMatch: 0.89,
+        citationRelevance: 0.92,
+        recencyScore: 0.88,
+        explanation: '귀하의 연구 데이터와 94%의 의미적 유사도를 보이며, 핵심 키워드 매칭률 89%를 기록했습니다. 특히 딥러닝 기반 기후 분석 방법론이 귀하의 연구 방향과 완벽하게 일치하며, 최근 인용 빈도(127회)가 높아 학계에서 주목받고 있는 연구입니다.'
+      },
       url: 'https://scienceon.kisti.re.kr/paper/12345',
       journal: 'Nature Climate Change',
       authors: ['Smith, J.', 'Kim, H.S.'],
@@ -51,6 +66,13 @@ const ResearchRecommendationAgent = () => {
       score: 0.91,
       level: '가장 추천',
       reason: '입력 데이터와 주제적 연관성이 매우 높습니다.',
+      detailedReason: {
+        semanticSimilarity: 0.91,
+        keywordMatch: 0.87,
+        citationRelevance: 0.85,
+        recencyScore: 0.95,
+        explanation: '귀하의 연구 주제와 91%의 의미적 연관성을 가진 최신 데이터셋입니다. 키워드 매칭률 87%로 연구에 직접 활용 가능한 데이터를 포함하고 있으며, 2024년 최신 데이터로 실시간 업데이트되어 연구 신뢰도를 크게 높일 수 있습니다.'
+      },
       url: 'https://dataon.kisti.re.kr/dataset/67890',
       publisher: 'World Meteorological Organization',
       year: 2024,
@@ -98,7 +120,7 @@ const ResearchRecommendationAgent = () => {
   const handleChatSubmit = () => {
     if (!chatInput.trim()) return;
     
-    const userMessage = {
+    const userMessage: ChatMessage = {
       type: 'user',
       message: chatInput,
       time: new Date().toLocaleTimeString()
@@ -109,7 +131,7 @@ const ResearchRecommendationAgent = () => {
     setChatInput('');
     
     setTimeout(() => {
-      const agentResponse = {
+      const agentResponse: ChatMessage = {
         type: 'agent',
         message: `"${searchQuery}"와 관련된 논문을 검색해드리겠습니다!`,
         time: new Date().toLocaleTimeString()
@@ -145,6 +167,13 @@ const ResearchRecommendationAgent = () => {
           score: 0.94,
           level: '가장 추천',
           reason: '검색하신 기후변화 주제와 완벽하게 일치하며, 최신 딥러닝 기법을 적용한 실용적인 연구입니다. 특히 한국의 기후 데이터도 포함되어 있어 국내 연구에 직접 활용 가능합니다.',
+          detailedReason: {
+            semanticSimilarity: 0.94,
+            keywordMatch: 0.91,
+            citationRelevance: 0.92,
+            recencyScore: 0.88,
+            explanation: '입력하신 "기후변화" 키워드와 94%의 의미적 유사도를 달성했으며, 키워드 매칭률 91%로 매우 높은 관련성을 보입니다. 위성 데이터 활용 방법론이 귀하의 연구와 직접적으로 연결되며, 최근 1년간 127회 인용으로 학계의 높은 주목을 받고 있습니다.'
+          },
           url: 'https://scienceon.kisti.re.kr/paper/12345',
           journal: 'Nature Climate Change',
           authors: ['Smith, J.', 'Kim, H.S.'],
@@ -160,6 +189,13 @@ const ResearchRecommendationAgent = () => {
           score: 0.91,
           level: '가장 추천',
           reason: '기후변화 연구에 필수적인 고품질 데이터셋입니다. 실시간으로 업데이트되며 API를 통해 쉽게 접근할 수 있어 연구 효율성을 크게 높일 수 있습니다.',
+          detailedReason: {
+            semanticSimilarity: 0.91,
+            keywordMatch: 0.89,
+            citationRelevance: 0.88,
+            recencyScore: 0.96,
+            explanation: '귀하의 검색어와 91%의 의미 일치도를 보이며, 키워드 매칭 89%로 연구 목적에 최적화된 데이터입니다. 2024년 최신 버전으로 실시간 API 제공(96% 최신성 점수)되어 즉시 연구에 활용 가능합니다. 127GB 규모의 포괄적 데이터로 장기 연구에 적합합니다.'
+          },
           url: 'https://dataon.kisti.re.kr/dataset/67890',
           publisher: 'World Meteorological Organization',
           year: 2024,
@@ -175,6 +211,13 @@ const ResearchRecommendationAgent = () => {
           score: 0.87,
           level: '추천',
           reason: '환경과 기후 분야의 교차점에서 머신러닝 활용법을 제시합니다. 실제 프로젝트 적용 사례가 풍부하여 실무에 도움이 됩니다.',
+          detailedReason: {
+            semanticSimilarity: 0.87,
+            keywordMatch: 0.85,
+            citationRelevance: 0.84,
+            recencyScore: 0.92,
+            explanation: '귀하의 연구와 87%의 의미적 연관성을 가지며, 키워드 매칭 85%로 보완적 연구 자료로 활용 가능합니다. 환경 영향 평가에 대한 실무 적용 사례가 풍부하여 실질적 연구 방법론을 제공하며, 2024년 최신 연구로 최근 트렌드를 반영합니다.'
+          },
           url: 'https://scienceon.kisti.re.kr/paper/33333',
           journal: 'Environmental Science & Technology',
           authors: ['Lee, M.J.', 'Park, S.H.'],
@@ -362,37 +405,12 @@ const ResearchRecommendationAgent = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-32">
-      {/* Header */}
-      <div className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <div className="p-2 bg-gradient-to-r from-slate-700 to-blue-800 rounded-lg shadow-lg">
-                <Flame className="text-white" size={24} />
-              </div>
-              <div>
-                <h1 className="text-2xl font-bold text-gray-900">연구의 등불</h1>
-              </div>
-            </div>
-            <div className="flex items-center space-x-6 text-sm text-gray-500">
-              {responseTime && (
-                <div className="flex items-center space-x-1 text-emerald-600">
-                  <Clock size={16} />
-                  <span>{(responseTime / 1000).toFixed(1)}초</span>
-                </div>
-              )}
-              <button
-                onClick={() => setShowMetrics(!showMetrics)}
-                className="flex items-center space-x-1 text-blue-600 hover:text-blue-800 transition-colors"
-              >
-                <BarChart3 size={16} />
-                <span>성능 지표</span>
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
+    <div className="min-h-screen bg-gray-50 pb-8">
+      <Header 
+        responseTime={responseTime}
+        showMetrics={showMetrics}
+        onToggleMetrics={() => setShowMetrics(!showMetrics)}
+      />
 
       <div className="max-w-7xl mx-auto px-6 py-8">
         {/* Performance Metrics */}
@@ -539,11 +557,37 @@ const ResearchRecommendationAgent = () => {
 
                         {/* 추천 사유 섹션 - 항상 표시 */}
                         <div className="mb-4 p-4 bg-slate-600 rounded-lg border-l-4 border-blue-400">
-                          <h5 className="font-medium text-blue-300 mb-2 flex items-center">
+                          <h5 className="font-medium text-blue-300 mb-3 flex items-center">
                             <Target size={16} className="mr-2" />
                             추천 사유
                           </h5>
-                          <p className="text-slate-200 text-sm leading-relaxed">{rec.reason}</p>
+                          
+                          {/* 수치적 지표 */}
+                          {rec.detailedReason && (
+                            <div className="mb-3 grid grid-cols-2 gap-2">
+                              <div className="bg-slate-700 p-2 rounded">
+                                <p className="text-xs text-slate-400">의미적 유사도</p>
+                                <p className="text-lg font-bold text-blue-300">{(rec.detailedReason.semanticSimilarity * 100).toFixed(1)}%</p>
+                              </div>
+                              <div className="bg-slate-700 p-2 rounded">
+                                <p className="text-xs text-slate-400">키워드 매칭률</p>
+                                <p className="text-lg font-bold text-emerald-300">{(rec.detailedReason.keywordMatch * 100).toFixed(1)}%</p>
+                              </div>
+                              <div className="bg-slate-700 p-2 rounded">
+                                <p className="text-xs text-slate-400">인용 관련성</p>
+                                <p className="text-lg font-bold text-purple-300">{(rec.detailedReason.citationRelevance * 100).toFixed(1)}%</p>
+                              </div>
+                              <div className="bg-slate-700 p-2 rounded">
+                                <p className="text-xs text-slate-400">최신성 점수</p>
+                                <p className="text-lg font-bold text-orange-300">{(rec.detailedReason.recencyScore * 100).toFixed(1)}%</p>
+                              </div>
+                            </div>
+                          )}
+                          
+                          {/* 상세 설명 */}
+                          <p className="text-slate-200 text-sm leading-relaxed">
+                            {rec.detailedReason?.explanation || rec.reason}
+                          </p>
                         </div>
 
                         <div className="flex items-center justify-between">
@@ -729,81 +773,15 @@ const ResearchRecommendationAgent = () => {
         </div>
       </div>
 
-      {/* 하단 고정 AI 채팅 */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-xl z-50">
-        <div className="max-w-7xl mx-auto px-6 py-4">
-          {chatMessages.length > 1 && (
-            <div className="mb-4 max-h-32 overflow-y-auto">
-              <div className="space-y-2">
-                {chatMessages.slice(-3).map((msg, index) => (
-                  <div key={index} className={`flex ${msg.type === 'user' ? 'justify-end' : 'justify-start'}`}>
-                    <div className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
-                      msg.type === 'user' 
-                        ? 'bg-blue-600 text-white' 
-                        : 'bg-gray-100 text-gray-800'
-                    }`}>
-                      <p className="text-sm">{msg.message}</p>
-                      <p className="text-xs opacity-70 mt-1">{msg.time}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          <div className="flex items-center space-x-4">
-            <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
-                <Brain className="text-white" size={20} />
-              </div>
-              <div className="hidden sm:block">
-                <p className="text-sm font-medium text-gray-800">AI 연구 어시스턴트</p>
-                <p className="text-xs text-gray-500">논문 추천 전문가</p>
-              </div>
-            </div>
-            
-            <div className="flex-1 flex items-center space-x-2">
-              <div className="flex-1 relative">
-                <input
-                  type="text"
-                  value={chatInput}
-                  onChange={(e) => setChatInput(e.target.value)}
-                  onKeyPress={(e) => e.key === 'Enter' && handleChatSubmit()}
-                  className="w-full px-4 py-3 bg-gray-50 border border-gray-200 text-gray-800 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white placeholder-gray-500"
-                  placeholder="궁금한 연구 주제를 입력해주세요..."
-                />
-              </div>
-              <button
-                onClick={handleChatSubmit}
-                disabled={!chatInput.trim()}
-                className="p-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-full hover:from-blue-700 hover:to-indigo-700 disabled:from-gray-400 disabled:to-gray-500 disabled:cursor-not-allowed transition-all shadow-lg"
-              >
-                <Send size={18} />
-              </button>
-            </div>
-          </div>
-          
-          <div className="mt-3 flex flex-wrap items-center gap-2">
-            <span className="text-sm font-medium text-gray-700 mr-2">실시간 검색어 순위</span>
-            {[
-              '기후변화 연구',
-              '인공지능 최신 동향',
-              '바이오 의료 기술',
-              '양자컴퓨팅',
-              '환경 모니터링'
-            ].map((topic, index) => (
-              <button
-                key={index}
-                onClick={() => setChatInput(topic)}
-                className="px-3 py-1 bg-gray-100 text-gray-600 rounded-full text-sm hover:bg-gray-200 hover:text-gray-800 transition-colors flex items-center space-x-1"
-              >
-                <span className="text-xs font-bold text-blue-600">{index + 1}</span>
-                <span>{topic}</span>
-              </button>
-            ))}
-          </div>
-        </div>
-      </div>
+      {/* Chat Modal */}
+      <ChatModal
+        isOpen={isChatOpen}
+        onToggle={() => setIsChatOpen(!isChatOpen)}
+        chatMessages={chatMessages}
+        chatInput={chatInput}
+        onInputChange={setChatInput}
+        onSubmit={handleChatSubmit}
+      />
     </div>
   );
 };
