@@ -63,28 +63,11 @@ const ResearchRecommendationAgent = () => {
 
   const [userName, setUserName] = useState<string>('연구자');
   
-  // 시간대별 인사말 생성
-  const getGreetingByTime = (name: string) => {
-    const hour = new Date().getHours();
-    let greeting = '';
-    
-    if (hour >= 5 && hour < 12) {
-      greeting = '좋은 아침입니다';
-    } else if (hour >= 12 && hour < 18) {
-      greeting = '좋은 오후입니다';
-    } else if (hour >= 18 && hour < 22) {
-      greeting = '좋은 저녁입니다';
-    } else {
-      greeting = '안녕하세요';
-    }
-    
-    return `${name}님 안녕하세요! ${greeting} 궁금한 내용을 설명해주시면 논문이나 데이터를 추천해드릴게요`;
-  };
   
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([
     { 
       type: 'agent', 
-      message: getGreetingByTime('연구자'), 
+      message: '김연구님 안녕하세요! 궁금한 내용을 설명해주시면 논문이나 데이터를 추천해드릴게요', 
       time: new Date().toLocaleTimeString() 
     }
   ]);
@@ -1920,14 +1903,6 @@ const ResearchRecommendationAgent = () => {
       
       if (data && data.full_name) {
         setUserName(data.full_name);
-        // 채팅 메시지의 첫 메시지도 업데이트
-        setChatMessages([
-          { 
-            type: 'agent', 
-            message: getGreetingByTime(data.full_name), 
-            time: new Date().toLocaleTimeString() 
-          }
-        ]);
       }
     } catch (error) {
       console.error('프로필 로드 실패:', error);
@@ -2525,40 +2500,40 @@ const ResearchRecommendationAgent = () => {
                   </h4>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                     <a 
-                      href="https://paperswithcode.com/datasets" 
+                      href={`https://paperswithcode.com/search?q=${encodeURIComponent(chatMessages.find(msg => msg.type === 'user')?.message || '')}`}
                       target="_blank" 
                       rel="noopener noreferrer"
                       className="p-3 bg-slate-600/50 rounded-lg hover:bg-slate-600 transition-colors border border-slate-500"
                     >
-                      <h5 className="font-semibold text-sm mb-1 text-white">Papers with Code Datasets</h5>
-                      <p className="text-xs text-slate-300">연구 논문과 연결된 실제 데이터셋 모음</p>
+                      <h5 className="font-semibold text-sm mb-1 text-white">Papers with Code</h5>
+                      <p className="text-xs text-slate-300">AI/ML 논문과 코드 구현</p>
                     </a>
                     <a 
-                      href="https://datasetsearch.research.google.com/" 
+                      href={`https://datasetsearch.research.google.com/search?query=${encodeURIComponent(chatMessages.find(msg => msg.type === 'user')?.message || '')}`}
                       target="_blank" 
                       rel="noopener noreferrer"
                       className="p-3 bg-slate-600/50 rounded-lg hover:bg-slate-600 transition-colors border border-slate-500"
                     >
                       <h5 className="font-semibold text-sm mb-1 text-white">Google Dataset Search</h5>
-                      <p className="text-xs text-slate-300">구글의 데이터셋 검색 엔진</p>
+                      <p className="text-xs text-slate-300">구글 데이터셋 검색</p>
                     </a>
                     <a 
-                      href="https://www.kaggle.com/datasets" 
+                      href={`https://www.kaggle.com/search?q=${encodeURIComponent(chatMessages.find(msg => msg.type === 'user')?.message || '')}`}
                       target="_blank" 
                       rel="noopener noreferrer"
                       className="p-3 bg-slate-600/50 rounded-lg hover:bg-slate-600 transition-colors border border-slate-500"
                     >
-                      <h5 className="font-semibold text-sm mb-1 text-white">Kaggle Datasets</h5>
-                      <p className="text-xs text-slate-300">실전 데이터 과학 데이터셋 플랫폼</p>
+                      <h5 className="font-semibold text-sm mb-1 text-white">Kaggle</h5>
+                      <p className="text-xs text-slate-300">데이터 과학 경진대회 플랫폼</p>
                     </a>
                     <a 
-                      href="https://huggingface.co/datasets" 
+                      href={`https://huggingface.co/datasets?search=${encodeURIComponent(chatMessages.find(msg => msg.type === 'user')?.message || '')}`}
                       target="_blank" 
                       rel="noopener noreferrer"
                       className="p-3 bg-slate-600/50 rounded-lg hover:bg-slate-600 transition-colors border border-slate-500"
                     >
-                      <h5 className="font-semibold text-sm mb-1 text-white">Hugging Face Datasets</h5>
-                      <p className="text-xs text-slate-300">머신러닝 및 NLP 데이터셋</p>
+                      <h5 className="font-semibold text-sm mb-1 text-white">Hugging Face</h5>
+                      <p className="text-xs text-slate-300">NLP 및 ML 데이터셋</p>
                     </a>
                   </div>
                 </div>
@@ -2994,13 +2969,6 @@ const ResearchRecommendationAgent = () => {
         onInputChange={setChatInput}
         onSubmit={() => handleChatSubmit()}
         onTrendingKeywordClick={(keyword) => {
-          // 대화 기록에 사용자 메시지 추가
-          const userMessage: ChatMessage = {
-            type: 'user',
-            message: keyword,
-            time: new Date().toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' })
-          };
-          setChatMessages(prev => [...prev, userMessage]);
           setChatInput(keyword);
           setTimeout(() => handleChatSubmit(), 100);
         }}
