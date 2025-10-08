@@ -166,49 +166,71 @@ const ResearchRecommendationAgent = () => {
 
   const [todayPaper] = useState(getTodayPaper());
 
-  // 재미있는 논문 데이터
+  // 재미있는 논문 데이터 - 실제로 특이하고 재미있는 논문들
   const allFunPapers = [
     {
-      title: 'Attention Is All You Need',
-      authors: 'Vaswani, A. et al.',
-      year: 2017,
-      journal: 'NeurIPS',
-      url: 'https://arxiv.org/abs/1706.03762'
+      title: 'Can a Biologist Fix a Radio?—Or, What I Learned while Studying Apoptosis',
+      authors: 'Lazebnik, Y.',
+      year: 2002,
+      journal: 'Cancer Cell',
+      url: 'https://www.cell.com/cancer-cell/fulltext/S1535-6108(02)00133-2',
+      description: '생물학자가 라디오를 고칠 수 있을까? 세포 사멸 연구에서 얻은 통찰을 재치있게 풀어낸 논문'
     },
     {
-      title: 'ImageNet Classification with Deep Convolutional Neural Networks',
-      authors: 'Krizhevsky, A. et al.',
-      year: 2012,
-      journal: 'NeurIPS',
-      url: 'https://papers.nips.cc/paper/2012/hash/c399862d3b9d6b76c8436e924a68c45b-Abstract.html'
+      title: 'On the Reception and Detection of Pseudo-Profound Bullshit',
+      authors: 'Pennycook, G. et al.',
+      year: 2015,
+      journal: 'Judgment and Decision Making',
+      url: 'http://journal.sjdm.org/15/15923a/jdm15923a.pdf',
+      description: '심오한 척하는 헛소리를 어떻게 감지하는가? 인지 과학의 재미있는 연구'
     },
     {
-      title: 'Generative Adversarial Networks',
-      authors: 'Goodfellow, I. et al.',
-      year: 2014,
-      journal: 'NeurIPS',
-      url: 'https://arxiv.org/abs/1406.2661'
+      title: 'Pressures Produced When Penguins Pooh—Calculations on Avian Defaecation',
+      authors: 'Meyer-Rochow, V.B. & Gal, J.',
+      year: 2003,
+      journal: 'Polar Biology',
+      url: 'https://link.springer.com/article/10.1007/s00300-003-0563-3',
+      description: '펭귄의 배변 시 압력을 계산한 독특한 생물학 연구'
     },
     {
-      title: 'Deep Residual Learning for Image Recognition',
-      authors: 'He, K. et al.',
-      year: 2016,
-      journal: 'CVPR',
-      url: 'https://arxiv.org/abs/1512.03385'
+      title: 'The Effect of Country Music on Suicide',
+      authors: 'Stack, S. & Gundlach, J.',
+      year: 1992,
+      journal: 'Social Forces',
+      url: 'https://academic.oup.com/sf/article-abstract/71/1/211/2234100',
+      description: '컨트리 음악이 자살률에 미치는 영향을 분석한 사회학 연구'
     },
     {
-      title: 'BERT: Pre-training of Deep Bidirectional Transformers',
-      authors: 'Devlin, J. et al.',
-      year: 2019,
-      journal: 'NAACL',
-      url: 'https://arxiv.org/abs/1810.04805'
+      title: 'Are Full or Empty Beer Bottles Sturdier and Does Their Fracture-Threshold Suffice to Break the Human Skull?',
+      authors: 'Bolliger, S.A. et al.',
+      year: 2009,
+      journal: 'Journal of Forensic and Legal Medicine',
+      url: 'https://www.sciencedirect.com/science/article/abs/pii/S1752928X09000444',
+      description: '맥주병의 견고함과 두개골 파괴 가능성을 연구한 법의학 논문'
     },
     {
-      title: 'Mastering the Game of Go with Deep Neural Networks',
-      authors: 'Silver, D. et al.',
-      year: 2016,
-      journal: 'Nature',
-      url: 'https://www.nature.com/articles/nature16961'
+      title: 'Why Do Old Men Have Big Ears?',
+      authors: 'Heathcote, J.A.',
+      year: 1995,
+      journal: 'BMJ',
+      url: 'https://www.bmj.com/content/311/7021/1668',
+      description: '나이가 들수록 귀가 커지는 현상을 조사한 의학 연구'
+    },
+    {
+      title: 'Sword Swallowing and Its Side Effects',
+      authors: 'Witcombe, B. & Meyer, D.',
+      year: 2006,
+      journal: 'BMJ',
+      url: 'https://www.bmj.com/content/333/7582/1285',
+      description: '칼 삼키기의 부작용을 조사한 의학 연구로 이그노벨상 수상'
+    },
+    {
+      title: 'The Unsuccessful Self-Treatment of a Case of "Writer\'s Block"',
+      authors: 'Upper, D.',
+      year: 1974,
+      journal: 'Journal of Applied Behavior Analysis',
+      url: 'https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1311997/',
+      description: '빈 페이지만 있는 유명한 논문 - 작가의 블록을 표현'
     }
   ];
 
@@ -2297,7 +2319,7 @@ const ResearchRecommendationAgent = () => {
         {showMetrics && (
           <div className="bg-white rounded-xl shadow-lg border p-6 mb-6">
             <h3 className="text-lg font-semibold text-gray-900 mb-4">시스템 성능 및 특징</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               <div className="bg-gradient-to-br from-emerald-600 to-emerald-700 p-4 rounded-lg shadow-lg">
                 <div className="flex items-center space-x-2 mb-2">
                   <Clock size={16} className="text-emerald-200" />
@@ -2334,17 +2356,17 @@ const ResearchRecommendationAgent = () => {
           </div>
         )}
 
-        {/* Main Content */}
-        <div className="grid grid-cols-1 xl:grid-cols-4 gap-6">
-          <div className="xl:col-span-3 space-y-6">
+        {/* Main Content - 반응형 그리드 */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <div className="lg:col-span-2 xl:col-span-3 space-y-6">
             {/* Clarify Options */}
             {clarifyOptions && clarifyOptions.length > 0 && !isLoading && (
               <div className="bg-gradient-to-br from-blue-800 to-indigo-800 rounded-xl shadow-xl border border-blue-600 p-6">
-                <h3 className="text-lg font-semibold text-white mb-4 flex items-center">
-                  <Brain size={20} className="mr-2" />
-                  {clarifyQuestion}
-                </h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <h3 className="text-lg font-semibold text-white mb-4 flex items-center">
+              <Brain size={20} className="mr-2" />
+              {clarifyQuestion}
+            </h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {clarifyOptions.map((option, index) => (
                     <button
                       key={index}
@@ -2408,25 +2430,25 @@ const ResearchRecommendationAgent = () => {
                   {paginatedRecommendations.map((rec, index) => (
                     <div key={rec.id} className="bg-slate-700 border border-slate-600 rounded-lg hover:shadow-xl hover:border-slate-500 transition-all">
                       <div className="p-5">
-                        <div className="flex items-start justify-between mb-4">
-                          <div className="flex items-start space-x-4 flex-1">
-                            <div className="flex items-center space-x-2">
-                              <span className="text-xl font-bold text-slate-400">#{index + 1}</span>
-                              <div className={`p-2 rounded-lg ${rec.type === 'paper' ? 'bg-emerald-600' : 'bg-blue-600'}`}>
-                                {rec.type === 'paper' ? <FileText size={18} className="text-white" /> : <Database size={18} className="text-white" />}
-                              </div>
+                      <div className="flex items-start justify-between mb-4">
+                        <div className="flex items-start space-x-3 md:space-x-4 flex-1">
+                          <div className="flex items-center space-x-2 flex-shrink-0">
+                            <span className="text-lg md:text-xl font-bold text-slate-400">#{index + 1}</span>
+                            <div className={`p-1.5 md:p-2 rounded-lg ${rec.type === 'paper' ? 'bg-emerald-600' : 'bg-blue-600'}`}>
+                              {rec.type === 'paper' ? <FileText size={16} className="text-white md:w-[18px] md:h-[18px]" /> : <Database size={16} className="text-white md:w-[18px] md:h-[18px]" />}
                             </div>
-                            <div className="flex-1">
-                            <div className="flex items-start gap-2 mb-2">
-                              <a 
-                                href={rec.url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="flex-1 min-w-0"
-                              >
-                                <h4 className="font-semibold text-white text-lg hover:text-blue-400 transition-colors break-words">{rec.title}</h4>
-                              </a>
-                              <div className="flex items-center gap-2 flex-shrink-0">
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-start gap-2 mb-2 flex-wrap sm:flex-nowrap">
+                            <a 
+                              href={rec.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="flex-1 min-w-0"
+                            >
+                              <h4 className="font-semibold text-white text-base md:text-lg hover:text-blue-400 transition-colors break-words line-clamp-2">{rec.title}</h4>
+                            </a>
+                            <div className="flex items-center gap-2 flex-shrink-0 flex-wrap sm:flex-nowrap">
                                 <span className={`px-2 py-1 rounded text-xs font-bold whitespace-nowrap ${
                                   rec.type === 'paper' ? 'bg-emerald-500 text-white' : 'bg-purple-500 text-white'
                                 }`}>
@@ -2447,7 +2469,7 @@ const ResearchRecommendationAgent = () => {
                                 </span>
                               </div>
                             </div>
-                              <div className="flex items-center space-x-4 text-sm text-slate-300 mb-3">
+                              <div className="flex items-center flex-wrap gap-2 md:gap-4 text-xs md:text-sm text-slate-300 mb-3">
                                 {rec.type === 'paper' ? (
                                   <>
                                     <span>{rec.journal}</span>
@@ -2496,17 +2518,17 @@ const ResearchRecommendationAgent = () => {
                           {rec.detailedReason && (
                             <div className="mb-3 space-y-2">
                               <div className="grid grid-cols-3 gap-2">
-                                <div className="bg-slate-700 p-2 rounded">
-                                  <p className="text-xs text-slate-400">BM25</p>
-                                  <p className="text-lg font-bold text-emerald-300">{(rec.detailedReason.bm25Score * 100).toFixed(1)}%</p>
+                                <div className="bg-slate-700 p-1.5 md:p-2 rounded">
+                                  <p className="text-[10px] md:text-xs text-slate-400">BM25</p>
+                                  <p className="text-base md:text-lg font-bold text-emerald-300">{(rec.detailedReason.bm25Score * 100).toFixed(1)}%</p>
                                 </div>
-                                <div className="bg-slate-700 p-2 rounded">
-                                  <p className="text-xs text-slate-400">Dense</p>
-                                  <p className="text-lg font-bold text-blue-300">{(rec.detailedReason.denseEmbeddingScore * 100).toFixed(1)}%</p>
+                                <div className="bg-slate-700 p-1.5 md:p-2 rounded">
+                                  <p className="text-[10px] md:text-xs text-slate-400">Dense</p>
+                                  <p className="text-base md:text-lg font-bold text-blue-300">{(rec.detailedReason.denseEmbeddingScore * 100).toFixed(1)}%</p>
                                 </div>
-                                <div className="bg-slate-700 p-2 rounded">
-                                  <p className="text-xs text-slate-400">Cross-Encoder</p>
-                                  <p className="text-lg font-bold text-purple-300">{(rec.detailedReason.crossEncoderScore * 100).toFixed(1)}%</p>
+                                <div className="bg-slate-700 p-1.5 md:p-2 rounded">
+                                  <p className="text-[10px] md:text-xs text-slate-400">Cross-Encoder</p>
+                                  <p className="text-base md:text-lg font-bold text-purple-300">{(rec.detailedReason.crossEncoderScore * 100).toFixed(1)}%</p>
                                 </div>
                               </div>
                               
@@ -2796,7 +2818,7 @@ const ResearchRecommendationAgent = () => {
               <p className="text-xs text-gray-600 mt-1">특이하고 재미있는 주제의 연구들</p>
             </div>
             
-            <div className="relative overflow-hidden py-6 bg-white/20">
+            <div className="relative overflow-hidden py-4 md:py-6 bg-white/20">
               <div className="flex animate-scroll-left whitespace-nowrap">
                 {funPapers.concat(funPapers).map((paper, index) => (
                   <a
@@ -2804,16 +2826,21 @@ const ResearchRecommendationAgent = () => {
                     href={paper.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-block mx-4 bg-white rounded-lg p-4 shadow-md hover:shadow-xl transition-all hover:scale-105 w-80 flex-shrink-0"
+                    className="inline-block mx-3 md:mx-4 bg-white rounded-lg p-3 md:p-4 shadow-md hover:shadow-xl transition-all hover:scale-105 w-72 md:w-80 flex-shrink-0"
                   >
                     <div className="space-y-2">
-                      <h4 className="font-bold text-gray-900 text-base leading-tight line-clamp-2" style={{fontFamily: 'Georgia, serif'}}>
+                      <h4 className="font-bold text-gray-900 text-sm md:text-base leading-tight line-clamp-2" style={{fontFamily: 'Georgia, serif'}}>
                         {paper.title}
                       </h4>
-                      <p className="text-sm text-gray-600" style={{fontFamily: 'Georgia, serif'}}>
+                      {paper.description && (
+                        <p className="text-xs text-gray-600 line-clamp-2" style={{fontFamily: 'Georgia, serif'}}>
+                          {paper.description}
+                        </p>
+                      )}
+                      <p className="text-xs md:text-sm text-gray-600" style={{fontFamily: 'Georgia, serif'}}>
                         {paper.authors}
                       </p>
-                      <p className="text-sm text-gray-500 font-medium" style={{fontFamily: 'Georgia, serif'}}>
+                      <p className="text-xs md:text-sm text-gray-500 font-medium" style={{fontFamily: 'Georgia, serif'}}>
                         {paper.journal} • {paper.year}
                       </p>
                     </div>
