@@ -22,7 +22,10 @@ const ResearchRecommendationAgent = () => {
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [user, setUser] = useState<any>(null);
   const [bookmarkedIds, setBookmarkedIds] = useState<Set<string>>(new Set());
+  const [bookmarkedPapers, setBookmarkedPapers] = useState([]);
   const [hasSearched, setHasSearched] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(10);
 
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([
     { 
@@ -33,11 +36,11 @@ const ResearchRecommendationAgent = () => {
   ]);
 
   const [trendingPapers, setTrendingPapers] = useState([
-    { id: 1, rank: 1, title: 'GPT-4 in Scientific Research', author: 'OpenAI Research Team', trend: 'hot' },
-    { id: 2, rank: 2, title: 'Climate Change ML Models', author: 'Smith, J. et al.', trend: 'up' },
-    { id: 3, rank: 3, title: 'Quantum Computing Advances', author: 'Chen, L. & Park, K.', trend: 'down' },
-    { id: 4, rank: 4, title: 'Biomedical Data Mining', author: 'Johnson, M. et al.', trend: 'new' },
-    { id: 5, rank: 5, title: 'Neural Network Optimization', author: 'Lee, S. & Kim, H.', trend: 'same' }
+    { id: 1, rank: 1, prevRank: 5, title: 'GPT-4 in Scientific Research', author: 'OpenAI Research Team', trend: 'hot' },
+    { id: 2, rank: 2, prevRank: 3, title: 'Climate Change ML Models', author: 'Smith, J. et al.', trend: 'up' },
+    { id: 3, rank: 3, prevRank: 1, title: 'Quantum Computing Advances', author: 'Chen, L. & Park, K.', trend: 'down' },
+    { id: 4, rank: 4, prevRank: 4, title: 'Biomedical Data Mining', author: 'Johnson, M. et al.', trend: 'same' },
+    { id: 5, rank: 5, prevRank: 2, title: 'Neural Network Optimization', author: 'Lee, S. & Kim, H.', trend: 'down' }
   ]);
 
   const mockRecommendations = [
@@ -94,11 +97,12 @@ const ResearchRecommendationAgent = () => {
         const others = prev.slice(0, -1);
         
         const updated = [
-          { ...last, rank: 1, trend: 'hot' },
+          { ...last, rank: 1, prevRank: last.rank, trend: 'hot' },
           ...others.map((item, index) => ({
             ...item,
             rank: index + 2,
-            trend: index === 0 ? 'down' : 'up'
+            prevRank: item.rank,
+            trend: index === 0 ? 'down' : item.rank < index + 2 ? 'down' : item.rank > index + 2 ? 'up' : 'same'
           }))
         ];
         
@@ -138,13 +142,14 @@ const ResearchRecommendationAgent = () => {
     try {
       const { data, error } = await supabase
         .from('bookmarks')
-        .select('id')
+        .select('*')
         .eq('user_id', userId);
 
       if (error) throw error;
       
-      const ids = new Set(data?.map(b => b.id) || []);
+      const ids = new Set(data?.map(b => `${b.title}-${b.year}`) || []);
       setBookmarkedIds(ids);
+      setBookmarkedPapers(data || []);
     } catch (error) {
       console.error('북마크 로드 실패:', error);
     }
@@ -258,6 +263,37 @@ const ResearchRecommendationAgent = () => {
 
   const generateRecommendations = (query) => {
     const lowerQuery = query.toLowerCase();
+    
+    // 북마크 기반 추천 생성
+    const generateBookmarkBasedRecs = () => {
+      if (bookmarkedPapers.length === 0) return [];
+      
+      const recentBookmark = bookmarkedPapers[0];
+      return [
+        {
+          id: 'bookmark-1',
+          type: 'paper',
+          title: `Similar to "${recentBookmark.title}": Advanced Research Methods`,
+          description: `${recentBookmark.title}와 유사한 연구 방법론을 다룬 최신 논문입니다.`,
+          score: 0.92,
+          level: '가장 추천',
+          reason: `김연구님이 북마크하신 "${recentBookmark.title}" 논문과 유사한 주제를 다루는 연구입니다.`,
+          detailedReason: {
+            semanticSimilarity: 0.92,
+            keywordMatch: 0.88,
+            citationRelevance: 0.90,
+            recencyScore: 0.94,
+            explanation: `북마크하신 "${recentBookmark.title}"와 92%의 의미적 유사도를 보이며, 동일한 연구 방법론을 채택하고 있습니다. 관련 키워드 매칭률 88%로 연구 확장에 도움이 됩니다.`
+          },
+          url: 'https://scienceon.kisti.re.kr/paper/similar001',
+          journal: recentBookmark.journal || 'Research Journal',
+          authors: ['Related Author, A.', 'Related Author, B.'],
+          year: 2024,
+          citationCount: 156,
+          keywords: recentBookmark.keywords?.slice(0, 3) || ['research', 'analysis']
+        }
+      ];
+    };
     
     // 기후변화 관련
     if (lowerQuery.includes('기후') || lowerQuery.includes('climate') || lowerQuery.includes('환경')) {
@@ -485,12 +521,17 @@ const ResearchRecommendationAgent = () => {
     }
     
     // 기본 추천 (일반적인 검색어)
-    return mockRecommendations.map(rec => ({
+    const baseRecs = mockRecommendations.map(rec => ({
       ...rec,
       reason: `"${query}" 검색어와 관련된 ${rec.type === 'paper' ? '논문' : '데이터셋'}입니다. ${rec.reason}`
     }));
+    
+    // 북마크 기반 추천을 추가
+    const bookmarkRecs = generateBookmarkBasedRecs();
+    return [...bookmarkRecs, ...baseRecs];
   };
 
+  // 페이지네이션 로직
   const filteredRecommendations = recommendations.filter(rec => {
     if (activeFilter === 'all') return true;
     if (activeFilter === 'paper') return rec.type === 'paper';
@@ -601,8 +642,8 @@ const ResearchRecommendationAgent = () => {
                   </div>
                 </div>
 
-                <div className="space-y-4">
-                  {filteredRecommendations.map((rec, index) => (
+                 <div className="space-y-4">
+                  {paginatedRecommendations.map((rec, index) => (
                     <div key={rec.id} className="bg-slate-700 border border-slate-600 rounded-lg hover:shadow-xl hover:border-slate-500 transition-all">
                       <div className="p-5">
                         <div className="flex items-start justify-between mb-4">
@@ -737,6 +778,37 @@ const ResearchRecommendationAgent = () => {
                     </div>
                   ))}
                 </div>
+                
+                {/* 페이지네이션 */}
+                <div className="flex items-center justify-center gap-2 mt-8 pt-6 border-t border-slate-600">
+                  <button
+                    onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
+                    disabled={currentPage === 1}
+                    className="px-3 py-2 text-white disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-600 rounded"
+                  >
+                    &lt;
+                  </button>
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                    <button
+                      key={page}
+                      onClick={() => handlePageChange(page)}
+                      className={`px-4 py-2 rounded ${
+                        currentPage === page
+                          ? 'bg-blue-600 text-white'
+                          : 'text-slate-300 hover:bg-slate-600'
+                      }`}
+                    >
+                      {page}
+                    </button>
+                  ))}
+                  <button
+                    onClick={() => handlePageChange(Math.min(totalPages, currentPage + 1))}
+                    disabled={currentPage === totalPages}
+                    className="px-3 py-2 text-white disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-600 rounded"
+                  >
+                    &gt;
+                  </button>
+                </div>
               </div>
             )}
           </div>
@@ -762,16 +834,16 @@ const ResearchRecommendationAgent = () => {
                 <div className="flex space-x-3">
                   <div className="w-1/4 bg-white rounded-lg flex-shrink-0 border-2 border-gray-200 shadow-sm p-2 flex flex-col justify-center items-center" style={{aspectRatio: '1/1.414'}}>
                     <div className="text-center">
-                      <div className="text-xs font-bold text-gray-800 leading-tight mb-1" style={{fontFamily: 'Arial, sans-serif'}}>
+                      <div className="text-xs font-bold text-gray-800 leading-tight mb-1" style={{fontFamily: 'Georgia, serif'}}>
                         Machine Learning for Climate Science
                       </div>
-                      <div className="text-xs text-gray-600 mb-2" style={{fontFamily: 'Arial, sans-serif'}}>
+                      <div className="text-xs text-gray-600 mb-2" style={{fontFamily: 'Georgia, serif'}}>
                         Advances and Applications
                       </div>
-                      <div className="text-xs text-gray-500 font-medium" style={{fontFamily: 'Arial, sans-serif'}}>
+                      <div className="text-xs text-gray-500 font-medium" style={{fontFamily: 'Georgia, serif'}}>
                         Nature Climate Change
                       </div>
-                      <div className="text-xs text-gray-400" style={{fontFamily: 'Arial, sans-serif'}}>
+                      <div className="text-xs text-gray-400" style={{fontFamily: 'Georgia, serif'}}>
                         2024
                       </div>
                     </div>
@@ -826,7 +898,51 @@ const ResearchRecommendationAgent = () => {
               </div>
               
               <div className="p-3">
-                {trendingPapers.map((paper) => (
+                {trendingPapers.slice(0, 3).map((paper) => {
+                  const rankChange = paper.prevRank - paper.rank;
+                  return (
+                  <div 
+                    key={paper.id} 
+                    className="p-3 rounded-lg mb-2 last:mb-0 hover:bg-gray-50 transition-all duration-500"
+                  >
+                    <div className="flex items-start justify-between">
+                      <div className="flex items-start space-x-3 flex-1">
+                        <div className={`w-7 h-7 rounded-full flex items-center justify-center text-sm font-bold transition-all duration-300 ${
+                          paper.rank === 1 ? 'bg-gradient-to-r from-yellow-400 to-orange-500 text-white shadow-md transform scale-110' :
+                          paper.rank === 2 ? 'bg-gradient-to-r from-gray-300 to-gray-400 text-white' :
+                          'bg-gradient-to-r from-yellow-600 to-yellow-700 text-white'
+                        }`}>
+                          {paper.rank}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2">
+                            <p className="text-sm font-medium text-gray-800 truncate leading-tight">{paper.title}</p>
+                            {paper.trend === 'hot' && (
+                              <span className="text-xl animate-pulse">🔥</span>
+                            )}
+                            {rankChange !== 0 && (
+                              <span className={`text-xs font-bold ${rankChange > 0 ? 'text-emerald-600' : 'text-red-600'}`}>
+                                {rankChange > 0 ? `+${rankChange}` : rankChange}
+                              </span>
+                            )}
+                          </div>
+                          <p className="text-xs text-gray-500 truncate">{paper.author}</p>
+                        </div>
+                      </div>
+                      
+                      <div className="ml-2">
+                        {paper.trend === 'up' && (
+                          <ArrowUp size={20} className="text-emerald-500" />
+                        )}
+                        {paper.trend === 'down' && (
+                          <ArrowDown size={20} className="text-red-500" />
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                  );
+                })}
+              </div>
                   <div 
                     key={paper.id} 
                     className="p-3 rounded-lg mb-2 last:mb-0 hover:bg-gray-50 transition-all duration-500"

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -8,7 +8,9 @@ import { toast } from 'sonner';
 import { Flame, Loader2 } from 'lucide-react';
 
 const Auth = () => {
-  const [isLogin, setIsLogin] = useState(true);
+  const [searchParams] = useSearchParams();
+  const mode = searchParams.get('mode');
+  const [isLogin, setIsLogin] = useState(mode !== 'signup');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
@@ -23,6 +25,15 @@ const Auth = () => {
       }
     });
   }, [navigate]);
+
+  useEffect(() => {
+    // URL 파라미터에 따라 모드 변경
+    if (mode === 'signup') {
+      setIsLogin(false);
+    } else if (mode === 'login') {
+      setIsLogin(true);
+    }
+  }, [mode]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -90,7 +101,7 @@ const Auth = () => {
                 <Input
                   id="fullName"
                   type="text"
-                  placeholder="홍길동"
+                  placeholder="김연구"
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
                   required={!isLogin}

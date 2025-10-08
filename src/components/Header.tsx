@@ -70,36 +70,29 @@ const Header: React.FC<HeaderProps> = ({ responseTime, showMetrics, onToggleMetr
     <div className="bg-white shadow-sm border-b">
       <div className="max-w-7xl mx-auto px-6 py-4">
         <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-4">
+          <button 
+            onClick={() => navigate('/')}
+            className="flex items-center space-x-4 hover:opacity-80 transition-opacity"
+          >
             <div className="p-2 bg-gradient-to-r from-slate-700 to-blue-800 rounded-lg shadow-lg">
               <Flame className="text-white" size={24} />
             </div>
             <div>
               <h1 className="text-2xl font-bold text-gray-900">연구의 등불</h1>
             </div>
-          </div>
+          </button>
           
           <div className="flex items-center space-x-4">
-            {responseTime && (
-              <div className="flex items-center space-x-1 text-emerald-600 text-sm">
-                <Clock size={16} />
-                <span>{(responseTime / 1000).toFixed(1)}초</span>
-              </div>
-            )}
-            <button
-              onClick={onToggleMetrics}
-              className="flex items-center space-x-1 text-blue-600 hover:text-blue-800 transition-colors text-sm"
-            >
-              <BarChart3 size={16} />
-              <span>성능 지표</span>
-            </button>
             
             <div className="flex items-center space-x-2 ml-4 border-l pl-4 border-border">
               {user ? (
                 <>
-                  <span className="text-sm font-medium text-foreground px-3 py-2">
+                  <button 
+                    onClick={() => navigate('/profile')}
+                    className="text-sm font-medium text-foreground px-3 py-2 hover:bg-accent/10 rounded-lg transition-colors"
+                  >
                     {profile?.full_name || '연구자'}님
-                  </span>
+                  </button>
                   <button 
                     onClick={() => navigate('/library')}
                     className="flex items-center space-x-1 px-3 py-2 text-foreground hover:bg-accent/10 rounded-lg transition-colors text-sm"
@@ -118,18 +111,18 @@ const Header: React.FC<HeaderProps> = ({ responseTime, showMetrics, onToggleMetr
               ) : (
                 <>
                   <button 
-                    onClick={() => navigate('/auth')}
-                    className="flex items-center space-x-1 px-3 py-2 text-foreground hover:bg-accent/10 rounded-lg transition-colors text-sm"
-                  >
-                    <LogIn size={18} />
-                    <span>로그인</span>
-                  </button>
-                  <button 
-                    onClick={() => navigate('/auth')}
+                    onClick={() => navigate('/auth?mode=signup')}
                     className="flex items-center space-x-1 px-3 py-2 bg-primary text-primary-foreground hover:bg-primary/90 rounded-lg transition-colors text-sm font-medium"
                   >
                     <UserPlus size={18} />
                     <span>회원가입</span>
+                  </button>
+                  <button 
+                    onClick={() => navigate('/auth?mode=login')}
+                    className="flex items-center space-x-1 px-3 py-2 text-foreground hover:bg-accent/10 rounded-lg transition-colors text-sm"
+                  >
+                    <LogIn size={18} />
+                    <span>로그인</span>
                   </button>
                 </>
               )}
