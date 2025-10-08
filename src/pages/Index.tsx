@@ -75,25 +75,50 @@ const ResearchRecommendationAgent = () => {
 
   const generateTrendingPapers = () => {
     const shuffled = [...allTrendingPapers].sort(() => Math.random() - 0.5).slice(0, 5);
+    
+    // 하나만 하강, 나머지는 상승
+    const downIndex = Math.floor(Math.random() * 4) + 1; // 1~4 중 하나 (0번은 hot)
+    
     return shuffled.map((paper, index) => {
       const rank = index + 1;
       
-      // 80% 확률로 상승 추세 (대부분 상승)
-      const isUp = Math.random() > 0.2;
-      const prevRank = isUp ? 
-        Math.min(8, rank + Math.floor(Math.random() * 3) + 1) : // 상승 (이전 순위가 더 낮음)
-        Math.max(1, rank - Math.floor(Math.random() * 2) - 1);  // 하강 (이전 순위가 더 높음)
+      // 첫 번째는 항상 hot
+      if (index === 0) {
+        return {
+          ...paper,
+          rank,
+          prevRank: rank + 2,
+          rankChange: 2 * (Math.floor(Math.random() * 300) + 100),
+          trend: 'hot' as const
+        };
+      }
       
-      const rankChange = prevRank - rank;
-      const trend = rankChange > 0 ? 'up' : rankChange < 0 ? 'down' : 'same';
+      // 선택된 인덱스만 하강, 나머지는 상승
+      const isDown = index === downIndex;
       
-      return {
-        ...paper,
-        rank,
-        prevRank,
-        rankChange: Math.abs(rankChange) * (Math.floor(Math.random() * 300) + 100),
-        trend: index === 0 ? 'hot' : trend
-      };
+      if (isDown) {
+        // 하강: prevRank가 더 높음 (작은 숫자)
+        const prevRank = Math.max(1, rank - Math.floor(Math.random() * 2) - 1);
+        const rankChange = rank - prevRank; // 양수 (순위 하락)
+        return {
+          ...paper,
+          rank,
+          prevRank,
+          rankChange: rankChange * (Math.floor(Math.random() * 300) + 100),
+          trend: 'down' as const
+        };
+      } else {
+        // 상승: prevRank가 더 낮음 (큰 숫자)
+        const prevRank = Math.min(8, rank + Math.floor(Math.random() * 2) + 1);
+        const rankChange = prevRank - rank; // 양수 (순위 상승)
+        return {
+          ...paper,
+          rank,
+          prevRank,
+          rankChange: rankChange * (Math.floor(Math.random() * 300) + 100),
+          trend: 'up' as const
+        };
+      }
     });
   };
 
@@ -1758,30 +1783,8 @@ const ResearchRecommendationAgent = () => {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setTrendingPapers(prev => {
-        const last = prev[prev.length - 1];
-        const others = prev.slice(0, -1);
-        
-        const generateRankChange = () => Math.floor(Math.random() * 900) + 100;
-        
-        const updated = [
-          { ...last, rank: 1, prevRank: last.rank, rankChange: generateRankChange(), trend: 'hot' as const },
-          ...others.map((item, index) => {
-            const newRank = index + 2;
-            const change = item.rank < newRank ? -generateRankChange() : item.rank > newRank ? generateRankChange() : 0;
-            return {
-              ...item,
-              rank: newRank,
-              prevRank: item.rank,
-              rankChange: change,
-              trend: (item.rank < newRank ? 'down' : item.rank > newRank ? 'up' : 'same') as 'up' | 'down' | 'same' | 'hot'
-            };
-          })
-        ];
-        
-        return updated;
-      });
-    }, 3000);
+      setTrendingPapers(generateTrendingPapers());
+    }, 5 * 60 * 1000); // 5분
 
     return () => clearInterval(interval);
   }, []);
@@ -1897,7 +1900,7 @@ const ResearchRecommendationAgent = () => {
     }, 2000);
   };
 
-  const handleChatSubmit = () => {
+  const handleChatSubmit = async () => {
     if (!chatInput.trim()) return;
     
     const userMessage: ChatMessage = {
@@ -1910,28 +1913,40 @@ const ResearchRecommendationAgent = () => {
     const searchQuery = chatInput;
     setChatInput('');
     setHasSearched(true);
+    setIsLoading(true);
+    setRecommendations([]);
     
-    setTimeout(() => {
-      const agentResponse: ChatMessage = {
-        type: 'agent',
-        message: `"${searchQuery}"와 관련된 논문을 검색해드리겠습니다!`,
-        time: new Date().toLocaleTimeString()
-      };
-      setChatMessages(prev => [...prev, agentResponse]);
-      
-      // 검색어에 따른 맞춤형 추천 논문 생성
-      const relatedRecommendations = generateRecommendations(searchQuery);
-      setIsLoading(true);
-      setRecommendations([]);
-      
+    const agentResponse: ChatMessage = {
+      type: 'agent',
+      message: `"${searchQuery}"와 관련된 논문을 검색해드리겠습니다!`,
+      time: new Date().toLocaleTimeString()
+    };
+    setChatMessages(prev => [...prev, agentResponse]);
+    
+    try {
       const startTime = Date.now();
       
-      setTimeout(() => {
-        setRecommendations(relatedRecommendations);
-        setResponseTime(Date.now() - startTime);
+      const { data, error } = await supabase.functions.invoke('recommend-papers', {
+        body: { query: searchQuery }
+      });
+      
+      if (error) {
+        console.error('Error calling recommend-papers:', error);
+        toast.error('추천 결과를 불러오는데 실패했습니다.');
         setIsLoading(false);
-      }, 2000);
-    }, 500);
+        return;
+      }
+      
+      if (data && data.recommendations) {
+        setRecommendations(data.recommendations);
+        setResponseTime(Date.now() - startTime);
+      }
+    } catch (error) {
+      console.error('Error in handleChatSubmit:', error);
+      toast.error('추천 결과를 불러오는데 실패했습니다.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const generateRecommendations = (query) => {
@@ -2644,9 +2659,14 @@ const ResearchRecommendationAgent = () => {
                                   NEW
                                 </span>
                               )}
-                              {paper.rankChange !== 0 && (
-                                <span className={`text-lg font-black whitespace-nowrap ${paper.rankChange > 0 ? 'text-emerald-600' : 'text-red-600'}`}>
-                                  {paper.rankChange > 0 ? `+${paper.rankChange}` : paper.rankChange}
+                              {paper.rankChange > 0 && paper.trend === 'up' && (
+                                <span className="text-lg font-black whitespace-nowrap text-emerald-600">
+                                  +{paper.rankChange}
+                                </span>
+                              )}
+                              {paper.rankChange > 0 && paper.trend === 'down' && (
+                                <span className="text-lg font-black whitespace-nowrap text-red-600">
+                                  -{paper.rankChange}
                                 </span>
                               )}
                             </div>

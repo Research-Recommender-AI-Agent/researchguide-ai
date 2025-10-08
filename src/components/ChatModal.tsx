@@ -68,13 +68,15 @@ const ChatModal: React.FC<ChatModalProps> = ({
       .sort(() => Math.random() - 0.5)
       .slice(0, 3);
     
-    // 상승이 대부분이 되도록 (80% 상승, 20% 하강)
+    // 항상 하나만 하강, 나머지는 상승
+    const downIndex = Math.floor(Math.random() * 3); // 0, 1, 2 중 하나
+    
     return keywords.map((k, index) => {
-      const isUp = Math.random() > 0.2; // 80% 확률로 상승
+      const isDown = index === downIndex;
       return {
         ...k,
         change: Math.floor(Math.random() * 900) + 100,
-        trend: isUp ? 'up' as const : 'down' as const
+        trend: isDown ? 'down' as const : 'up' as const
       };
     });
   };
@@ -147,7 +149,10 @@ const ChatModal: React.FC<ChatModalProps> = ({
               {trendingKeywords.map((item, index) => (
                 <button
                   key={index}
-                  onClick={() => onInputChange(item.text)}
+                  onClick={() => {
+                    onInputChange(item.text);
+                    setTimeout(() => onSubmit(), 100); // 입력 값이 업데이트된 후 실행
+                  }}
                   className="w-full px-3 py-2 bg-white text-gray-600 rounded-lg text-xs hover:bg-gray-200 hover:text-gray-800 transition-colors flex items-center justify-between border border-gray-200 group"
                 >
                   <div className="flex items-center space-x-2">
