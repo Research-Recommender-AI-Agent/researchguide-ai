@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Database, FileText, ExternalLink, BarChart3, ChevronDown, ChevronUp, Target, TrendingUp, ArrowUp, ArrowDown, Minus, Star, Brain, Clock } from 'lucide-react';
 import Header from '@/components/Header';
 import ChatModal from '@/components/ChatModal';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 
 interface ChatMessage {
   type: 'user' | 'agent';
@@ -18,6 +20,9 @@ const ResearchRecommendationAgent = () => {
   const [responseTime, setResponseTime] = useState(null);
   const [chatInput, setChatInput] = useState('');
   const [isChatOpen, setIsChatOpen] = useState(false);
+  const [user, setUser] = useState<any>(null);
+  const [bookmarkedIds, setBookmarkedIds] = useState<Set<string>>(new Set());
+  const [hasSearched, setHasSearched] = useState(false);
 
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([
     { 
@@ -104,9 +109,106 @@ const ResearchRecommendationAgent = () => {
     return () => clearInterval(interval);
   }, []);
 
+  useEffect(() => {
+    // 사용자 인증 확인 및 북마크 로드
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
+      if (session?.user) {
+        loadBookmarks(session.user.id);
+      }
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (event, session) => {
+        setUser(session?.user ?? null);
+        if (session?.user) {
+          setTimeout(() => {
+            loadBookmarks(session.user.id);
+          }, 0);
+        } else {
+          setBookmarkedIds(new Set());
+        }
+      }
+    );
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const loadBookmarks = async (userId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('bookmarks')
+        .select('id')
+        .eq('user_id', userId);
+
+      if (error) throw error;
+      
+      const ids = new Set(data?.map(b => b.id) || []);
+      setBookmarkedIds(ids);
+    } catch (error) {
+      console.error('북마크 로드 실패:', error);
+    }
+  };
+
+  const toggleBookmark = async (paper: any) => {
+    if (!user) {
+      toast.error('로그인이 필요합니다');
+      return;
+    }
+
+    const bookmarkId = `${paper.title}-${paper.year}`;
+    const isBookmarked = bookmarkedIds.has(bookmarkId);
+
+    try {
+      if (isBookmarked) {
+        // 북마크 제거
+        const { error } = await supabase
+          .from('bookmarks')
+          .delete()
+          .eq('user_id', user.id)
+          .eq('title', paper.title);
+
+        if (error) throw error;
+
+        setBookmarkedIds(prev => {
+          const newSet = new Set(prev);
+          newSet.delete(bookmarkId);
+          return newSet;
+        });
+        toast.success('북마크를 제거했습니다');
+      } else {
+        // 북마크 추가
+        const { data, error } = await supabase
+          .from('bookmarks')
+          .insert({
+            user_id: user.id,
+            title: paper.title,
+            description: paper.description,
+            url: paper.url,
+            paper_type: paper.type || 'paper',
+            authors: paper.authors || [],
+            year: paper.year,
+            journal: paper.journal || '',
+            keywords: paper.keywords || [],
+          })
+          .select()
+          .single();
+
+        if (error) throw error;
+
+        setBookmarkedIds(prev => new Set(prev).add(bookmarkId));
+        toast.success('북마크에 추가했습니다');
+      }
+    } catch (error: any) {
+      toast.error('북마크 처리 중 오류가 발생했습니다');
+      console.error(error);
+    }
+  };
+
   const handleRecommendation = async () => {
     setIsLoading(true);
     setRecommendations([]);
+    setHasSearched(true);
     
     const startTime = Date.now();
     
@@ -129,6 +231,7 @@ const ResearchRecommendationAgent = () => {
     setChatMessages(prev => [...prev, userMessage]);
     const searchQuery = chatInput;
     setChatInput('');
+    setHasSearched(true);
     
     setTimeout(() => {
       const agentResponse: ChatMessage = {
@@ -513,6 +616,16 @@ const ResearchRecommendationAgent = () => {
                             <div className="flex-1">
                               <div className="flex items-center space-x-3 mb-2">
                                 <h4 className="font-semibold text-white text-lg">{rec.title}</h4>
+                                <button
+                                  onClick={() => toggleBookmark(rec)}
+                                  className="p-1 hover:scale-110 transition-transform"
+                                  aria-label="북마크"
+                                >
+                                  <Star
+                                    size={20}
+                                    className={bookmarkedIds.has(`${rec.title}-${rec.year}`) ? 'fill-yellow-400 text-yellow-400' : 'text-slate-400'}
+                                  />
+                                </button>
                                 <span className={`px-3 py-1 rounded-full text-xs font-medium border ${getLevelColor(rec.level)}`}>
                                   {rec.level}
                                 </span>
@@ -630,19 +743,20 @@ const ResearchRecommendationAgent = () => {
 
           {/* Right Panel */}
           <div className="xl:col-span-1 space-y-6">
-            {/* 오늘의 논문 */}
-            <div className="bg-white rounded-xl shadow-xl border">
-              <div className="p-4 border-b border-gray-200 bg-gradient-to-r from-emerald-600 to-emerald-700 rounded-t-xl">
-                <div className="flex items-center space-x-2">
-                  <div className="text-yellow-300 fill-current">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-                    </svg>
+            {/* 오늘의 논문 - 메인 화면에만 표시 */}
+            {!hasSearched && (
+              <div className="bg-white rounded-xl shadow-xl border">
+                <div className="p-4 border-b border-gray-200 bg-gradient-to-r from-emerald-600 to-emerald-700 rounded-t-xl">
+                  <div className="flex items-center space-x-2">
+                    <div className="text-yellow-300 fill-current">
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                      </svg>
+                    </div>
+                    <h3 className="font-semibold text-white">오늘의 논문</h3>
                   </div>
-                  <h3 className="font-semibold text-white">오늘의 논문</h3>
+                  <p className="text-xs text-emerald-100 mt-1">김연구님을 위한 추천</p>
                 </div>
-                <p className="text-xs text-emerald-100 mt-1">김연구님을 위한 추천</p>
-              </div>
               
               <div className="p-4">
                 <div className="flex space-x-3">
@@ -698,8 +812,10 @@ const ResearchRecommendationAgent = () => {
                 </div>
               </div>
             </div>
+            )}
 
-            {/* 실시간 논문 트렌드 */}
+            {/* 실시간 논문 트렌드 - 메인 화면에만 표시 */}
+            {!hasSearched && (
             <div className="bg-white rounded-xl shadow-xl border sticky top-6">
               <div className="p-4 border-b border-gray-200 bg-gradient-to-r from-slate-700 to-slate-900 rounded-t-xl">
                 <div className="flex items-center space-x-2">
@@ -767,11 +883,12 @@ const ResearchRecommendationAgent = () => {
                 <div className="flex items-center justify-center space-x-2 text-xs text-gray-500">
                   <div className="w-2 h-2 bg-orange-500 rounded-full animate-pulse"></div>
                 </div>
+                </div>
               </div>
             </div>
+            )}
           </div>
         </div>
-      </div>
 
       {/* Chat Modal */}
       <ChatModal
