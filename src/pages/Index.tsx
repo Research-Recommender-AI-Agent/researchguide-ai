@@ -539,6 +539,16 @@ const ResearchRecommendationAgent = () => {
     return true;
   });
 
+  const totalPages = Math.max(5, Math.ceil(filteredRecommendations.length / itemsPerPage));
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedRecommendations = filteredRecommendations.slice(startIndex, endIndex);
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   const getLevelColor = (level) => {
     switch (level) {
       case '가장 추천': return 'bg-emerald-100 text-emerald-800 border-emerald-200';
@@ -942,57 +952,6 @@ const ResearchRecommendationAgent = () => {
                   </div>
                   );
                 })}
-              </div>
-                  <div 
-                    key={paper.id} 
-                    className="p-3 rounded-lg mb-2 last:mb-0 hover:bg-gray-50 transition-all duration-500"
-                  >
-                    <div className="flex items-start justify-between">
-                      <div className="flex items-start space-x-3 flex-1">
-                        <div className={`w-7 h-7 rounded-full flex items-center justify-center text-sm font-bold transition-all duration-300 ${
-                          paper.rank === 1 ? 'bg-gradient-to-r from-yellow-400 to-orange-500 text-white shadow-md transform scale-110' :
-                          paper.rank === 2 ? 'bg-gradient-to-r from-gray-300 to-gray-400 text-white' :
-                          paper.rank === 3 ? 'bg-gradient-to-r from-yellow-600 to-yellow-700 text-white' :
-                          'bg-blue-600 text-white'
-                        }`}>
-                          {paper.rank}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium text-gray-800 truncate leading-tight mb-1">{paper.title}</p>
-                          <p className="text-xs text-gray-500 truncate">{paper.author}</p>
-                        </div>
-                      </div>
-                      
-                      <div className="ml-2">
-                        {paper.trend === 'hot' && (
-                          <div className="flex items-center text-red-400 animate-pulse">
-                            <span className="text-xs font-bold">🔥</span>
-                          </div>
-                        )}
-                        {paper.trend === 'up' && (
-                          <div className="flex items-center text-emerald-400">
-                            <ArrowUp size={12} />
-                          </div>
-                        )}
-                        {paper.trend === 'down' && (
-                          <div className="flex items-center text-red-400">
-                            <ArrowDown size={12} />
-                          </div>
-                        )}
-                        {paper.trend === 'new' && (
-                          <div className="text-xs bg-red-500 text-white px-1.5 py-0.5 rounded-full font-bold">
-                            NEW
-                          </div>
-                        )}
-                        {paper.trend === 'same' && (
-                          <div className="flex items-center text-gray-400">
-                            <Minus size={12} />
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                ))}
               </div>
               
               <div className="p-3 bg-gray-50 rounded-b-xl">
