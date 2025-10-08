@@ -67,7 +67,7 @@ const ResearchRecommendationAgent = () => {
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([
     { 
       type: 'agent', 
-      message: '김연구님 안녕하세요! 궁금한 내용을 설명해주시면 논문이나 데이터를 추천해드릴게요', 
+      message: '연구자님 안녕하세요! 궁금한 내용을 설명해주시면 논문이나 데이터를 추천해드릴게요', 
       time: new Date().toLocaleTimeString() 
     }
   ]);
@@ -1854,6 +1854,17 @@ const ResearchRecommendationAgent = () => {
   };
   
   // Agent AI: 연구 패턴 분석 및 자율적 제안
+  // Agent 제안 5분마다 갱신
+  useEffect(() => {
+    if (!user || bookmarkedPapers.length === 0) return;
+    
+    const interval = setInterval(() => {
+      analyzeResearchPattern(bookmarkedPapers);
+    }, 5 * 60 * 1000); // 5분
+    
+    return () => clearInterval(interval);
+  }, [user, bookmarkedPapers]);
+
   const analyzeResearchPattern = (bookmarks: any[]) => {
     const keywords = bookmarks.flatMap(b => b.keywords || []);
     const keywordFreq: Record<string, number> = {};
@@ -2492,52 +2503,6 @@ const ResearchRecommendationAgent = () => {
                   </div>
                 </div>
 
-                {/* 관련 데이터셋 섹션 */}
-                <div className="mb-6 bg-slate-700/50 rounded-lg border border-slate-600 p-4">
-                  <h4 className="text-base font-semibold mb-3 flex items-center gap-2 text-white">
-                    <Database className="w-4 h-4 text-blue-400" />
-                    관련 데이터셋
-                  </h4>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    <a 
-                      href={`https://paperswithcode.com/search?q=${encodeURIComponent(chatMessages.filter(msg => msg.type === 'user').slice(-1)[0]?.message || '')}`}
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="p-3 bg-slate-600/50 rounded-lg hover:bg-slate-600 transition-colors border border-slate-500"
-                    >
-                      <h5 className="font-semibold text-sm mb-1 text-white">Papers with Code</h5>
-                      <p className="text-xs text-slate-300">AI/ML 논문과 코드 구현</p>
-                    </a>
-                    <a 
-                      href={`https://datasetsearch.research.google.com/search?query=${encodeURIComponent(chatMessages.filter(msg => msg.type === 'user').slice(-1)[0]?.message || '')}`}
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="p-3 bg-slate-600/50 rounded-lg hover:bg-slate-600 transition-colors border border-slate-500"
-                    >
-                      <h5 className="font-semibold text-sm mb-1 text-white">Google Dataset Search</h5>
-                      <p className="text-xs text-slate-300">구글 데이터셋 검색</p>
-                    </a>
-                    <a 
-                      href={`https://www.kaggle.com/search?q=${encodeURIComponent(chatMessages.filter(msg => msg.type === 'user').slice(-1)[0]?.message || '')}`}
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="p-3 bg-slate-600/50 rounded-lg hover:bg-slate-600 transition-colors border border-slate-500"
-                    >
-                      <h5 className="font-semibold text-sm mb-1 text-white">Kaggle</h5>
-                      <p className="text-xs text-slate-300">데이터 과학 경진대회 플랫폼</p>
-                    </a>
-                    <a 
-                      href={`https://huggingface.co/datasets?search=${encodeURIComponent(chatMessages.filter(msg => msg.type === 'user').slice(-1)[0]?.message || '')}`}
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="p-3 bg-slate-600/50 rounded-lg hover:bg-slate-600 transition-colors border border-slate-500"
-                    >
-                      <h5 className="font-semibold text-sm mb-1 text-white">Hugging Face</h5>
-                      <p className="text-xs text-slate-300">NLP 및 ML 데이터셋</p>
-                    </a>
-                  </div>
-                </div>
-
                  <div className="space-y-4">
                   {paginatedRecommendations.map((rec, index) => (
                     <div key={rec.id} className="bg-slate-700 border border-slate-600 rounded-lg hover:shadow-xl hover:border-slate-500 transition-all">
@@ -2706,6 +2671,52 @@ const ResearchRecommendationAgent = () => {
                       </div>
                     </div>
                   ))}
+                </div>
+
+                {/* 관련 데이터셋 섹션 */}
+                <div className="mt-6 bg-slate-700/50 rounded-lg border border-slate-600 p-4">
+                  <h4 className="text-base font-semibold mb-3 flex items-center gap-2 text-white">
+                    <Database className="w-4 h-4 text-blue-400" />
+                    관련 데이터셋
+                  </h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <a 
+                      href={`https://paperswithcode.com/search?q=${encodeURIComponent(chatMessages.filter(msg => msg.type === 'user').slice(-1)[0]?.message || '')}`}
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="p-3 bg-slate-600/50 rounded-lg hover:bg-slate-600 transition-colors border border-slate-500"
+                    >
+                      <h5 className="font-semibold text-sm mb-1 text-white">Papers with Code</h5>
+                      <p className="text-xs text-slate-300">AI/ML 논문과 코드 구현</p>
+                    </a>
+                    <a 
+                      href={`https://datasetsearch.research.google.com/search?query=${encodeURIComponent(chatMessages.filter(msg => msg.type === 'user').slice(-1)[0]?.message || '')}`}
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="p-3 bg-slate-600/50 rounded-lg hover:bg-slate-600 transition-colors border border-slate-500"
+                    >
+                      <h5 className="font-semibold text-sm mb-1 text-white">Google Dataset Search</h5>
+                      <p className="text-xs text-slate-300">구글 데이터셋 검색</p>
+                    </a>
+                    <a 
+                      href={`https://www.kaggle.com/search?q=${encodeURIComponent(chatMessages.filter(msg => msg.type === 'user').slice(-1)[0]?.message || '')}`}
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="p-3 bg-slate-600/50 rounded-lg hover:bg-slate-600 transition-colors border border-slate-500"
+                    >
+                      <h5 className="font-semibold text-sm mb-1 text-white">Kaggle</h5>
+                      <p className="text-xs text-slate-300">데이터 과학 경진대회 플랫폼</p>
+                    </a>
+                    <a 
+                      href={`https://huggingface.co/datasets?search=${encodeURIComponent(chatMessages.filter(msg => msg.type === 'user').slice(-1)[0]?.message || '')}`}
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="p-3 bg-slate-600/50 rounded-lg hover:bg-slate-600 transition-colors border border-slate-500"
+                    >
+                      <h5 className="font-semibold text-sm mb-1 text-white">Hugging Face</h5>
+                      <p className="text-xs text-slate-300">NLP 및 ML 데이터셋</p>
+                    </a>
+                  </div>
                 </div>
                 
                 {/* 페이지네이션 */}
