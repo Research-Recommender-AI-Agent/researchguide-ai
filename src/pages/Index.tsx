@@ -36,11 +36,11 @@ const ResearchRecommendationAgent = () => {
   ]);
 
   const [trendingPapers, setTrendingPapers] = useState([
-    { id: 1, rank: 1, prevRank: 5, title: 'GPT-4 in Scientific Research', author: 'OpenAI Research Team', trend: 'hot' },
-    { id: 2, rank: 2, prevRank: 3, title: 'Climate Change ML Models', author: 'Smith, J. et al.', trend: 'up' },
-    { id: 3, rank: 3, prevRank: 1, title: 'Quantum Computing Advances', author: 'Chen, L. & Park, K.', trend: 'down' },
-    { id: 4, rank: 4, prevRank: 4, title: 'Biomedical Data Mining', author: 'Johnson, M. et al.', trend: 'same' },
-    { id: 5, rank: 5, prevRank: 2, title: 'Neural Network Optimization', author: 'Lee, S. & Kim, H.', trend: 'down' }
+    { id: 1, rank: 1, prevRank: 5, rankChange: 234, title: 'GPT-4 in Scientific Research', author: 'OpenAI Research Team', trend: 'hot' },
+    { id: 2, rank: 2, prevRank: 3, rankChange: 156, title: 'Climate Change ML Models', author: 'Smith, J. et al.', trend: 'up' },
+    { id: 3, rank: 3, prevRank: 1, rankChange: -189, title: 'Quantum Computing Advances', author: 'Chen, L. & Park, K.', trend: 'down' },
+    { id: 4, rank: 4, prevRank: 4, rankChange: 0, title: 'Biomedical Data Mining', author: 'Johnson, M. et al.', trend: 'same' },
+    { id: 5, rank: 5, prevRank: 2, rankChange: -234, title: 'Neural Network Optimization', author: 'Lee, S. & Kim, H.', trend: 'down' }
   ]);
 
   const mockRecommendations = [
@@ -57,7 +57,7 @@ const ResearchRecommendationAgent = () => {
         keywordMatch: 0.89,
         citationRelevance: 0.92,
         recencyScore: 0.88,
-        explanation: '귀하의 연구 데이터와 94%의 의미적 유사도를 보이며, 핵심 키워드 매칭률 89%를 기록했습니다. 특히 딥러닝 기반 기후 분석 방법론이 귀하의 연구 방향과 완벽하게 일치하며, 최근 인용 빈도(127회)가 높아 학계에서 주목받고 있는 연구입니다.'
+        explanation: '김연구님의 연구 데이터와 94%의 의미적 유사도를 보이며, 핵심 키워드 매칭률 89%를 기록했습니다. 특히 딥러닝 기반 기후 분석 방법론이 김연구님의 연구 방향과 완벽하게 일치하며, 최근 인용 빈도(127회)가 높아 학계에서 주목받고 있는 연구입니다.'
       },
       url: 'https://scienceon.kisti.re.kr/paper/12345',
       journal: 'Nature Climate Change',
@@ -79,7 +79,7 @@ const ResearchRecommendationAgent = () => {
         keywordMatch: 0.87,
         citationRelevance: 0.85,
         recencyScore: 0.95,
-        explanation: '귀하의 연구 주제와 91%의 의미적 연관성을 가진 최신 데이터셋입니다. 키워드 매칭률 87%로 연구에 직접 활용 가능한 데이터를 포함하고 있으며, 2024년 최신 데이터로 실시간 업데이트되어 연구 신뢰도를 크게 높일 수 있습니다.'
+        explanation: '김연구님의 연구 주제와 91%의 의미적 연관성을 가진 최신 데이터셋입니다. 키워드 매칭률 87%로 연구에 직접 활용 가능한 데이터를 포함하고 있으며, 2024년 최신 데이터로 실시간 업데이트되어 연구 신뢰도를 크게 높일 수 있습니다.'
       },
       url: 'https://dataon.kisti.re.kr/dataset/67890',
       publisher: 'World Meteorological Organization',
@@ -96,14 +96,21 @@ const ResearchRecommendationAgent = () => {
         const last = prev[prev.length - 1];
         const others = prev.slice(0, -1);
         
+        const generateRankChange = () => Math.floor(Math.random() * 900) + 100;
+        
         const updated = [
-          { ...last, rank: 1, prevRank: last.rank, trend: 'hot' },
-          ...others.map((item, index) => ({
-            ...item,
-            rank: index + 2,
-            prevRank: item.rank,
-            trend: index === 0 ? 'down' : item.rank < index + 2 ? 'down' : item.rank > index + 2 ? 'up' : 'same'
-          }))
+          { ...last, rank: 1, prevRank: last.rank, rankChange: generateRankChange(), trend: 'hot' as const },
+          ...others.map((item, index) => {
+            const newRank = index + 2;
+            const change = item.rank < newRank ? -generateRankChange() : item.rank > newRank ? generateRankChange() : 0;
+            return {
+              ...item,
+              rank: newRank,
+              prevRank: item.rank,
+              rankChange: change,
+              trend: (item.rank < newRank ? 'down' : item.rank > newRank ? 'up' : 'same') as 'up' | 'down' | 'same' | 'hot'
+            };
+          })
         ];
         
         return updated;
@@ -311,7 +318,7 @@ const ResearchRecommendationAgent = () => {
             keywordMatch: 0.91,
             citationRelevance: 0.92,
             recencyScore: 0.88,
-            explanation: '입력하신 "기후변화" 키워드와 94%의 의미적 유사도를 달성했으며, 키워드 매칭률 91%로 매우 높은 관련성을 보입니다. 위성 데이터 활용 방법론이 귀하의 연구와 직접적으로 연결되며, 최근 1년간 127회 인용으로 학계의 높은 주목을 받고 있습니다.'
+            explanation: '입력하신 "기후변화" 키워드와 94%의 의미적 유사도를 달성했으며, 키워드 매칭률 91%로 매우 높은 관련성을 보입니다. 위성 데이터 활용 방법론이 김연구님의 연구와 직접적으로 연결되며, 최근 1년간 127회 인용으로 학계의 높은 주목을 받고 있습니다.'
           },
           url: 'https://scienceon.kisti.re.kr/paper/12345',
           journal: 'Nature Climate Change',
@@ -333,7 +340,7 @@ const ResearchRecommendationAgent = () => {
             keywordMatch: 0.89,
             citationRelevance: 0.88,
             recencyScore: 0.96,
-            explanation: '귀하의 검색어와 91%의 의미 일치도를 보이며, 키워드 매칭 89%로 연구 목적에 최적화된 데이터입니다. 2024년 최신 버전으로 실시간 API 제공(96% 최신성 점수)되어 즉시 연구에 활용 가능합니다. 127GB 규모의 포괄적 데이터로 장기 연구에 적합합니다.'
+            explanation: '김연구님의 검색어와 91%의 의미 일치도를 보이며, 키워드 매칭 89%로 연구 목적에 최적화된 데이터입니다. 2024년 최신 버전으로 실시간 API 제공(96% 최신성 점수)되어 즉시 연구에 활용 가능합니다. 127GB 규모의 포괄적 데이터로 장기 연구에 적합합니다.'
           },
           url: 'https://dataon.kisti.re.kr/dataset/67890',
           publisher: 'World Meteorological Organization',
@@ -355,7 +362,7 @@ const ResearchRecommendationAgent = () => {
             keywordMatch: 0.85,
             citationRelevance: 0.84,
             recencyScore: 0.92,
-            explanation: '귀하의 연구와 87%의 의미적 연관성을 가지며, 키워드 매칭 85%로 보완적 연구 자료로 활용 가능합니다. 환경 영향 평가에 대한 실무 적용 사례가 풍부하여 실질적 연구 방법론을 제공하며, 2024년 최신 연구로 최근 트렌드를 반영합니다.'
+            explanation: '김연구님의 연구와 87%의 의미적 연관성을 가지며, 키워드 매칭 85%로 보완적 연구 자료로 활용 가능합니다. 환경 영향 평가에 대한 실무 적용 사례가 풍부하여 실질적 연구 방법론을 제공하며, 2024년 최신 연구로 최근 트렌드를 반영합니다.'
           },
           url: 'https://scienceon.kisti.re.kr/paper/33333',
           journal: 'Environmental Science & Technology',
@@ -665,8 +672,13 @@ const ResearchRecommendationAgent = () => {
                               </div>
                             </div>
                             <div className="flex-1">
-                              <div className="flex items-center space-x-3 mb-2">
+                            <div className="flex items-center space-x-3 mb-2">
                                 <h4 className="font-semibold text-white text-lg">{rec.title}</h4>
+                                <span className={`px-2 py-1 rounded text-xs font-bold ${
+                                  rec.type === 'paper' ? 'bg-emerald-500 text-white' : 'bg-purple-500 text-white'
+                                }`}>
+                                  {rec.type === 'paper' ? '논문' : '데이터셋'}
+                                </span>
                                 <button
                                   onClick={() => toggleBookmark(rec)}
                                   className="p-1 hover:scale-110 transition-transform"
@@ -823,11 +835,12 @@ const ResearchRecommendationAgent = () => {
             )}
           </div>
 
-          {/* Right Panel */}
-          <div className="xl:col-span-1 space-y-6">
-            {/* 오늘의 논문 - 메인 화면에만 표시 */}
+          {/* Right Panel - 왼쪽/오른쪽 분할 */}
+          <div className="xl:col-span-1">
             {!hasSearched && (
-              <div className="bg-white rounded-xl shadow-xl border">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* 오늘의 논문 - 왼쪽 */}
+                <div className="bg-white rounded-xl shadow-xl border">
                 <div className="p-4 border-b border-gray-200 bg-gradient-to-r from-emerald-600 to-emerald-700 rounded-t-xl">
                   <div className="flex items-center space-x-2">
                     <div className="text-yellow-300 fill-current">
@@ -894,11 +907,9 @@ const ResearchRecommendationAgent = () => {
                 </div>
               </div>
             </div>
-            )}
 
-            {/* 실시간 논문 트렌드 - 메인 화면에만 표시 */}
-            {!hasSearched && (
-            <div className="bg-white rounded-xl shadow-xl border sticky top-6">
+            {/* 실시간 논문 트렌드 - 오른쪽 */}
+            <div className="bg-white rounded-xl shadow-xl border">
               <div className="p-4 border-b border-gray-200 bg-gradient-to-r from-slate-700 to-slate-900 rounded-t-xl">
                 <div className="flex items-center space-x-2">
                   <TrendingUp size={20} className="text-slate-100" />
@@ -928,11 +939,17 @@ const ResearchRecommendationAgent = () => {
                           <div className="flex items-center gap-2">
                             <p className="text-sm font-medium text-gray-800 truncate leading-tight">{paper.title}</p>
                             {paper.trend === 'hot' && (
-                              <span className="text-xl animate-pulse">🔥</span>
+                              <span className="text-2xl animate-pulse">🔥</span>
                             )}
-                            {rankChange !== 0 && (
-                              <span className={`text-xs font-bold ${rankChange > 0 ? 'text-emerald-600' : 'text-red-600'}`}>
-                                {rankChange > 0 ? `+${rankChange}` : rankChange}
+                            {paper.trend === 'up' && (
+                              <ArrowUp size={24} className="text-emerald-500" />
+                            )}
+                            {paper.trend === 'down' && (
+                              <ArrowDown size={24} className="text-red-500" />
+                            )}
+                            {paper.rankChange !== 0 && (
+                              <span className={`text-xl font-extrabold ${paper.rankChange > 0 ? 'text-emerald-600' : 'text-red-600'}`}>
+                                {paper.rankChange > 0 ? `+${paper.rankChange}` : paper.rankChange}
                               </span>
                             )}
                           </div>
@@ -941,12 +958,6 @@ const ResearchRecommendationAgent = () => {
                       </div>
                       
                       <div className="ml-2">
-                        {paper.trend === 'up' && (
-                          <ArrowUp size={20} className="text-emerald-500" />
-                        )}
-                        {paper.trend === 'down' && (
-                          <ArrowDown size={20} className="text-red-500" />
-                        )}
                       </div>
                     </div>
                   </div>
@@ -960,6 +971,7 @@ const ResearchRecommendationAgent = () => {
                 </div>
               </div>
             </div>
+              </div>
             )}
           </div>
         </div>

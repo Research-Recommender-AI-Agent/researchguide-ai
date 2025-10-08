@@ -1,10 +1,21 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import { ArrowLeft, Plus, Loader2 } from 'lucide-react';
+import { ArrowLeft, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Header from '@/components/Header';
+import ReactFlow, {
+  MiniMap,
+  Controls,
+  Background,
+  Node,
+  Edge,
+  useNodesState,
+  useEdgesState,
+  BackgroundVariant,
+} from 'reactflow';
+import 'reactflow/dist/style.css';
 
 interface Bookmark {
   id: string;
@@ -14,6 +25,7 @@ interface Bookmark {
   journal: string;
   url: string;
   category_id: string | null;
+  keywords: string[];
 }
 
 interface Category {
@@ -29,8 +41,9 @@ const Library = () => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [user, setUser] = useState<any>(null);
+  const [nodes, setNodes, onNodesChange] = useNodesState([]);
+  const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const navigate = useNavigate();
-  const canvasRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     checkUser();
@@ -58,6 +71,9 @@ const Library = () => {
 
       setBookmarks(bookmarksRes.data || []);
       setCategories(categoriesRes.data || []);
+      
+      // 마인드맵 노드와 엣지 생성
+      createMindMap(bookmarksRes.data || [], categoriesRes.data || []);
     } catch (error: any) {
       toast.error('데이터를 불러오는데 실패했습니다.');
       console.error(error);
@@ -66,62 +82,137 @@ const Library = () => {
     }
   };
 
-  const getCategoryBookmarks = (categoryId: string) => {
-    return bookmarks.filter((b) => b.category_id === categoryId);
-  };
+  const createMindMap = (bookmarks: Bookmark[], categories: Category[]) => {
+    const newNodes: Node[] = [];
+    const newEdges: Edge[] = [];
 
-  const getChildCategories = (parentId: string | null) => {
-    return categories.filter((c) => c.parent_id === parentId);
-  };
+    // 중앙 루트 노드
+    newNodes.push({
+      id: 'root',
+      data: { label: '내 라이브러리' },
+      position: { x: 400, y: 50 },
+      style: {
+        background: '#3b82f6',
+        color: 'white',
+        border: '2px solid #1e40af',
+        borderRadius: '12px',
+        padding: '16px 24px',
+        fontSize: '18px',
+        fontWeight: 'bold',
+        width: 200,
+      },
+    });
 
-  const renderCategory = (category: Category, level: number = 0) => {
-    const childCategories = getChildCategories(category.id);
-    const categoryBookmarks = getCategoryBookmarks(category.id);
+    // 키워드별로 북마크 그룹화
+    const keywordGroups = new Map<string, Bookmark[]>();
+    bookmarks.forEach(bookmark => {
+      if (bookmark.keywords && bookmark.keywords.length > 0) {
+        bookmark.keywords.forEach(keyword => {
+          if (!keywordGroups.has(keyword)) {
+            keywordGroups.set(keyword, []);
+          }
+          keywordGroups.get(keyword)!.push(bookmark);
+        });
+      } else {
+        // 키워드가 없는 경우 "기타"로 분류
+        if (!keywordGroups.has('기타')) {
+          keywordGroups.set('기타', []);
+        }
+        keywordGroups.get('기타')!.push(bookmark);
+      }
+    });
 
-    return (
-      <div
-        key={category.id}
-        className="mb-6"
-        style={{ marginLeft: `${level * 40}px` }}
-      >
-        <div className="flex items-center gap-3 mb-3">
-          <div className="w-4 h-4 rounded-full bg-primary"></div>
-          <h3 className="text-lg font-semibold text-foreground">{category.name}</h3>
-          <span className="text-sm text-muted-foreground">
-            ({categoryBookmarks.length}개)
-          </span>
-        </div>
+    // 키워드 노드와 북마크 노드 생성
+    const keywordArray = Array.from(keywordGroups.keys());
+    const angleStep = (2 * Math.PI) / keywordArray.length;
+    const radius = 300;
 
-        {categoryBookmarks.length > 0 && (
-          <div className="ml-7 space-y-2 mb-4">
-            {categoryBookmarks.map((bookmark) => (
-              <div
-                key={bookmark.id}
-                className="bg-card border border-border rounded-lg p-3 hover:shadow-md transition-shadow"
-              >
-                <a
-                  href={bookmark.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-sm font-medium text-foreground hover:text-primary"
-                >
-                  {bookmark.title}
-                </a>
-                <p className="text-xs text-muted-foreground mt-1">
-                  {bookmark.authors?.join(', ')} ({bookmark.year})
-                </p>
+    keywordArray.forEach((keyword, index) => {
+      const angle = index * angleStep;
+      const x = 500 + radius * Math.cos(angle);
+      const y = 250 + radius * Math.sin(angle);
+
+      // 키워드(대분류) 노드
+      const keywordNodeId = `keyword-${keyword}`;
+      newNodes.push({
+        id: keywordNodeId,
+        data: { label: keyword },
+        position: { x, y },
+        style: {
+          background: '#10b981',
+          color: 'white',
+          border: '2px solid #059669',
+          borderRadius: '10px',
+          padding: '12px 20px',
+          fontSize: '15px',
+          fontWeight: '600',
+          minWidth: 120,
+        },
+      });
+
+      // 루트에서 키워드로 엣지
+      newEdges.push({
+        id: `edge-root-${keywordNodeId}`,
+        source: 'root',
+        target: keywordNodeId,
+        animated: true,
+        style: { stroke: '#3b82f6', strokeWidth: 2 },
+      });
+
+      // 각 키워드의 북마크 노드들
+      const papers = keywordGroups.get(keyword) || [];
+      papers.forEach((paper, paperIndex) => {
+        const paperAngle = angle + (paperIndex - papers.length / 2) * 0.3;
+        const paperRadius = radius + 200;
+        const paperX = 500 + paperRadius * Math.cos(paperAngle);
+        const paperY = 250 + paperRadius * Math.sin(paperAngle);
+
+        const paperNodeId = `paper-${paper.id}`;
+        newNodes.push({
+          id: paperNodeId,
+          data: {
+            label: (
+              <div className="text-left">
+                <div className="font-semibold text-xs mb-1 line-clamp-2">{paper.title}</div>
+                <div className="text-xs opacity-80">{paper.year}</div>
               </div>
-            ))}
-          </div>
-        )}
+            ),
+          },
+          position: { x: paperX, y: paperY },
+          style: {
+            background: 'white',
+            border: '2px solid #e5e7eb',
+            borderRadius: '8px',
+            padding: '10px',
+            fontSize: '12px',
+            width: 180,
+            cursor: 'pointer',
+          },
+        });
 
-        {childCategories.map((child) => renderCategory(child, level + 1))}
-      </div>
-    );
+        // 키워드에서 논문으로 엣지
+        newEdges.push({
+          id: `edge-${keywordNodeId}-${paperNodeId}`,
+          source: keywordNodeId,
+          target: paperNodeId,
+          style: { stroke: '#10b981', strokeWidth: 1.5 },
+        });
+      });
+    });
+
+    setNodes(newNodes);
+    setEdges(newEdges);
   };
 
-  const uncategorizedBookmarks = bookmarks.filter((b) => !b.category_id);
-  const rootCategories = getChildCategories(null);
+  const onNodeClick = useCallback((event: React.MouseEvent, node: Node) => {
+    if (node.id.startsWith('paper-')) {
+      const paperId = node.id.replace('paper-', '');
+      const paper = bookmarks.find(b => b.id === paperId);
+      if (paper && paper.url) {
+        window.open(paper.url, '_blank');
+      }
+    }
+  }, [bookmarks]);
 
   if (isLoading) {
     return (
@@ -138,9 +229,9 @@ const Library = () => {
     <div className="min-h-screen bg-background">
       <Header responseTime={null} showMetrics={false} onToggleMetrics={() => {}} />
       
-      <div className="max-w-7xl mx-auto px-6 py-8">
-        <div className="flex items-center justify-between mb-8">
-          <div className="flex items-center gap-4">
+      <div className="h-[calc(100vh-80px)]">
+        <div className="absolute top-24 left-6 z-10 bg-card rounded-xl border border-border p-4 shadow-lg">
+          <div className="flex items-center gap-4 mb-2">
             <Button
               variant="ghost"
               size="icon"
@@ -149,60 +240,45 @@ const Library = () => {
               <ArrowLeft className="h-5 w-5" />
             </Button>
             <div>
-              <h1 className="text-3xl font-bold text-foreground">내 라이브러리</h1>
-              <p className="text-muted-foreground mt-1">
-                북마크한 논문들을 주제별로 정리했습니다
+              <h1 className="text-2xl font-bold text-foreground">내 라이브러리</h1>
+              <p className="text-sm text-muted-foreground mt-1">
+                {bookmarks.length}개의 북마크
               </p>
             </div>
           </div>
         </div>
 
-        <div className="bg-card rounded-xl border border-border p-8" ref={canvasRef}>
-          {rootCategories.length === 0 && uncategorizedBookmarks.length === 0 ? (
-            <div className="text-center py-12">
+        {bookmarks.length === 0 ? (
+          <div className="flex items-center justify-center h-full">
+            <div className="text-center">
               <p className="text-muted-foreground mb-4">
                 아직 북마크한 논문이 없습니다.
               </p>
               <Button onClick={() => navigate('/')}>논문 찾아보기</Button>
             </div>
-          ) : (
-            <>
-              {rootCategories.map((category) => renderCategory(category))}
-
-              {uncategorizedBookmarks.length > 0 && (
-                <div className="mt-8 pt-8 border-t border-border">
-                  <div className="flex items-center gap-3 mb-3">
-                    <div className="w-4 h-4 rounded-full bg-muted"></div>
-                    <h3 className="text-lg font-semibold text-foreground">미분류</h3>
-                    <span className="text-sm text-muted-foreground">
-                      ({uncategorizedBookmarks.length}개)
-                    </span>
-                  </div>
-                  <div className="ml-7 space-y-2">
-                    {uncategorizedBookmarks.map((bookmark) => (
-                      <div
-                        key={bookmark.id}
-                        className="bg-card border border-border rounded-lg p-3 hover:shadow-md transition-shadow"
-                      >
-                        <a
-                          href={bookmark.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-sm font-medium text-foreground hover:text-primary"
-                        >
-                          {bookmark.title}
-                        </a>
-                        <p className="text-xs text-muted-foreground mt-1">
-                          {bookmark.authors?.join(', ')} ({bookmark.year})
-                        </p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </>
-          )}
-        </div>
+          </div>
+        ) : (
+          <ReactFlow
+            nodes={nodes}
+            edges={edges}
+            onNodesChange={onNodesChange}
+            onEdgesChange={onEdgesChange}
+            onNodeClick={onNodeClick}
+            fitView
+            attributionPosition="bottom-left"
+          >
+            <Controls />
+            <MiniMap 
+              nodeColor={(node) => {
+                if (node.id === 'root') return '#3b82f6';
+                if (node.id.startsWith('keyword')) return '#10b981';
+                return '#e5e7eb';
+              }}
+              style={{ background: '#f9fafb' }}
+            />
+            <Background variant={BackgroundVariant.Dots} gap={12} size={1} />
+          </ReactFlow>
+        )}
       </div>
     </div>
   );
