@@ -64,14 +64,19 @@ const ChatModal: React.FC<ChatModalProps> = ({
   ];
 
   const generateKeywords = () => {
-    return [...allKeywords]
+    const keywords = [...allKeywords]
       .sort(() => Math.random() - 0.5)
-      .slice(0, 3)
-      .map(k => ({
+      .slice(0, 3);
+    
+    // 상승이 대부분이 되도록 (80% 상승, 20% 하강)
+    return keywords.map((k, index) => {
+      const isUp = Math.random() > 0.2; // 80% 확률로 상승
+      return {
         ...k,
         change: Math.floor(Math.random() * 900) + 100,
-        trend: Math.random() > 0.5 ? 'up' as const : 'down' as const
-      }));
+        trend: isUp ? 'up' as const : 'down' as const
+      };
+    });
   };
 
   const [trendingKeywords, setTrendingKeywords] = React.useState(generateKeywords());
@@ -99,7 +104,7 @@ const ChatModal: React.FC<ChatModalProps> = ({
 
       {/* Chat Modal */}
       {isOpen && (
-        <div className="fixed bottom-6 right-6 w-96 h-[600px] bg-white rounded-2xl shadow-2xl border border-gray-200 z-50 flex flex-col">
+        <div className="fixed bottom-6 right-6 w-96 h-[700px] bg-white rounded-2xl shadow-2xl border border-gray-200 z-50 flex flex-col">
           {/* Header */}
           <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-4 rounded-t-2xl flex items-center justify-between">
             <div className="flex items-center space-x-3">

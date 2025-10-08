@@ -5,7 +5,7 @@ import { toast } from 'sonner';
 import { ArrowLeft, User, Mail, Calendar, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Header from '@/components/Header';
-import curiousScientistIcon from '@/assets/curious-scientist-profile.png';
+import curiousScientistIcon from '@/assets/curious-scientist-v2.png';
 
 const Profile = () => {
   const [user, setUser] = useState<any>(null);

@@ -77,9 +77,16 @@ const ResearchRecommendationAgent = () => {
     const shuffled = [...allTrendingPapers].sort(() => Math.random() - 0.5).slice(0, 5);
     return shuffled.map((paper, index) => {
       const rank = index + 1;
-      const prevRank = Math.floor(Math.random() * 5) + 1;
+      
+      // 80% 확률로 상승 추세 (대부분 상승)
+      const isUp = Math.random() > 0.2;
+      const prevRank = isUp ? 
+        Math.min(8, rank + Math.floor(Math.random() * 3) + 1) : // 상승 (이전 순위가 더 낮음)
+        Math.max(1, rank - Math.floor(Math.random() * 2) - 1);  // 하강 (이전 순위가 더 높음)
+      
       const rankChange = prevRank - rank;
-      const trend = rankChange > 0 ? 'up' : rankChange < 0 ? 'down' : rankChange === 0 ? 'same' : 'hot';
+      const trend = rankChange > 0 ? 'up' : rankChange < 0 ? 'down' : 'same';
+      
       return {
         ...paper,
         rank,
