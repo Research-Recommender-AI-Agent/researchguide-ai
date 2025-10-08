@@ -169,46 +169,46 @@ const ResearchRecommendationAgent = () => {
   // 재미있는 논문 데이터
   const allFunPapers = [
     {
-      title: 'Attention Is All You Need',
-      authors: 'Vaswani, A. et al.',
-      year: 2017,
-      journal: 'NeurIPS',
-      url: 'https://arxiv.org/abs/1706.03762'
+      title: 'On the Reception and Detection of Pseudo-Profound Bullshit',
+      authors: 'Pennycook, G. et al.',
+      year: 2015,
+      journal: 'Judgment and Decision Making',
+      url: 'https://doi.org/10.1017/S1930297500006999'
     },
     {
-      title: 'ImageNet Classification with Deep Convolutional Neural Networks',
-      authors: 'Krizhevsky, A. et al.',
-      year: 2012,
-      journal: 'NeurIPS',
-      url: 'https://papers.nips.cc/paper/2012/hash/c399862d3b9d6b76c8436e924a68c45b-Abstract.html'
-    },
-    {
-      title: 'Generative Adversarial Networks',
-      authors: 'Goodfellow, I. et al.',
-      year: 2014,
-      journal: 'NeurIPS',
-      url: 'https://arxiv.org/abs/1406.2661'
-    },
-    {
-      title: 'Deep Residual Learning for Image Recognition',
-      authors: 'He, K. et al.',
+      title: 'Will Work for Praise: The Impact of Verbal Social Stimuli on Effort Provision',
+      authors: 'Bradler, C. et al.',
       year: 2016,
-      journal: 'CVPR',
-      url: 'https://arxiv.org/abs/1512.03385'
+      journal: 'Journal of Economic Psychology',
+      url: 'https://doi.org/10.1016/j.joep.2016.07.003'
     },
     {
-      title: 'BERT: Pre-training of Deep Bidirectional Transformers',
-      authors: 'Devlin, J. et al.',
-      year: 2019,
-      journal: 'NAACL',
-      url: 'https://arxiv.org/abs/1810.04805'
+      title: 'Sword Swallowing and Its Side Effects',
+      authors: 'Witcombe, B. & Meyer, D.',
+      year: 2006,
+      journal: 'BMJ',
+      url: 'https://www.bmj.com/content/333/7582/1285'
     },
     {
-      title: 'Mastering the Game of Go with Deep Neural Networks',
-      authors: 'Silver, D. et al.',
-      year: 2016,
-      journal: 'Nature',
-      url: 'https://www.nature.com/articles/nature16961'
+      title: 'Fart Proudly: Writings of Benjamin Franklin You Never Read in School',
+      authors: 'Franklin, B.',
+      year: 1781,
+      journal: 'Historical Letter',
+      url: 'https://founders.archives.gov/documents/Franklin/01-37-02-0109'
+    },
+    {
+      title: 'The Case of the Disappearing Teaspoons: Longitudinal Cohort Study of the Displacement of Teaspoons in an Australian Research Institute',
+      authors: 'Lim, M.S. et al.',
+      year: 2005,
+      journal: 'BMJ',
+      url: 'https://www.bmj.com/content/331/7531/1498'
+    },
+    {
+      title: 'Pressures Produced When Penguins Pooh—Calculations on Avian Defaecation',
+      authors: 'Meyer-Rochow, V.B. & Gal, J.',
+      year: 2003,
+      journal: 'Polar Biology',
+      url: 'https://doi.org/10.1007/s00300-003-0563-3'
     }
   ];
 
@@ -2608,12 +2608,12 @@ const ResearchRecommendationAgent = () => {
             )}
           </div>
 
-          {/* Right Panel - 왼쪽/오른쪽 분할 */}
+          {/* Right Panel - 고정된 2열 레이아웃 */}
           <div className="xl:col-span-1">
             {!hasSearched && (
-              <div className="grid grid-cols-2 gap-6">
+              <div className="grid gap-6" style={{ gridTemplateColumns: '1fr 1fr' }}>
             {/* 오늘의 논문 - 왼쪽 */}
-                <div className="bg-white rounded-xl shadow-xl border">
+                <div className="bg-white rounded-xl shadow-xl border" style={{ minWidth: 0 }}>
                 <div className="p-3 border-b border-gray-200 bg-gradient-to-r from-emerald-600 to-emerald-700 rounded-t-xl">
                   <div className="flex items-center space-x-2">
                     <div className="text-yellow-300 fill-current">
@@ -2699,7 +2699,7 @@ const ResearchRecommendationAgent = () => {
             </div>
 
             {/* 실시간 논문 트렌드 - 오른쪽 */}
-            <div className="bg-white rounded-xl shadow-xl border">
+            <div className="bg-white rounded-xl shadow-xl border" style={{ minWidth: 0 }}>
               <div className="p-3 border-b border-gray-200 bg-gradient-to-r from-slate-700 to-slate-900 rounded-t-xl">
                 <div className="flex items-center space-x-2">
                   <TrendingUp size={18} className="text-slate-100" />

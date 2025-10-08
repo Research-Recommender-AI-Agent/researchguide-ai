@@ -181,17 +181,17 @@ const Library = () => {
       return;
     }
 
-    // 각 키워드를 독립적인 마인드맵의 중심으로 설정
+    // 각 키워드를 독립적인 마인드맵의 중심으로 설정 (더 간결하게)
     const keywordArray = Array.from(keywordGroups.keys());
-    const mapsPerRow = 3; // 한 행에 3개의 마인드맵
-    const mapSpacing = 600; // 마인드맵 간 간격
-    const verticalSpacing = 500; // 수직 간격
+    const mapsPerRow = 4; // 한 행에 4개의 마인드맵 (더 조밀하게)
+    const mapSpacing = 450; // 마인드맵 간 간격 줄임
+    const verticalSpacing = 400; // 수직 간격 줄임
 
     keywordArray.forEach((keyword, keywordIndex) => {
       const row = Math.floor(keywordIndex / mapsPerRow);
       const col = keywordIndex % mapsPerRow;
-      const centerX = col * mapSpacing + 300;
-      const centerY = row * verticalSpacing + 200;
+      const centerX = col * mapSpacing + 250;
+      const centerY = row * verticalSpacing + 150;
 
       // 키워드(중심) 노드
       const keywordNodeId = `keyword-${keyword}`;
@@ -212,9 +212,9 @@ const Library = () => {
         },
       });
 
-      // 각 키워드의 북마크 노드들을 원형으로 배치
+      // 각 키워드의 북마크 노드들을 원형으로 배치 (더 가깝게)
       const papers = keywordGroups.get(keyword) || [];
-      const radius = 250;
+      const radius = 180; // 반경 줄임
       const angleStep = (2 * Math.PI) / papers.length;
 
       papers.forEach((paper, paperIndex) => {
@@ -237,27 +237,27 @@ const Library = () => {
           position: { x: paperX, y: paperY },
           style: {
             background: 'white',
-            border: '3px solid #cbd5e0',
-            borderRadius: '12px',
-            padding: '16px',
-            fontSize: '14px',
-            width: 220,
+            border: '2px solid #cbd5e0',
+            borderRadius: '10px',
+            padding: '12px',
+            fontSize: '13px',
+            width: 180,
             cursor: 'pointer',
-            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
             transition: 'all 0.3s ease',
           },
+          className: 'hover:border-sky-300 hover:shadow-lg',
         });
 
-        // 키워드에서 논문으로 엣지
+        // 키워드에서 논문으로 엣지 (더 간결하게)
         newEdges.push({
           id: `edge-${keywordNodeId}-${paperNodeId}`,
           source: keywordNodeId,
           target: paperNodeId,
           animated: false,
           style: { 
-            stroke: '#667eea', 
-            strokeWidth: 2.5,
-            strokeDasharray: '5,5'
+            stroke: '#cbd5e0', 
+            strokeWidth: 1.5,
           },
         });
       });
@@ -292,56 +292,86 @@ const Library = () => {
     <div className="min-h-screen bg-background">
       <Header responseTime={null} showMetrics={false} onToggleMetrics={() => {}} />
       
-      <div className="h-[calc(100vh-80px)]">
-        <div className="absolute top-24 left-6 z-10 bg-card rounded-xl border border-border p-4 shadow-lg">
-          <div className="flex items-center gap-4 mb-2">
+      <div className="flex h-[calc(100vh-80px)] pt-20">
+        {/* 왼쪽 카테고리 패널 */}
+        <div className="w-64 bg-white border-r border-border overflow-y-auto shadow-lg">
+          <div className="p-4">
             <Button
               variant="ghost"
-              size="icon"
+              size="sm"
               onClick={() => navigate('/')}
+              className="mb-4 w-full justify-start"
             >
-              <ArrowLeft className="h-5 w-5" />
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              돌아가기
             </Button>
-            <div>
-              <h1 className="text-2xl font-bold text-foreground">내 라이브러리</h1>
-              <p className="text-sm text-muted-foreground mt-1">
-                {bookmarks.length}개의 북마크
-              </p>
+            
+            <h2 className="text-lg font-bold mb-4">카테고리</h2>
+            
+            {/* 키워드별 카테고리 */}
+            {Array.from(new Set(bookmarks.flatMap(b => b.keywords || []))).map((keyword, idx) => {
+              const papersInCategory = bookmarks.filter(b => b.keywords?.includes(keyword));
+              return (
+                <div key={idx} className="mb-2">
+                  <button className="w-full text-left px-3 py-2 rounded-lg hover:bg-sky-100 hover:text-black transition-colors text-sm font-medium">
+                    {keyword} ({papersInCategory.length})
+                  </button>
+                </div>
+              );
+            })}
+            
+            {bookmarks.filter(b => !b.keywords || b.keywords.length === 0).length > 0 && (
+              <div className="mb-2">
+                <button className="w-full text-left px-3 py-2 rounded-lg hover:bg-sky-100 hover:text-black transition-colors text-sm font-medium">
+                  기타 ({bookmarks.filter(b => !b.keywords || b.keywords.length === 0).length})
+                </button>
+              </div>
+            )}
+            
+            <div className="mt-6 pt-4 border-t">
+              <p className="text-xs text-muted-foreground mb-2">전체 통계</p>
+              <p className="text-sm">총 {bookmarks.length}개의 논문</p>
             </div>
           </div>
         </div>
+        
+        {/* 오른쪽 마인드맵 영역 */}
+        <div className="flex-1 relative">
 
-        {bookmarks.length === 0 ? (
-          <div className="flex items-center justify-center h-full">
-            <div className="text-center">
-              <p className="text-muted-foreground mb-4">
-                아직 북마크한 논문이 없습니다.
-              </p>
-              <Button onClick={() => navigate('/')}>논문 찾아보기</Button>
+          {bookmarks.length === 0 ? (
+            <div className="flex items-center justify-center h-full">
+              <div className="text-center">
+                <p className="text-muted-foreground mb-4">
+                  아직 북마크한 논문이 없습니다.
+                </p>
+                <Button onClick={() => navigate('/')}>논문 찾아보기</Button>
+              </div>
             </div>
-          </div>
-        ) : (
-          <ReactFlow
-            nodes={nodes}
-            edges={edges}
-            onNodesChange={onNodesChange}
-            onEdgesChange={onEdgesChange}
-            onNodeClick={onNodeClick}
-            fitView
-            attributionPosition="bottom-left"
-          >
-            <Controls />
-            <MiniMap 
-              nodeColor={(node) => {
-                if (node.id === 'root') return '#3b82f6';
-                if (node.id.startsWith('keyword')) return '#10b981';
-                return '#e5e7eb';
-              }}
-              style={{ background: '#f9fafb' }}
-            />
-            <Background variant={BackgroundVariant.Dots} gap={12} size={1} />
-          </ReactFlow>
-        )}
+          ) : (
+            <ReactFlow
+              nodes={nodes}
+              edges={edges}
+              onNodesChange={onNodesChange}
+              onEdgesChange={onEdgesChange}
+              onNodeClick={onNodeClick}
+              fitView
+              attributionPosition="bottom-left"
+              nodesDraggable={false}
+              nodesConnectable={false}
+              elementsSelectable={true}
+            >
+              <Controls />
+              <MiniMap 
+                nodeColor={(node) => {
+                  if (node.id.startsWith('keyword')) return '#667eea';
+                  return '#e5e7eb';
+                }}
+                style={{ background: '#f9fafb' }}
+              />
+              <Background variant={BackgroundVariant.Dots} gap={16} size={1} color="#e5e7eb" />
+            </ReactFlow>
+          )}
+        </div>
       </div>
     </div>
   );
