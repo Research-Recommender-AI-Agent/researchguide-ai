@@ -78,7 +78,12 @@ const Header: React.FC<HeaderProps> = ({ responseTime, showMetrics, onToggleMetr
               <Flame className="text-white" size={24} />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">연구의 등불</h1>
+              <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
+                연구의 등불
+                <span className="text-xs font-semibold px-2 py-1 bg-gradient-to-r from-purple-500 to-blue-500 text-white rounded-full animate-pulse">
+                  AI Agent
+                </span>
+              </h1>
             </div>
           </button>
           

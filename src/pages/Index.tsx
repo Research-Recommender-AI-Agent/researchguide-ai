@@ -29,6 +29,11 @@ const ResearchRecommendationAgent = () => {
   const [clarifyOptions, setClarifyOptions] = useState<string[] | null>(null);
   const [clarifyQuestion, setClarifyQuestion] = useState<string | null>(null);
   const [pendingQuery, setPendingQuery] = useState<string>('');
+  
+  // Agent-level AI 상태
+  const [agentSuggestions, setAgentSuggestions] = useState<string[]>([]);
+  const [researchPhase, setResearchPhase] = useState<string>('탐색');
+  const [showAgentPanel, setShowAgentPanel] = useState(false);
 
   // localStorage에서 대화 내용 로드
   useEffect(() => {
@@ -1836,9 +1841,52 @@ const ResearchRecommendationAgent = () => {
       const ids = new Set(data?.map(b => `${b.title}-${b.year}`) || []);
       setBookmarkedIds(ids);
       setBookmarkedPapers(data || []);
+      
+      // Agent AI: 연구 패턴 분석 및 제안 생성
+      if (data && data.length > 0) {
+        analyzeResearchPattern(data);
+      }
     } catch (error) {
       console.error('북마크 로드 실패:', error);
     }
+  };
+  
+  // Agent AI: 연구 패턴 분석 및 자율적 제안
+  const analyzeResearchPattern = (bookmarks: any[]) => {
+    const keywords = bookmarks.flatMap(b => b.keywords || []);
+    const keywordFreq: Record<string, number> = {};
+    keywords.forEach(k => {
+      keywordFreq[k] = (keywordFreq[k] || 0) + 1;
+    });
+    
+    const topKeywords = Object.entries(keywordFreq)
+      .sort(([, a], [, b]) => (b as number) - (a as number))
+      .slice(0, 3)
+      .map(([k]) => k);
+    
+    // 연구 단계 파악
+    const paperCount = bookmarks.length;
+    let phase = '탐색';
+    if (paperCount > 10) phase = '심화';
+    if (paperCount > 20) phase = '전문';
+    setResearchPhase(phase);
+    
+    // 자율적 제안 생성
+    const suggestions = [];
+    if (topKeywords.length > 0) {
+      suggestions.push(`${topKeywords.join(', ')} 분야의 최신 리뷰 논문 찾기`);
+      suggestions.push(`${topKeywords[0]}와 연관된 새로운 연구 방향 탐색`);
+    }
+    if (phase === '심화') {
+      suggestions.push('관련 데이터셋 및 벤치마크 찾기');
+      suggestions.push('주요 연구자들의 최근 논문 추적');
+    }
+    if (phase === '전문') {
+      suggestions.push('연구 분야의 미래 트렌드 분석');
+      suggestions.push('학제간 연구 기회 발견');
+    }
+    
+    setAgentSuggestions(suggestions);
   };
 
   const loadUserProfile = async (userId: string) => {
@@ -2396,12 +2444,66 @@ const ResearchRecommendationAgent = () => {
               </div>
             )}
 
-            {/* Empty State */}
+            {/* Empty State - Agent AI 특징 강조 */}
             {recommendations.length === 0 && !isLoading && !clarifyOptions && (
-              <div className="bg-gradient-to-br from-slate-800 to-blue-800 rounded-xl shadow-xl border border-slate-600 p-4 text-center">
-                <Brain size={24} className="text-slate-400 mx-auto mb-2" />
-                <h3 className="text-sm font-semibold text-white mb-1">하단에서 논문·연구데이터 정보를 입력해주세요</h3>
-                <p className="text-slate-300 text-xs">AI 채팅창이나 실시간 검색어를 클릭하여 추천을 받아보세요.</p>
+              <div className="bg-gradient-to-br from-slate-800 to-blue-800 rounded-xl shadow-xl border border-slate-600 p-6">
+                <div className="text-center mb-6">
+                  <div className="inline-flex items-center gap-2 mb-4">
+                    <Brain size={32} className="text-purple-400 animate-pulse" />
+                    <span className="text-2xl font-bold text-white">AI Agent</span>
+                  </div>
+                  <h3 className="text-lg font-semibold text-white mb-2">자율적 연구 지원 시스템</h3>
+                  <p className="text-slate-300 text-sm">하단 AI 채팅창 또는 실시간 검색어로 시작하세요</p>
+                </div>
+                
+                <div className="grid grid-cols-2 gap-4 mb-4">
+                  <div className="bg-white/5 backdrop-blur-sm rounded-lg p-4 border border-white/10">
+                    <div className="flex items-start gap-2 mb-2">
+                      <span className="text-2xl">🧠</span>
+                      <div>
+                        <h4 className="font-semibold text-white text-sm">다단계 추론</h4>
+                        <p className="text-xs text-slate-300 mt-1">BM25, Dense Embedding, Cross-Encoder 재랭킹</p>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="bg-white/5 backdrop-blur-sm rounded-lg p-4 border border-white/10">
+                    <div className="flex items-start gap-2 mb-2">
+                      <span className="text-2xl">🎯</span>
+                      <div>
+                        <h4 className="font-semibold text-white text-sm">의도 파악</h4>
+                        <p className="text-xs text-slate-300 mt-1">Clarify 질문으로 정확한 추천</p>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="bg-white/5 backdrop-blur-sm rounded-lg p-4 border border-white/10">
+                    <div className="flex items-start gap-2 mb-2">
+                      <span className="text-2xl">📚</span>
+                      <div>
+                        <h4 className="font-semibold text-white text-sm">패턴 학습</h4>
+                        <p className="text-xs text-slate-300 mt-1">북마크 분석으로 맞춤 제안</p>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="bg-white/5 backdrop-blur-sm rounded-lg p-4 border border-white/10">
+                    <div className="flex items-start gap-2 mb-2">
+                      <span className="text-2xl">⚡</span>
+                      <div>
+                        <h4 className="font-semibold text-white text-sm">프로액티브</h4>
+                        <p className="text-xs text-slate-300 mt-1">자율적 워크플로우 제안</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="bg-purple-500/10 border border-purple-500/30 rounded-lg p-3">
+                  <p className="text-xs text-purple-200 text-center">
+                    💡 <span className="font-semibold">Agent-level AI</span>는 단순 검색이 아닌, 
+                    <span className="font-semibold"> 연구 맥락을 이해하고 능동적으로 지원</span>하는 시스템입니다
+                  </p>
+                </div>
               </div>
             )}
 
@@ -2879,6 +2981,53 @@ const ResearchRecommendationAgent = () => {
           setTimeout(() => handleChatSubmit(), 100);
         }}
       />
+      
+      {/* Agent AI 제안 패널 */}
+      {user && agentSuggestions.length > 0 && (
+        <div className="fixed bottom-24 right-24 w-80 bg-gradient-to-br from-purple-600 to-blue-600 text-white rounded-2xl shadow-2xl p-4 animate-fade-in z-40">
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-2">
+              <Brain size={20} className="animate-pulse" />
+              <h3 className="font-bold text-sm">AI Agent 제안</h3>
+              <span className="text-xs bg-white/20 px-2 py-0.5 rounded-full">
+                {researchPhase}
+              </span>
+            </div>
+            <button 
+              onClick={() => setShowAgentPanel(!showAgentPanel)}
+              className="text-white/80 hover:text-white"
+            >
+              {showAgentPanel ? '−' : '+'}
+            </button>
+          </div>
+          
+          {showAgentPanel && (
+            <div className="space-y-2 animate-accordion-down">
+              <p className="text-xs opacity-90 mb-2">
+                연구 패턴을 분석하여 다음 단계를 제안합니다:
+              </p>
+              {agentSuggestions.map((suggestion, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => {
+                    setChatInput(suggestion);
+                    setIsChatOpen(true);
+                    setTimeout(() => handleChatSubmit(), 100);
+                  }}
+                  className="w-full text-left px-3 py-2 bg-white/10 hover:bg-white/20 rounded-lg text-xs transition-all backdrop-blur-sm border border-white/20"
+                >
+                  💡 {suggestion}
+                </button>
+              ))}
+              <div className="mt-3 pt-3 border-t border-white/20">
+                <p className="text-xs opacity-75">
+                  <span className="font-semibold">자율적 학습:</span> {bookmarkedPapers.length}개 논문 분석 완료
+                </p>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 };
