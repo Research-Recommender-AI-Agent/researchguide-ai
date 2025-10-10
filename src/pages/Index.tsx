@@ -3007,6 +3007,13 @@ const ResearchRecommendationAgent = () => {
           )}
         </div>
       )}
+
+      {/* Footer */}
+      <footer className="bg-gray-100 border-t border-gray-200 mt-16">
+        <div className="max-w-7xl mx-auto px-6 py-4">
+          <p className="text-sm text-gray-600">©연구의등불</p>
+        </div>
+      </footer>
     </div>
   );
 };
