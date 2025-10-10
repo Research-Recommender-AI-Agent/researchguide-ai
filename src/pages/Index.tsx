@@ -2429,8 +2429,8 @@ const ResearchRecommendationAgent = () => {
         )}
 
         {/* Main Content */}
-        <div className="grid grid-cols-1 xl:grid-cols-4 gap-6">
-          <div className="xl:col-span-3 space-y-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-2 space-y-6">
             {/* Clarify Options */}
             {clarifyOptions && clarifyOptions.length > 0 && !isLoading && (
               <div className="bg-gradient-to-br from-blue-800 to-indigo-800 rounded-xl shadow-xl border border-blue-600 p-6">
@@ -2753,12 +2753,12 @@ const ResearchRecommendationAgent = () => {
             )}
           </div>
 
-          {/* Right Panel - 고정된 2열 레이아웃 */}
-          <div className="xl:col-span-1">
+          {/* Right Panel - 반응형 레이아웃 */}
+          <div className="lg:col-span-1 space-y-6">
             {!hasSearched && (
-              <div className="grid gap-6" style={{ gridTemplateColumns: '1fr 1fr' }}>
-            {/* 오늘의 논문 - 왼쪽 */}
-                <div className="bg-white rounded-xl shadow-xl border" style={{ minWidth: 0 }}>
+              <>
+            {/* 오늘의 논문 */}
+                <div className="bg-white rounded-xl shadow-xl border">
                 <div className="p-3 border-b border-gray-200 bg-gradient-to-r from-emerald-600 to-emerald-700 rounded-t-xl">
                   <div className="flex items-center space-x-2">
                     <div className="text-yellow-300 fill-current">
@@ -2772,25 +2772,25 @@ const ResearchRecommendationAgent = () => {
                 </div>
               
               <div className="p-4">
-                <div className="flex space-x-4">
+                <div className="flex flex-col sm:flex-row gap-4">
                   <a 
                     href={todayPaper.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="block w-64 bg-white rounded-lg flex-shrink-0 border-2 border-gray-200 shadow-sm p-4 flex flex-col justify-center items-center hover:border-blue-400 transition-colors" 
+                    className="w-full sm:w-40 lg:w-32 xl:w-40 mx-auto sm:mx-0 bg-white rounded-lg flex-shrink-0 border-2 border-gray-200 shadow-sm p-3 flex flex-col justify-center items-center hover:border-blue-400 transition-colors" 
                     style={{aspectRatio: '1/1.414'}}
                   >
                     <div className="text-center">
-                      <div className="text-[13px] font-bold text-gray-800 leading-tight mb-2" style={{fontFamily: 'Georgia, serif'}}>
+                      <div className="text-xs sm:text-[11px] lg:text-[10px] xl:text-[11px] font-bold text-gray-800 leading-tight mb-1.5" style={{fontFamily: 'Georgia, serif'}}>
                         {todayPaper.title.split(':')[0]}
                       </div>
-                      <div className="text-[11px] text-gray-600 mb-2" style={{fontFamily: 'Georgia, serif'}}>
+                      <div className="text-[10px] sm:text-[9px] lg:text-[8px] xl:text-[9px] text-gray-600 mb-1.5" style={{fontFamily: 'Georgia, serif'}}>
                         {todayPaper.title.includes(':') ? todayPaper.title.split(':')[1] : ''}
                       </div>
-                      <div className="text-[10px] text-gray-500 font-medium mb-1" style={{fontFamily: 'Georgia, serif'}}>
+                      <div className="text-[9px] sm:text-[8px] lg:text-[7px] xl:text-[8px] text-gray-500 font-medium mb-1" style={{fontFamily: 'Georgia, serif'}}>
                         {todayPaper.journal}
                       </div>
-                      <div className="text-[9px] text-gray-400" style={{fontFamily: 'Georgia, serif'}}>
+                      <div className="text-[8px] sm:text-[7px] lg:text-[6px] xl:text-[7px] text-gray-400" style={{fontFamily: 'Georgia, serif'}}>
                         {todayPaper.year}
                       </div>
                     </div>
@@ -2843,8 +2843,8 @@ const ResearchRecommendationAgent = () => {
               </div>
             </div>
 
-            {/* 실시간 논문 트렌드 - 오른쪽 */}
-            <div className="bg-white rounded-xl shadow-xl border" style={{ minWidth: 0 }}>
+            {/* 실시간 논문 트렌드 */}
+            <div className="bg-white rounded-xl shadow-xl border">
               <div className="p-3 border-b border-gray-200 bg-gradient-to-r from-slate-700 to-slate-900 rounded-t-xl">
                 <div className="flex items-center space-x-2">
                   <TrendingUp size={18} className="text-slate-100" />
@@ -2926,8 +2926,8 @@ const ResearchRecommendationAgent = () => {
                   <div className="w-2 h-2 bg-orange-500 rounded-full animate-pulse"></div>
                 </div>
                </div>
-             </div>
               </div>
+              </>
             )}
           </div>
         </div>
