@@ -2428,9 +2428,9 @@ const ResearchRecommendationAgent = () => {
           </div>
         )}
 
+
         {/* Main Content */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-2 space-y-6">
+        <div className="space-y-6">
             {/* Clarify Options */}
             {clarifyOptions && clarifyOptions.length > 0 && !isLoading && (
               <div className="bg-gradient-to-br from-blue-800 to-indigo-800 rounded-xl shadow-xl border border-blue-600 p-6">
@@ -2649,22 +2649,44 @@ const ResearchRecommendationAgent = () => {
 
                         <div className="flex items-center justify-between">
                           <div className="flex flex-wrap gap-2">
-                            {rec.keywords.map((keyword, idx) => (
-                              <span key={idx} className="px-2 py-1 bg-blue-600 text-blue-100 rounded text-xs">
+                            {rec.keywords?.map((keyword, idx) => (
+                              <span key={idx} className="px-2 py-1 bg-slate-600 text-slate-200 rounded text-xs">
                                 {keyword}
                               </span>
                             ))}
                           </div>
+                          
+                          <a
+                            href={rec.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center space-x-1 text-blue-400 hover:text-blue-300 text-sm font-medium transition-colors flex-shrink-0 ml-4"
+                          >
+                            <span>자세히 보기</span>
+                            <ExternalLink size={14} />
+                          </a>
                         </div>
 
                         {expandedCard === rec.id && (
-                          <div className="mt-6 pt-4 border-t border-slate-600">
-                            <h5 className="font-medium text-white mb-3">상세 정보</h5>
+                          <div className="mt-4 pt-4 border-t border-slate-600">
+                            <h5 className="font-medium text-white mb-2">상세 정보</h5>
                             <div className="space-y-2 text-sm text-slate-300">
-                              <p><span className="font-medium">발행일:</span> {rec.year}</p>
-                              {rec.type === 'paper' && <p><span className="font-medium">인용 횟수:</span> {rec.citationCount}회</p>}
-                              {rec.type === 'dataset' && <p><span className="font-medium">데이터 크기:</span> {rec.dataSize}</p>}
-                              <p><span className="font-medium">키워드:</span> {rec.keywords.join(', ')}</p>
+                              {rec.type === 'paper' && (
+                                <>
+                                  <p><span className="font-medium">저자:</span> {rec.authors?.join(', ')}</p>
+                                  <p><span className="font-medium">저널:</span> {rec.journal}</p>
+                                  <p><span className="font-medium">출판년도:</span> {rec.year}</p>
+                                  <p><span className="font-medium">인용 횟수:</span> {rec.citationCount}</p>
+                                </>
+                              )}
+                              {rec.type === 'dataset' && (
+                                <>
+                                  <p><span className="font-medium">발행처:</span> {rec.publisher}</p>
+                                  <p><span className="font-medium">데이터 크기:</span> {rec.dataSize}</p>
+                                  <p><span className="font-medium">형식:</span> {rec.format}</p>
+                                  <p><span className="font-medium">라이센스:</span> {rec.license}</p>
+                                </>
+                              )}
                             </div>
                           </div>
                         )}
@@ -2673,90 +2695,34 @@ const ResearchRecommendationAgent = () => {
                   ))}
                 </div>
 
-                {/* 관련 데이터셋 섹션 */}
-                <div className="mt-6 bg-slate-700/50 rounded-lg border border-slate-600 p-4">
-                  <h4 className="text-base font-semibold mb-3 flex items-center gap-2 text-white">
-                    <Database className="w-4 h-4 text-blue-400" />
-                    관련 데이터셋
-                  </h4>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    <a 
-                      href={`https://paperswithcode.com/search?q=${encodeURIComponent(chatMessages.filter(msg => msg.type === 'user').slice(-1)[0]?.message || '')}`}
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="p-3 bg-slate-600/50 rounded-lg hover:bg-slate-600 transition-colors border border-slate-500"
-                    >
-                      <h5 className="font-semibold text-sm mb-1 text-white">Papers with Code</h5>
-                      <p className="text-xs text-slate-300">AI/ML 논문과 코드 구현</p>
-                    </a>
-                    <a 
-                      href={`https://datasetsearch.research.google.com/search?query=${encodeURIComponent(chatMessages.filter(msg => msg.type === 'user').slice(-1)[0]?.message || '')}`}
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="p-3 bg-slate-600/50 rounded-lg hover:bg-slate-600 transition-colors border border-slate-500"
-                    >
-                      <h5 className="font-semibold text-sm mb-1 text-white">Google Dataset Search</h5>
-                      <p className="text-xs text-slate-300">구글 데이터셋 검색</p>
-                    </a>
-                    <a 
-                      href={`https://www.kaggle.com/search?q=${encodeURIComponent(chatMessages.filter(msg => msg.type === 'user').slice(-1)[0]?.message || '')}`}
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="p-3 bg-slate-600/50 rounded-lg hover:bg-slate-600 transition-colors border border-slate-500"
-                    >
-                      <h5 className="font-semibold text-sm mb-1 text-white">Kaggle</h5>
-                      <p className="text-xs text-slate-300">데이터 과학 경진대회 플랫폼</p>
-                    </a>
-                    <a 
-                      href={`https://huggingface.co/datasets?search=${encodeURIComponent(chatMessages.filter(msg => msg.type === 'user').slice(-1)[0]?.message || '')}`}
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="p-3 bg-slate-600/50 rounded-lg hover:bg-slate-600 transition-colors border border-slate-500"
-                    >
-                      <h5 className="font-semibold text-sm mb-1 text-white">Hugging Face</h5>
-                      <p className="text-xs text-slate-300">NLP 및 ML 데이터셋</p>
-                    </a>
-                  </div>
-                </div>
-                
-                {/* 페이지네이션 */}
-                <div className="flex items-center justify-center gap-2 mt-8 pt-6 border-t border-slate-600">
-                  <button
-                    onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
-                    disabled={currentPage === 1}
-                    className="px-3 py-2 text-white disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-600 rounded"
-                  >
-                    &lt;
-                  </button>
-                  {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                {/* Pagination */}
+                {filteredRecommendations.length > itemsPerPage && (
+                  <div className="flex items-center justify-center space-x-2 mt-6">
                     <button
-                      key={page}
-                      onClick={() => handlePageChange(page)}
-                      className={`px-4 py-2 rounded ${
-                        currentPage === page
-                          ? 'bg-blue-600 text-white'
-                          : 'text-slate-300 hover:bg-slate-600'
-                      }`}
+                      onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+                      disabled={currentPage === 1}
+                      className="px-4 py-2 bg-slate-600 text-white rounded-md hover:bg-slate-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                     >
-                      {page}
+                      이전
                     </button>
-                  ))}
-                  <button
-                    onClick={() => handlePageChange(Math.min(totalPages, currentPage + 1))}
-                    disabled={currentPage === totalPages}
-                    className="px-3 py-2 text-white disabled:opacity-50 disabled:cursor-not-allowed hover:bg-slate-600 rounded"
-                  >
-                    &gt;
-                  </button>
-                </div>
+                    <span className="text-white">
+                      {currentPage} / {Math.ceil(filteredRecommendations.length / itemsPerPage)}
+                    </span>
+                    <button
+                      onClick={() => setCurrentPage(Math.min(Math.ceil(filteredRecommendations.length / itemsPerPage), currentPage + 1))}
+                      disabled={currentPage === Math.ceil(filteredRecommendations.length / itemsPerPage)}
+                      className="px-4 py-2 bg-slate-600 text-white rounded-md hover:bg-slate-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    >
+                      다음
+                    </button>
+                  </div>
+                )}
               </div>
             )}
-          </div>
 
-          {/* Right Panel - 반응형 레이아웃 */}
-          <div className="lg:col-span-1 space-y-6">
+            {/* 오늘의 논문과 실시간 트렌드를 가로로 배치 (큰 화면) */}
             {!hasSearched && (
-              <>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* 오늘의 논문 */}
                 <div className="bg-white rounded-xl shadow-xl border">
                 <div className="p-3 border-b border-gray-200 bg-gradient-to-r from-emerald-600 to-emerald-700 rounded-t-xl">
@@ -2927,9 +2893,8 @@ const ResearchRecommendationAgent = () => {
                 </div>
                </div>
               </div>
-              </>
+              </div>
             )}
-          </div>
         </div>
         
         {/* 재미있는 논문 추천 롤링 배너 */}
