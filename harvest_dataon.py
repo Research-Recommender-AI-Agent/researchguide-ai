@@ -7,15 +7,15 @@ import string
 import itertools
 import glob
 
-# ✅ [1] API 인증 관련 설정
+# [1] API 인증 관련 설정
 SEARCH_KEY = "5494BC49983EF849F14BD95428E97132"  # KISTI DataON API key
 SEARCH_URL = "http://dataon.kisti.re.kr/rest/api/search/dataset"  # 검색 endpoint
 
-# ✅ [2] 저장 관련 파라미터
+# [2] 저장 관련 파라미터
 SPLIT_SIZE = 100_000  # 파일 하나당 저장할 최대 데이터 수 (너무 커지지 않게 분할)
 STEP = 100             # 한 번의 요청당 가져올 데이터 개수 (API size 파라미터)
 
-# ✅ [3] 쿼리 문자 조합 생성 (2글자씩)
+# [3] 쿼리 문자 조합 생성 (2글자씩)
 # DataON 검색 API는 검색어(query)가 있어야 결과를 반환하므로,
 # 가능한 모든 문자 조합으로 검색을 시도하여 전체 데이터를 커버함.
 
@@ -37,13 +37,13 @@ BASE_CHARS = (
 QUERIES = ["".join(p) for p in itertools.product(BASE_CHARS, repeat=2)]
 print(f"[INFO] 총 {len(QUERIES)} 개 쿼리 생성됨")
 
-# ✅ [4] 데이터 저장 디렉터리
+#  [4] 데이터 저장 디렉터리
 SAVE_DIR = "dataon_dumps"
 os.makedirs(SAVE_DIR, exist_ok=True)
 
 
 # =======================
-# 🔍 [5] API 요청 함수
+# [5] API 요청 함수
 # =======================
 def fetch_search(query="", start=0, size=100):
     """DataON API에서 query 검색 결과를 JSON 형태로 반환"""
@@ -54,7 +54,7 @@ def fetch_search(query="", start=0, size=100):
 
 
 # =======================
-# 💾 [6] JSONL 저장 함수
+# [6] JSONL 저장 함수
 # =======================
 def save_jsonl(records, file_path):
     """리스트 형태의 레코드를 JSON Lines 포맷으로 파일에 append"""
@@ -64,7 +64,7 @@ def save_jsonl(records, file_path):
 
 
 # =======================
-# 🧠 [7] 중복 방지용 ID 로드
+#  [7] 중복 방지용 ID 로드
 # =======================
 def load_seen_ids():
     """
@@ -87,7 +87,7 @@ def load_seen_ids():
 
 
 # =======================
-# 🚀 [8] 메인 로직
+#  [8] 메인 로직
 # =======================
 def main():
     # 기존에 저장된 데이터 ID 불러오기
@@ -164,6 +164,7 @@ def main():
     print(f"\n[DONE] 총 {total_saved} 건 데이터 저장 완료")
 
 
-# ✅ 프로그램 진입점
+# 프로그램 진입점
 if __name__ == "__main__":
+
     main()
