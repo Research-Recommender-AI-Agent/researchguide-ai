@@ -274,7 +274,192 @@ print(f"nDCG@{K}: {ndcg5:.3f}")
 - **메모리**: 대형 코퍼스는 SBERT 임베딩 메모리 사용량이 큼 → 배치 인코딩/절단  
 - **오류**: 로컬 모델 경로 불일치/누락 확인, CPU‑only 환경에서 CE를 꺼서 시간 절약
 - **LLM prompting 대신 추출적 근거를 사용하여 추천 사유 생성**
-   - Multi-Agent를 사용할 목적이었으나 모델을 3개나 사용하기 때문에 응답시간 길어지고(성능을 올릴려면 불가피) 중저사양 H/W에서는 힘들 것으로 판단함	
+   - Multi-Agent를 사용할 목적이었으나 모델을 3개나 사용하기 때문에 응답시간 길어지고(성능을 올릴려면 불가피) 중저사양 H/W에서는 힘들 것으로 판단함
+ 
+# Modeling.ipynb – 실행 환경 구성 가이드 (HW/SW)
+
+본 노트북은 **BM25 → SBERT 임베딩 → Cross-Encoder 재랭킹** 파이프라인으로
+논문/데이터셋 추천을 수행합니다. 아래 단계대로 HW/SW 환경을 구성하세요.
+
+---
+
+## 1) 권장 하드웨어
+
+- **GPU 권장:** NVIDIA 8GB VRAM 이상 (예: RTX 3060, T4 등)  
+  - GPU가 없더라도 CPU로 실행 가능하나, **추론 시간이 증가**합니다.
+- **RAM:** 최소 16GB 권장
+- **스토리지:** 모델/코퍼스 포함 5–10GB 이상 여유
+
+---
+
+## 2) NVIDIA 드라이버 & CUDA 런타임
+
+- PyTorch CUDA 패키지에 **CUDA 런타임이 포함**되므로 **별도 CUDA Toolkit 설치는 선택**입니다.
+- 드라이버는 CUDA 런타임과 호환되어야 합니다.
+
+| PyTorch CUDA 패키지 | 권장 드라이버(대략) | 비고 |
+|---|---|---|
+| cu118 (CUDA 11.8) | **>= 520** | 구형 GPU 호환성이 넓음 |
+| cu121 (CUDA 12.1) | **>= 530** | 최신 카드/성능 우선 |
+
+> 정확한 호환성은 **NVIDIA/PyTorch 릴리즈 노트**를 따르세요. (예: Linux Server Driver ≥ 530.x for CUDA 12.1)
+
+드라이버 확인:
+```bash
+nvidia-smi
+```
+
+---
+
+## 3) Conda 환경 구성 (권장)
+
+### A. 새 환경 만들기
+```bash
+# Miniconda/Anaconda 설치 후 실행
+conda create -n recsys-llm python=3.10 -y
+conda activate recsys-llm
+```
+
+### B. 핵심 파이썬 패키지 설치
+아래 중 **GPU 또는 CPU** 한 가지를 선택해 설치하세요.
+
+**[GPU – CUDA 12.1]**
+```bash
+# PyTorch (cu121)
+pip install --index-url https://download.pytorch.org/whl/cu121   torch==2.3.1 torchvision==0.18.1 torchaudio==2.3.1
+```
+
+**[CPU 전용]**
+```bash
+# CPU 빌드
+pip install torch==2.3.1 torchvision==0.18.1 torchaudio==2.3.1
+```
+
+그 다음 공통 패키지:
+```bash
+pip install -U pip
+pip install   sentence-transformers==2.7.0   transformers==4.41.2   rank-bm25==0.2.2   scikit-learn==1.4.2   numpy==1.26.4   scipy==1.11.4   pandas==2.2.2   tqdm==4.66.4   huggingface-hub==0.23.4
+```
+
+### C. (선택) 환경을 YAML로 관리
+`environment.yaml` 예시:
+```yaml
+name: recsys-llm
+channels:
+  - conda-forge
+dependencies:
+  - python=3.10
+  - pip>=24.0
+  - numpy=1.26.4
+  - scipy=1.11.4
+  - scikit-learn=1.4.2
+  - pandas=2.2.2
+  - tqdm=4.66.4
+  - ipykernel
+  - pip:
+      - sentence-transformers==2.7.0
+      - transformers==4.41.2
+      - rank-bm25==0.2.2
+      - huggingface-hub==0.23.4
+      # 🔹 PyTorch는 CUDA별 휠이 필요하므로 별도 명령으로 설치 권장
+```
+
+생성/적용:
+```bash
+conda env create -f environment.yaml
+conda activate recsys-llm
+# 이후, 위의 PyTorch(GPU/CPU) 설치 명령을 따로 실행
+```
+
+---
+
+## 4) 로컬 모델 경로
+
+노트북/코드에서 다음 경로를 사용합니다. 미리 폴더에 모델을 준비해 두세요.
+
+```
+models/
+ ├─ paraphrase-multilingual-MiniLM-L12-v2      # SBERT 임베딩
+ └─ bge-reranker-v2-m3                         # Cross-Encoder (재랭킹)
+```
+
+> 인터넷 미사용 환경이면, 두 디렉터리에 **config.json, model.safetensors, tokenizer files** 등이 포함되어야 합니다.
+
+---
+
+## 5) 실행 방법
+
+1. 콘다 활성화: `conda activate recsys-llm`  
+2. Jupyter/VS Code에서 **Modeling.ipynb** 열기  
+3. 노트북 상단 **Config** 섹션에서 CSV/모델 경로 확인  
+4. 전체 셀 실행 → 입력(제목/설명) → 결과 테이블/CSV 저장
+
+---
+
+## 6) GPU 사용 확인 코드
+
+```python
+import torch
+if torch.cuda.is_available():
+    print("CUDA available:", torch.version.cuda)
+    print("GPU:", torch.cuda.get_device_name(0))
+else:
+    print("CUDA not available → CPU 모드")
+```
+
+---
+
+## 7) 필수 라이브러리 버전 고정 (requirements)
+
+### A. 예시 `requirements.txt`
+> **주의:** GPU를 쓴다면 PyTorch는 아래 파일 대신, 위의 **CUDA별 설치 명령**을 사용하세요.
+```
+sentence-transformers==2.7.0
+transformers==4.41.2
+rank-bm25==0.2.2
+scikit-learn==1.4.2
+numpy==1.26.4
+scipy==1.11.4
+pandas==2.2.2
+tqdm==4.66.4
+huggingface-hub==0.23.4
+```
+
+설치:
+```bash
+pip install -r requirements.txt
+# (그 다음) GPU 또는 CPU용 PyTorch 설치 명령 실행
+```
+
+### B. 현재 환경을 Freeze로 보존
+```bash
+pip freeze > requirements_freeze.txt
+# 또는 conda env export --no-builds > environment_freeze.yaml
+```
+
+---
+
+## 8) 트러블슈팅
+
+- **torch.cuda.is_available() = False**
+  - NVIDIA 드라이버 미설치/버전 낮음, WSL2/컨테이너 권한 문제, 또는 CPU용 PyTorch가 설치됨
+  - 드라이버/런타임 확인: `nvidia-smi`
+- **CUDA 드라이버/런타임 불일치**
+  - cu118/121 등 **설치한 PyTorch 패키지의 CUDA 버전**과 **드라이버 호환**을 재확인
+- **메모리 부족**
+  - Cross-Encoder의 배치 크기 축소, 후보 수(M, L) 축소, CPU 모드로 폴백 등
+- **오프라인 환경**
+  - 모델 폴더(위 4절)를 사전에 채워 두고, `SentenceTransformer(local_path)`로 로드
+
+---
+
+## 9) 요약
+
+- **Conda + pip**로 재현 가능한 환경을 구성  
+- **PyTorch (CUDA별 휠)**는 별도 명령으로 설치  
+- 모델은 **로컬 디렉터리**에서 바로 로드  
+- `pip freeze`/`conda env export`로 **버전 고정** 파일을 함께 제공
+
    - 쿼리와 문서(제목·설명)를 문장 단위로 쪼개서 Cross-Encoder(지금 쓰는 BGE reranker)로 쿼리–문장 점수를 계산 → 상위 1–2개 문장을 근거로 뽑아 자연어 문장으로 조립했음.
 
 ---
