@@ -1,0 +1,28 @@
+# Core Python
+python>=3.9
+
+# === ML / NLP Core ===
+torch>=2.0.0
+transformers>=4.44.0
+sentencepiece>=0.1.99
+scipy>=1.11.0
+numpy>=1.25.0
+pandas>=2.0.0
+scikit-learn>=1.3.0
+
+# === Logging / Utils ===
+tqdm>=4.66.0
+regex>=2023.10.0
+
+# === For Text Processing / Recommendation ===
+nltk>=3.8.1
+
+# === Optional but Recommended (for CUDA speedup) ===
+accelerate>=0.30.0
+
+# === Compatibility (Hugging Face Hub & Token Caching) ===
+huggingface-hub>=0.24.0
+safetensors>=0.4.2
+
+# === Local Encoding & I/O ===
+charset-normalizer>=3.3.0
