@@ -26,6 +26,7 @@ TF-IDF 기반 추천 모델을 통해 가장 관련성 높은 논문/데이터�
  └─ 코사인 유사도 계산 및 상위 K개 추천
      ↓
 [결과 출력 및 CSV 저장]
+'''
 
 ### 3. Directory Structures
 
@@ -39,6 +40,7 @@ clarify_utils.py
 3. 불필요 요청 표현 제거 및 연구 토픽 형태로 재작성
    
 예시:
-입력 질의	Clarified Output
-“딥러닝 모델 성능 검증 논문 추천해주세요”	“Performance evaluation of deep learning models”
-“AI 기반 의료 데이터 분석 연구”	“AI-based analysis of medical data”
+|index| 입력 질의 | Output |
+|------------|------------|------------|
+| 1   | 딥러닝 모델 성능 검증 논문을 추천해주세요 | Performance evaluation of deep learning models |
+| 2 | AI 기반 의료 데이터 분석 연구 | AI-based analysis of medical data |
