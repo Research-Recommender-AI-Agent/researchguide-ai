@@ -137,12 +137,6 @@ recommendations = [corpus[i] for i in topk_idx]
 - 점수 결합: `ALPHA/BETA/GAMMA`
 - 사유 길이: `MAX_REASON_CHARS=100`
 
-> **지연 시간 단축 팁**
-> - `USE_CE=False` 또는 `L_CE` 축소
-> - `TOPN_BM25`, `M_DENSE` 축소
-> - `description`을 300자 내 요약 유지(기본 로직대로)
-> - 모델을 GPU에 상주시켜 반복 질의 시 재사용
-
 ---
 
 ## 7) 산출물(예시 컬럼)
