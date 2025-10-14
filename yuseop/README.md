@@ -341,36 +341,6 @@ pip install -U pip
 pip install   sentence-transformers==2.7.0   transformers==4.41.2   rank-bm25==0.2.2   scikit-learn==1.4.2   numpy==1.26.4   scipy==1.11.4   pandas==2.2.2   tqdm==4.66.4   huggingface-hub==0.23.4
 ```
 
-### C. (선택) 환경을 YAML로 관리
-`environment.yaml` 예시:
-```yaml
-name: recsys-llm
-channels:
-  - conda-forge
-dependencies:
-  - python=3.10
-  - pip>=24.0
-  - numpy=1.26.4
-  - scipy=1.11.4
-  - scikit-learn=1.4.2
-  - pandas=2.2.2
-  - tqdm=4.66.4
-  - ipykernel
-  - pip:
-      - sentence-transformers==2.7.0
-      - transformers==4.41.2
-      - rank-bm25==0.2.2
-      - huggingface-hub==0.23.4
-      # 🔹 PyTorch는 CUDA별 휠이 필요하므로 별도 명령으로 설치 권장
-```
-
-생성/적용:
-```bash
-conda env create -f environment.yaml
-conda activate recsys-llm
-# 이후, 위의 PyTorch(GPU/CPU) 설치 명령을 따로 실행
-```
-
 ---
 
 ## 4) 로컬 모델 경로
