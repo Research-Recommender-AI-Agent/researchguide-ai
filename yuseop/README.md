@@ -139,3 +139,81 @@
 
 ---
 
+## 6) 검증(Validation)
+
+### 6.1 무엇을 측정했나
+- **효율**: 총 지연(latency) — *입력 → 최종 CSV 저장*까지의 경과시간  
+  - Cold/Warm 분리(캐시/모델 로드 전후)
+- **품질**: Top‑K 정밀도/랭킹 품질  
+  - Precision@K, nDCG@K(기본 K=5), MRR  
+  - 오프라인 수작업 라벨(관련성 0/1/2) 기반
+
+### 6.2 재현 방법(간단 오프라인 평가)
+1) 아래 템플릿으로 **골드 라벨** 작성(샘플)
+```csv
+# gold_labels.csv
+query_title,query_desc,doc_title,doc_url,label
+"예: 생성형 AI 수업","학습성과 영향 분석","대학 강의에서 생성형 AI 도입의 학습 효과",https://...,2
+"예: 코로나 IP 이슈","온라인 소비 전환","Illicit Trade in Fakes under COVID-19",https://...,2
+```
+
+2) 노트북을 실행해 `추천_통합_다단계.csv`를 생성한 뒤, 아래 코드를
+노트북의 새 셀 또는 별도 파이썬 스크립트로 실행합니다.
+```python
+import pandas as pd, numpy as np
+
+gold = pd.read_csv("gold_labels.csv")            # label ∈ {0,1,2}
+pred = pd.read_csv("추천_통합_다단계.csv")        # 열: 구분,제목,설명,점수,추천 사유,Level,URL
+
+# 질의 단위(제목+설명)로 그룹핑할 수 있도록 키 구성 (상황에 맞게 정제)
+gold["qkey"] = gold["query_title"].fillna("") + " || " + gold["query_desc"].fillna("")
+pred["dkey"] = pred["제목"].fillna("")           # 간단 매칭: 제목 기준
+
+# Top‑K 후보에 해당 문서가 포함되면 hit, label을 가중치로 사용(2>1>0)
+K = 5
+pred["rank"] = np.arange(1, len(pred)+1)  # 노트북 출력이 이미 Top‑K면 그대로 사용
+
+# Precision@K
+hits = []
+for _, row in gold.iterrows():
+    g = row["doc_title"]
+    in_topk = (pred["제목"].head(K) == g)
+    hits.append(1 if in_topk.any() and row["label"]>0 else 0)
+p_at_k = np.mean(hits) if hits else 0.0
+
+# nDCG@K (label 0/1/2 사용)
+def dcg(labels):
+    return np.sum([(lab)/np.log2(i+2) for i,lab in enumerate(labels)])
+def ndcg_at_k(gold_rows, pred_titles, K=5):
+    rel = [gold_rows.get(t, 0) for t in pred_titles[:K]]
+    ideal = sorted(gold_rows.values(), reverse=True)[:K]
+    return (dcg(rel) / (dcg(ideal) or 1.0)) if rel else 0.0
+
+# 간단 nDCG@K 계산(질의 1개 시나리오)
+gold_map = dict(zip(gold["doc_title"], gold["label"]))
+ndcg5 = ndcg_at_k(gold_map, pred["제목"].tolist(), K)
+
+print(f"Precision@{K}: {p_at_k:.3f}")
+print(f"nDCG@{K}: {ndcg5:.3f}")
+```
+
+> 여러 질의를 한꺼번에 평가하려면 질의 키(`qkey`)별로 Top‑K 추천을 생성하여 매칭/집계를 반복하세요.
+
+### 6.3 성능/정확도 가이드라인(예시 지표 정의)
+- **Latency**(warm): SBERT 임베딩 + CE 15쌍 재랭킹 기준 *X*–*Y*초(머신 사양에 따라 다름)  
+- **Precision@5 / nDCG@5**: 프로젝트 골 기준(예: P@5 ≥ 0.60, nDCG@5 ≥ 0.70)
+
+### 6.4 어블레이션(권장)
+- `USE_CE=False` : CE 제거 시 품질/속도 변화
+- `TOPN_BM25, M_DENSE, L_CE` 축소/확대
+- `W_LANG`(ko/en 가중) 조정
+
+---
+
+## 7) 문제 해결 팁
+- **속도**: 캐시가 없으면 최초 로드가 느릴 수 있음 → 동일 세션에서 반복 실행 권장  
+- **메모리**: 대형 코퍼스는 SBERT 임베딩 메모리 사용량이 큼 → 배치 인코딩/절단  
+- **오류**: 로컬 모델 경로 불일치/누락 확인, CPU‑only 환경에서 CE를 꺼서 시간 절약
+
+---
+
