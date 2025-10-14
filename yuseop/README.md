@@ -46,11 +46,24 @@
 3. **2차 재점수 — SBERT Dense**
    - 문서 표현: `title [SEP] keywords_top8 [SEP] description<=300자`
    - SBERT 임베딩과 쿼리 임베딩 내적 → 상위 `M_DENSE` 선별
-   - 점수 정규화 후 `s_base = ALPHA*bm25_n + BETA*dense_n` 결합함.
+   - 점수 정규화 후 `s_base = ALPHA*bm25_n + BETA*dense_n` 결합
 
-\[
-\text{cos\_sim}(q, d) = \frac{q \cdot d}{\|q\|\|d\|} \;\;\xrightarrow{\text{normalize}}\;\; q \cdot d
-\]
+4. **3차 재랭킹 — Cross‑Encoder (옵션)**
+   - 상위 `L_CE`에 한해 CE 점수 산출 → 정규화
+   - `final = GAMMA*s_base + (1-GAMMA)*ce_n`로 최종 점수
+
+5. **등급화(Level)**
+   - 상위 L 구간의 퍼센타일(p50/p75/p90) 기준으로 `강추/추천/참고/보류` 라벨링
+
+6. **추천 사유(추출형)**
+   - 후보 설명을 문장 단위로 분할 → 쿼리와 임베딩 유사도 최대 문장 1개 선택
+   - 괄호문구 제거·경량 치환·문장부호 정리 → **100자 이내 한 문장**으로 출력
+
+7. **캐싱**
+   - 세션 내 1회만 BM25 인덱스·문서 임베딩을 구축하여 재사용
+   - 함수: `_ensure_indexes_and_dense`, `reset_retrieval_cache`
+
+---
 
 ### 파이프라인 요약
 1. **전처리**: (제목 + 설명) 결합 → 불필요 공백/제어문자 정리  
