@@ -1,16 +1,19 @@
 READ ME
 
-### 한영 통합 논문/데이터셋 추천 시스템 (LLM + TF-IDF 기반
+### 한영 통합 논문/데이터셋 추천 시스템 (LLM + TF-IDF 기반)
 
 ### 1. OverView
 이 프로젝트는 사용자의 질의(Query)를 자동으로 명확화(Clarify) 한 뒤,
+
 TF-IDF 기반 추천 모델을 통해 가장 관련성 높은 논문/데이터셋을 추천하는 시스템이다.
+
 [주요 특징]
 - 한국어 질의도 자동 번역 후 영어로 명확화
 - Flan-T5 기반 LLM Clarify 수행
 - TF-IDF / SBERT 등 다양한 벡터 모델과 호환 가능
 
 ### 2. PipeLine
+```text
 [사용자 질의]
      ↓
 [ClarifyModule]
