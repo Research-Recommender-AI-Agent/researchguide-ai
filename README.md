@@ -19,23 +19,25 @@ TF-IDF 기반 추천 모델을 통해 가장 관련성 높은 논문/데이터�
 | `dataon_clean.jsonl` | Dataon 연구 메타데이터 (논문·데이터셋 통합) | 전체 1차 원본 |
 | `datasets_part1~12.jsonl` | JSONL 분할 데이터셋 (BM25 인덱싱용) | 약 1GB 단위로 분리 |
 | `papers_clean.prep.csv` | 전처리된 문헌 메타데이터 | TF-IDF/SBERT 학습용 |
-
+- **컬럼 스키마 (권장)**
+  - **필수:** `title`, `description`, `url`
+  - **선택:** `keywords`, `org`, `doi` (BM25 가중치 반영 가능)
+  - 
 ## 사용 모델
 | 단계 | 모델명 | 역할 |
 |------|---------|------|
 | Clarify | `google/flan-t5-base` | 질의 명확화 (연구주제형 변환) |
 | Translation | `Helsinki-NLP/opus-mt-ko-en` | 한국어 → 영어 번역 |
-| Sparse Retrieval | `rank-bm25` | 필드별 토큰 기반 BM25 점수 |
-| Dense Retrieval | `sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2` | SBERT 임베딩 |
-| Cross-Encoder | `BAAI/bge-reranker-v2-m3` | 문맥 기반 재랭킹 |
-| Normalization | `robust_minmax`, `percentile_scaler` | 점수 정규화 및 레벨 구분 |
-
+| BM25 Retriever | `rank-bm25` | 필드별 토큰 기반 1차 검색 |
+| Dense Retrieval (SBERT) | `models/paraphrase-multilingual-MiniLM-L12-v2` | SBERT 임베딩 |
+| Cross-Encoder (옵션) |`models/bge-reranker-v2-m3` | 다국어 임베딩, Sentence-BERT |
+> 두 모델은 **로컬 경로**를 사용하며, 노트북 상단 설정에서 변경 가능합니다.
 
 # 3. 모델 실행환경 (HW/SW)
 ## 하드웨어 요구사항
 | 항목 | 권장 사양 | 비고 |
 |------|------------|------|
-| **GPU** | NVIDIA RTX 3060 / T4 (≥8GB VRAM) | CPU도 가능하지만 속도 저하 |
+| **GPU** |NVIDIA 8GB VRAM 이상 | CPU도 가능하지만 속도 저하 |
 | **CPU** | 8코어 이상 | 멀티스레드 임베딩 |
 | **RAM** | 16GB 이상 | SBERT·CE 임베딩 처리용 |
 | **Storage** | 10GB 이상 | 모델 가중치 및 데이터셋 포함 |
@@ -51,28 +53,17 @@ TF-IDF 기반 추천 모델을 통해 가장 관련성 높은 논문/데이터�
 | **CUDA Toolkit** | 12.1 | GPU 가속용 |
 | **NVIDIA Driver** | ≥ 530.x | CUDA 12.1 이상 대응 |
 
-## 필수 라이브러리
+## 필수 라이브러리 (requirements.txt)
 ```yaml
-name: researchguide
-channels:
-  - defaults
-  - conda-forge
-dependencies:
-  - python=3.10
-  - numpy=1.26.4
-  - pandas=2.2.2
-  - scikit-learn=1.4.2
-  - sentence-transformers=2.7.0
-  - transformers=4.41.2
-  - rank-bm25=0.2.2
-  - tqdm=4.66.4
-  - scipy=1.11.4
-  - pip
-  - pip:
-      - torch==2.3.1
-      - torchvision==0.18.1
-      - torchaudio==2.3.1
-      - huggingface-hub==0.23.4
+sentence-transformers==2.7.0
+transformers==4.41.2
+rank-bm25==0.2.2
+scikit-learn==1.4.2
+numpy==1.26.4
+scipy==1.11.4
+pandas==2.2.2
+tqdm==4.66.4
+huggingface-hub==0.23.4
 ```
 
 
@@ -98,9 +89,30 @@ dependencies:
 
 
 # 5. 학습/추론 수행방법
+## 1. Clarify 단계
+- 1. Jupyter/VS Code에서 `clarify_utils.py` 열기
+- 2. python clarify_utils.py를 통해 실행
+  - 한국어 입력을 감지 → 영어로 번역 (**Helsinki-NLP/opus-mt-ko-en**)  
+  - **Flan-T5** 모델을 통해 문장을 명확화  <br>
+**예시**
+| 입력 질의 | Clarify 결과 |
+|------------|--------------|
+| 딥러닝 모델 성능 검증 논문을 추천해주세요 | Performance evaluation of deep learning models |
+| AI 기반 의료 데이터 분석 연구 | AI-based analysis of medical data |
 
+## 2) Modeling 단계
+- 1. 콘다 활성화: `conda activate recsys-llm`  
+- 2. Jupyter/VS Code에서 **Modeling.ipynb** 열기  
+- 3. 노트북 상단 **Config** 섹션에서 CSV/모델 경로 확인  
+- 4. 전체 셀 실행 → 입력(제목/설명) → 결과 테이블/CSV 저장
+**예시**
+| 구분 | 제목 | 설명 | 점수 | 추천 사유 | Level | URL |
+|---|---|---|---|---|---|---|
+| thesis/dataset | … | … | 0.9123 | … | 강추 | https://… |
 
 # 6. 검증 및 성능 평가
+- 효율: Latency (입력~결과 저장)
+- 정확도: Precision@K, nDCG@K, MRR 기반 평가
 | 모델                 | nDCG@10 | MRR@10 | Recall@10 |
 |----------------------|:-------:|:------:|:---------:|
 | BM25                 | 0.477   | 0.403  | 0.245     |
@@ -113,6 +125,13 @@ dependencies:
 # 7. Directory Stucture
 
 # 8. Tech Stack Summary
+| Layer | Stack |
+| --- | --- |
+| **Frontend** | React + Vite + TypeScript + TailwindCSS |
+| **Backend** | Python + Supabase Functions |
+| **AI Models** | Flan-T5, SBERT, BGE-Reranker |
+| **Data** | JSONL corpus (`dataon_clean`, `datasets_part1~12`) |
+
 
 # 9. License
 
