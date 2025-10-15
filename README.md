@@ -3,14 +3,13 @@
 
 # 1. OverView
 이 프로젝트는 사용자의 질의(Query)를 자동으로 명확화(Clarify) 한 뒤,
-TF-IDF 기반 추천 모델을 통해 가장 관련성 높은 논문/데이터셋을 추천하는 시스템이다.
-✅ 웹에서 별도의 설치 없이 이용할 수 있습니다. [knowledgeodyssey.lovable.app](https://knowledgeodyssey.lovable.app/)
+TF-IDF 기반 추천 모델을 통해 가장 관련성 높은 논문/데이터셋을 추천하는 시스템이다. <br>
+✅ 웹에서 별도의 설치 없이 이용할 수 있습니다. [knowledgeodyssey.lovable.app](https://knowledgeodyssey.lovable.app/) <br>
 
 [주요 기능]
 - 한·영 자동 질의 인식 및 번역 (Opus-MT)
 - Flan-T5 기반 질의 명확화 (Clarify)
-- BM25/SVERT/Cross-Encoder 기반 다단계 추
-
+- BM25/SVERT/Cross-Encoder 기반 다단계 추천 <br>
 
 # 2. 데이터 및 모델
 ## 데이터 구성
