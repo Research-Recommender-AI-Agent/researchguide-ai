@@ -1,5 +1,6 @@
 # 한영 통합 논문/데이터셋 추천 시스템 (LLM + TF-IDF 기반)
 
+
 # 1. OverView
 이 프로젝트는 사용자의 질의(Query)를 자동으로 명확화(Clarify) 한 뒤,
 TF-IDF 기반 추천 모델을 통해 가장 관련성 높은 논문/데이터셋을 추천하는 시스템이다.
@@ -9,6 +10,7 @@ TF-IDF 기반 추천 모델을 통해 가장 관련성 높은 논문/데이터�
 - 한·영 자동 질의 인식 및 번역 (Opus-MT)
 - Flan-T5 기반 질의 명확화 (Clarify)
 - BM25/SVERT/Cross-Encoder 기반 다단계 추
+
 
 # 2. 데이터 및 모델
 ## 데이터 구성
@@ -27,6 +29,7 @@ TF-IDF 기반 추천 모델을 통해 가장 관련성 높은 논문/데이터�
 | Dense Retrieval | `sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2` | SBERT 임베딩 |
 | Cross-Encoder | `BAAI/bge-reranker-v2-m3` | 문맥 기반 재랭킹 |
 | Normalization | `robust_minmax`, `percentile_scaler` | 점수 정규화 및 레벨 구분 |
+
 
 # 3. 모델 실행환경 (HW/SW)
 ## 하드웨어 요구사항
@@ -72,6 +75,7 @@ dependencies:
       - huggingface-hub==0.23.4
 ```
 
+
 # 4. PipeLine
 ```text
 [사용자 질의]
@@ -92,7 +96,9 @@ dependencies:
 
 ```
 
+
 # 5. 학습/추론 수행방법
+
 
 # 6. 검증 및 성능 평가
 | 모델                 | nDCG@10 | MRR@10 | Recall@10 |
@@ -102,6 +108,7 @@ dependencies:
 | BM25+Dense           | 0.599   | 0.524  | 0.410     |
 | Recall++(Union)      | 0.525   | 0.421  | 0.338     |
 | BM25+Dense+CE(최종)  | 0.649   | 0.473  | 0.538     |
+
 
 # 7. Directory Stucture
 
