@@ -50,6 +50,12 @@ TF-IDF 기반 추천 모델을 통해 가장 관련성 높은 논문/데이터�
 | **Conda** | 24.5.x | 가상환경 및 의존성 관리 |
 | **CUDA Toolkit** | 12.1 | GPU 가속용 |
 | **NVIDIA Driver** | ≥ 530.x | CUDA 12.1 이상 대응 |
+> Conda 환경 구성 (권장)
+>  ```bash
+>  # Miniconda/Anaconda 설치 후 실행
+>  conda create -n recsys-llm python=3.10 -y
+>  conda activate recsys-llm
+>  ```
 
 ## 필수 라이브러리 (requirements.txt)
 ```yaml
@@ -103,8 +109,20 @@ huggingface-hub==0.23.4
 ## 2) Modeling 단계
 1. 콘다 활성화: `conda activate recsys-llm`  
 2. Jupyter/VS Code에서 **Modeling.ipynb** 열기  
-3. 노트북 상단 **Config** 섹션에서 CSV/모델 경로 확인  
+3. 노트북 상단 **Config** 섹션에서 경로/파라미터 확인
+   - `PAPERS_CSV`, `DATASETS_CSV`
+   - `SBERT_MODEL_NAME_OR_PATH`, `CE_MODEL`
+   - 단계별 후보 수: `TOPN_BM25`, `M_DENSE`, `L_CE`, 최종 `K_FINAL`
+   - 가중치: `ALPHA`, `BETA`, `GAMMA`
 4. 전체 셀 실행 → 입력(제목/설명) → 결과 테이블/CSV 저장
+```text
+주요 하이퍼파라미터
+- 검색 폭: `TOPN_BM25` (기본 200)
+- Dense 선택: `M_DENSE` (기본 60)
+- CE 대상: `L_CE` (기본 15), `USE_CE=True/False`
+- 점수 결합: `ALPHA/BETA/GAMMA`
+- 사유 길이: `MAX_REASON_CHARS=100`
+```
 
 **예시**
 
@@ -113,8 +131,79 @@ huggingface-hub==0.23.4
 | thesis/dataset | … | … | 0.9123 | … | 강추 | https://… |
 
 # 6. 검증 및 성능 평가
-- 효율: Latency (입력~결과 저장)
-- 정확도: Precision@K, nDCG@K, MRR 기반 평가
+- **효율**: Latency (입력~결과 저장까지의 시간)
+  - Cold/Warm 분리 (캐시/모델 로드 전후)
+- **품질**: Top‑K 정밀도/랭킹 품질  
+  - Precision@K, nDCG@K(기본 K=5), MRR  
+  - 오프라인 수작업 라벨(관련성 0/1/2) 기반
+### 6.1 재현 방법(간단 오프라인 평가)
+1) 아래 템플릿으로 **골드 라벨** 작성(샘플)
+```csv
+# gold_labels.csv
+query_title,query_desc,doc_title,doc_url,label
+"예: 생성형 AI 수업","학습성과 영향 분석","대학 강의에서 생성형 AI 도입의 학습 효과",https://...,2
+"예: 코로나 IP 이슈","온라인 소비 전환","Illicit Trade in Fakes under COVID-19",https://...,2
+```
+
+2) 노트북을 실행해 `추천_통합_다단계.csv`를 생성한 뒤, 아래 코드를
+노트북의 새 셀 또는 별도 파이썬 스크립트로 실행.
+```python
+import pandas as pd, numpy as np
+
+gold = pd.read_csv("gold_labels.csv")            # label ∈ {0,1,2}
+pred = pd.read_csv("추천_통합_다단계.csv")        # 열: 구분,제목,설명,점수,추천 사유,Level,URL
+
+# 질의 단위(제목+설명)로 그룹핑할 수 있도록 키 구성 (상황에 맞게 정제)
+gold["qkey"] = gold["query_title"].fillna("") + " || " + gold["query_desc"].fillna("")
+pred["dkey"] = pred["제목"].fillna("")           # 간단 매칭: 제목 기준
+
+# Top‑K 후보에 해당 문서가 포함되면 hit, label을 가중치로 사용(2>1>0)
+K = 5
+pred["rank"] = np.arange(1, len(pred)+1)  # 노트북 출력이 이미 Top‑K면 그대로 사용
+
+# Precision@K
+hits = []
+for _, row in gold.iterrows():
+    g = row["doc_title"]
+    in_topk = (pred["제목"].head(K) == g)
+    hits.append(1 if in_topk.any() and row["label"]>0 else 0)
+p_at_k = np.mean(hits) if hits else 0.0
+
+# nDCG@K (label 0/1/2 사용)
+def dcg(labels):
+    return np.sum([(lab)/np.log2(i+2) for i,lab in enumerate(labels)])
+def ndcg_at_k(gold_rows, pred_titles, K=5):
+    rel = [gold_rows.get(t, 0) for t in pred_titles[:K]]
+    ideal = sorted(gold_rows.values(), reverse=True)[:K]
+    return (dcg(rel) / (dcg(ideal) or 1.0)) if rel else 0.0
+
+# 간단 nDCG@K 계산(질의 1개 시나리오)
+gold_map = dict(zip(gold["doc_title"], gold["label"]))
+ndcg5 = ndcg_at_k(gold_map, pred["제목"].tolist(), K)
+
+print(f"Precision@{K}: {p_at_k:.3f}")
+print(f"nDCG@{K}: {ndcg5:.3f}")
+```
+
+> 여러 질의를 한꺼번에 평가하려면 질의 키(`qkey`)별로 Top‑K 추천을 생성하여 매칭/집계를 반복.
+
+### 6.2 성능/정확도 가이드라인(예시 지표 정의)
+- **Latency**(warm): SBERT 임베딩 + CE 15쌍 재랭킹 기준 *X*–*Y*초(머신 사양에 따라 다름)  
+- **Precision@5 / nDCG@5**: 프로젝트 골 기준(예: P@5 ≥ 0.60, nDCG@5 ≥ 0.70)
+
+### 6.3 어블레이션(권장)
+- `USE_CE=False` : CE 제거 시 품질/속도 변화
+- `TOPN_BM25, M_DENSE, L_CE` 축소/확대
+- `W_LANG`(ko/en 가중) 조정
+
+### 6.4 결과
+- nDCG@10 ≈ 0.65: 상위 랭킹 품질이 꽤 괜찮은 편(상위 결과에 관련 문서가 잘 올라옴).
+
+- MRR@10 ≈ 0.47: 평균적으로 첫 관련 문서가 2위쯤에 등장(1위면 1.0, 2위면 0.5이므로). 초반 정밀도가 괜찮음.
+
+- Recall@10 ≈ 0.54: 쿼리당 정답(긍정) 중 절반 조금 넘게 Top-10에 포착.
+
+### 6.5 오프라인 검증 결과
 
 | 모델                 | nDCG@10 | MRR@10 | Recall@10 |
 |----------------------|:-------:|:------:|:---------:|
@@ -123,6 +212,8 @@ huggingface-hub==0.23.4
 | BM25+Dense           | 0.599   | 0.524  | 0.410     |
 | Recall++(Union)      | 0.525   | 0.421  | 0.338     |
 | BM25+Dense+CE(최종)  | 0.649   | 0.473  | 0.538     |
+
+- 부연 설명 : CE를 넣으면 Recall이 많이 오르고 nDCG도 상승. MRR이 다소 내려간 건, CE가 “첫 관련 문서의 위치”를 항상 더 위로 올려주진 않기 때문(대신 Top-10 안에 관련 문서를 많이 넣어줌).
 
 
 # 7. Tech Stack Summary
@@ -133,8 +224,15 @@ huggingface-hub==0.23.4
 | **AI Models** | Flan-T5, SBERT, BGE-Reranker |
 | **Data** | JSONL corpus (`dataon_clean`, `datasets_part1~12`) |
 
+# 8. 문제 해결
+- **속도**: 캐시가 없으면 최초 로드가 느릴 수 있음 → 동일 세션에서 반복 실행 권장  
+- **메모리**: 대형 코퍼스는 SBERT 임베딩 메모리 사용량이 큼 → 배치 인코딩/절단  
+- **오류**: 로컬 모델 경로 불일치/누락 확인, CPU‑only 환경에서 CE를 꺼서 시간 절약
+- **LLM prompting 대신 추출적 근거를 사용하여 추천 사유 생성**
+   - Multi-Agent를 사용할 목적이었으나 모델을 3개나 사용하기 때문에 응답시간 길어지고(성능을 올릴려면 불가피) 중저사양 H/W에서는 힘들 것으로 판단함
+   - 쿼리와 문서(제목·설명)를 문장 단위로 쪼개서 Cross-Encoder(지금 쓰는 BGE reranker)로 쿼리–문장 점수를 계산 → 상위 1–2개 문장을 근거로 뽑아 자연어 문장으로 조립했음.
 
-# 8. License
+# 9. License
 - FLAN-T5 (google/flan-t5-base): Apache-2.0  https://huggingface.co/google/flan-t5-base
 - Opus-MT (Helsinki-NLP/opus-mt-ko-en): Apache-2.0 https://huggingface.co/Helsinki-NLP/opus-mt-ko-en
 - Sentence-BERT (paraphrase-multilingual-MiniLM-L12-v2): Apache-2.0 https://huggingface.co/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2 
