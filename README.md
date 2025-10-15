@@ -438,6 +438,6 @@ pip freeze > requirements_freeze.txt
 ## 9) 요약
 
 - **Conda + pip**로 재현 가능한 환경을 구성  
-- **PyTorch (CUDA별 휠)**는 별도 명령으로 설치  
+- PyTorch (CUDA별 휠)는 별도 명령으로 설치  
 - 모델은 **로컬 디렉터리**에서 바로 로드  
 - `pip freeze`/`conda env export`로 **버전 고정** 파일을 함께 제공
