@@ -132,4 +132,8 @@ huggingface-hub==0.23.4
 
 
 # 9. License
-
+- FLAN-T5 (google/flan-t5-base): Apache-2.0  https://huggingface.co/google/flan-t5-base
+- Opus-MT (Helsinki-NLP/opus-mt-ko-en): Apache-2.0 https://huggingface.co/Helsinki-NLP/opus-mt-ko-en
+- Sentence-BERT (paraphrase-multilingual-MiniLM-L12-v2): Apache-2.0 https://huggingface.co/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2 
+- BGE Reranker (bge-reranker-v2-m3): Apache-2.0 https://huggingface.co/BAAI/bge-reranker-v2-m3
+- (Lib) rank-bm25: Apache-2.0
