@@ -20,3 +20,38 @@ python clarify_utils.py
 실행하면 콘솔 입력창이 표시됩니다.
 - 한국어 입력 시: 자동 번역 후 명확화
 - 영어 입력 시: 바로 명확화
+
+## 3. Examples
+| 입력 질의 | Clarify 결과 |
+|------------|--------------|
+| 딥러닝 모델 성능 검증 논문을 추천해주세요 | Performance evaluation of deep learning models |
+| AI 기반 의료 데이터 분석 연구 | AI-based analysis of medical data |
+| 최신 LLM 파인튜닝 방법론 | Recent fine-tuning methods for large language models |
+
+## 4. Pipeline
+```text
+[User Query]
+     ↓
+[Language Detector]
+ ├─ Korean → [Opus-MT Translator] → English
+ └─ English → 그대로 진행
+     ↓
+[Clarifier (Flan-T5)]
+ ├─ 연구/논문 제목에 적합한 형태로 재작성
+ └─ 요청 문구 및 불필요 구 제거
+     ↓
+[Cleaner]
+ ├─ 괄호, 불필요 기호 제거
+ └─ 텍스트 정돈 후 반환
+```
+
+## 5. 실행 환경
+
+| 구성 | 버전 / 모델 |
+|------|---------------|
+| **Python** | 3.9 이상 (권장 3.10+) |
+| **Transformers** | 4.41.2 |
+| **Torch** | 2.3.1+ |
+| **Model 1** | `Helsinki-NLP/opus-mt-ko-en` |
+| **Model 2** | `google/flan-t5-base` |
+| **GPU (선택)** | CUDA 11.8 이상 |
