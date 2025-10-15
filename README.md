@@ -125,9 +125,7 @@ huggingface-hub==0.23.4
 | BM25+Dense+CE(최종)  | 0.649   | 0.473  | 0.538     |
 
 
-# 7. Directory Stucture
-
-# 8. Tech Stack Summary
+# 7. Tech Stack Summary
 | Layer | Stack |
 | --- | --- |
 | **Frontend** | React + Vite + TypeScript + TailwindCSS |
@@ -136,7 +134,7 @@ huggingface-hub==0.23.4
 | **Data** | JSONL corpus (`dataon_clean`, `datasets_part1~12`) |
 
 
-# 9. License
+# 8. License
 - FLAN-T5 (google/flan-t5-base): Apache-2.0  https://huggingface.co/google/flan-t5-base
 - Opus-MT (Helsinki-NLP/opus-mt-ko-en): Apache-2.0 https://huggingface.co/Helsinki-NLP/opus-mt-ko-en
 - Sentence-BERT (paraphrase-multilingual-MiniLM-L12-v2): Apache-2.0 https://huggingface.co/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2 
