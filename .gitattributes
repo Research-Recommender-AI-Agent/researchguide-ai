@@ -2,3 +2,4 @@ public/data/*.jsonl filter=lfs diff=lfs merge=lfs -text
 public/model/paraphrase-multilingual-MiniLM-L12-v2 filter=lfs diff=lfs merge=lfs -text
 “public/data/.*jsonl” filter=lfs diff=lfs merge=lfs -text
 public/model/bge-reranker-v2-m3 filter=lfs diff=lfs merge=lfs -text
+public/model/paraphrase-multilingual-MiniLM-L12-v2/* filter=lfs diff=lfs merge=lfs -text
