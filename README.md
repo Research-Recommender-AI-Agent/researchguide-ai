@@ -57,7 +57,7 @@ TF-IDF 기반 추천 모델을 통해 가장 관련성 높은 논문/데이터�
 >  conda create -n recsys-llm python=3.10 -y
 >  conda activate recsys-llm
 >  ```
->  B. 핵심 파이썬 패키지 설치 (GPU 또는 CPU 중 한 가지 선택)
+>  B. 핵심 파이썬 패키지 설치 (GPU 또는 CPU 중 한 가지 선택) <br>
 > **[GPU – CUDA 12.1]**
 > ```bash
 > # PyTorch (cu121)
