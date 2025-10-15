@@ -92,7 +92,7 @@ huggingface-hub==0.23.4
 - 2. python clarify_utils.py를 통해 실행
   - 한국어 입력을 감지 → 영어로 번역 (**Helsinki-NLP/opus-mt-ko-en**)  
   - **Flan-T5** 모델을 통해 문장을 명확화  <br>
-**예시**
+**예시** <br>
 | 입력 질의 | Clarify 결과 |
 |------------|--------------|
 | 딥러닝 모델 성능 검증 논문을 추천해주세요 | Performance evaluation of deep learning models |
@@ -103,14 +103,14 @@ huggingface-hub==0.23.4
 - 2. Jupyter/VS Code에서 **Modeling.ipynb** 열기  
 - 3. 노트북 상단 **Config** 섹션에서 CSV/모델 경로 확인  
 - 4. 전체 셀 실행 → 입력(제목/설명) → 결과 테이블/CSV 저장
-**예시**
+**예시** <br>
 | 구분 | 제목 | 설명 | 점수 | 추천 사유 | Level | URL |
 |---|---|---|---|---|---|---|
 | thesis/dataset | … | … | 0.9123 | … | 강추 | https://… |
 
 # 6. 검증 및 성능 평가
 - 효율: Latency (입력~결과 저장)
-- 정확도: Precision@K, nDCG@K, MRR 기반 평가
+- 정확도: Precision@K, nDCG@K, MRR 기반 평가 <br>
 | 모델                 | nDCG@10 | MRR@10 | Recall@10 |
 |----------------------|:-------:|:------:|:---------:|
 | BM25                 | 0.477   | 0.403  | 0.245     |
