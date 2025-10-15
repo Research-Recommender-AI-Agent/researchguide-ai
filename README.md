@@ -1,8 +1,8 @@
 READ ME
+# TEAM 논문지니 
+# 한영 통합 논문/데이터셋 추천 시스템 (LLM + TF-IDF 기반)
 
-### 한영 통합 논문/데이터셋 추천 시스템 (LLM + TF-IDF 기반)
-
-### 1. OverView
+# 1. OverView
 이 프로젝트는 사용자의 질의(Query)를 자동으로 명확화(Clarify) 한 뒤,
 
 TF-IDF 기반 추천 모델을 통해 가장 관련성 높은 논문/데이터셋을 추천하는 시스템이다.
@@ -12,7 +12,7 @@ TF-IDF 기반 추천 모델을 통해 가장 관련성 높은 논문/데이터�
 - Flan-T5 기반 LLM Clarify 수행
 - TF-IDF / SBERT 등 다양한 벡터 모델과 호환 가능
 
-### 2. PipeLine
+# 2. PipeLine
 ```text
 [사용자 질의]
      ↓
@@ -29,12 +29,12 @@ TF-IDF 기반 추천 모델을 통해 가장 관련성 높은 논문/데이터�
 
 ```
 
-### 3. Directory Structures
+# 3. Directory Structures
 
-### 4. How to Run
+# 4. How to Run
 
 
-### 5. Clarify Module Details
+# 5. Clarify Module Details
 clarify_utils.py
 1. 한국어 → 영어 자동 번역 (Helsinki-NLP/opus-mt-ko-en)
 2. 영어 문장 명확화 (google/flan-t5-base)
@@ -46,13 +46,11 @@ clarify_utils.py
 | 1   | 딥러닝 모델 성능 검증 논문을 추천해주세요 | Performance evaluation of deep learning models |
 | 2 | AI 기반 의료 데이터 분석 연구 | AI-based analysis of medical data |
 
-# Modeling.ipynb — 논문·데이터셋 추천 시스템
+# 6. Modeling (논문·데이터셋 추천 시스템) Details
 
 본 저장소의 `Modeling.ipynb`는 **BM25 → SBERT Dense → Cross‑Encoder**의 다단계 재랭킹 파이프라인으로
 사용자 입력(제목·설명)에 맞는 **논문/데이터셋**을 통합 추천.  
 추가로, 후보 설명에서 **가장 유사한 한 문장**을 추출하여 추천 사유를 간결히 제공함.
-
----
 
 ## 1) 데이터
 
@@ -67,8 +65,6 @@ clarify_utils.py
 
 > CSV는 UTF‑8 권장, 헤더 반드시 포함. 결측은 빈 문자열로 처리.
 
----
-
 ## 2) 모델 & 리소스
 
 - **Dense Retriever (SBERT)**: `models/paraphrase-multilingual-MiniLM-L12-v2`
@@ -79,9 +75,8 @@ clarify_utils.py
 
 > 두 모델은 **로컬 경로**로 사용(사전 다운로드 필요). 경로는 노트북 상단의 설정에서 변경 가능.
 
----
 
-## 3) 방법론(요약)
+## 3) 방법론
 
 1. **입력 정규화**
    - 사용자 입력(제목/설명) → 공백/결측 처리
@@ -110,8 +105,6 @@ clarify_utils.py
 7. **캐싱**
    - 세션 내 1회만 BM25 인덱스·문서 임베딩을 구축하여 재사용
    - 함수: `_ensure_indexes_and_dense`, `reset_retrieval_cache`
-
----
 
 ### 파이프라인 요약
 1. **전처리**: (제목 + 설명) 결합 → 불필요 공백/제어문자 정리  
@@ -148,7 +141,6 @@ K = 5
 topk_idx = np.argsort(-scores)[:K]
 recommendations = [corpus[i] for i in topk_idx]
 ```
----
 
 ## 4) 실행 환경
 
@@ -163,7 +155,6 @@ recommendations = [corpus[i] for i in topk_idx]
 
 > 인터넷 접속 없이 사용하려면 `models/` 디렉토리에 SBERT/CE 가중치를 미리 배치.
 
----
 
 ## 5) 사용 방법 (Jupyter)
 
@@ -175,8 +166,6 @@ recommendations = [corpus[i] for i in topk_idx]
 2. 모든 셀을 실행 → 프롬프트에 **제목/설명** 입력
 3. 노트북 말미에서 결과 테이블과 `추천_통합_다단계.csv` 생성
 
----
-
 ## 6) 주요 하이퍼파라미터
 
 - 검색 폭: `TOPN_BM25` (기본 200)
@@ -185,7 +174,6 @@ recommendations = [corpus[i] for i in topk_idx]
 - 점수 결합: `ALPHA/BETA/GAMMA`
 - 사유 길이: `MAX_REASON_CHARS=100`
 
----
 
 ## 7) 산출물(예시 컬럼)
 
@@ -204,7 +192,6 @@ recommendations = [corpus[i] for i in topk_idx]
 - 코퍼스 업데이트/모델 버전 변경 시 결과 달라질 수 있음.
 - 긴 설명 텍스트는 임베딩/CE 비용 증가 → 상위 K만 요약 권장.
 
----
 
 ## 9) 디렉토리 구조
 
@@ -218,8 +205,6 @@ recommendations = [corpus[i] for i in topk_idx]
 │   └── bge-reranker-v2-m3/
 └── 추천_통합_다단계.csv
 ```
-
----
 
 ## 10) 검증(Validation)
 
@@ -332,8 +317,6 @@ print(f"nDCG@{K}: {ndcg5:.3f}")
 - **RAM:** 최소 16GB 권장
 - **스토리지:** 모델/코퍼스 포함 5–10GB 이상 여유
 
----
-
 ## 2) NVIDIA 드라이버 & CUDA 런타임
 
 - PyTorch CUDA 패키지에 **CUDA 런타임이 포함**되므로 **별도 CUDA Toolkit 설치는 선택**입니다.
@@ -350,8 +333,6 @@ print(f"nDCG@{K}: {ndcg5:.3f}")
 ```bash
 nvidia-smi
 ```
-
----
 
 ## 3) Conda 환경 구성 (권장)
 
@@ -383,8 +364,6 @@ pip install -U pip
 pip install   sentence-transformers==2.7.0   transformers==4.41.2   rank-bm25==0.2.2   scikit-learn==1.4.2   numpy==1.26.4   scipy==1.11.4   pandas==2.2.2   tqdm==4.66.4   huggingface-hub==0.23.4
 ```
 
----
-
 ## 4) 로컬 모델 경로
 
 노트북/코드에서 다음 경로를 사용합니다. 미리 폴더에 모델을 준비해 두세요.
@@ -397,7 +376,6 @@ models/
 
 > 인터넷 미사용 환경이면, 두 디렉터리에 **config.json, model.safetensors, tokenizer files** 등이 포함되어야 합니다.
 
----
 
 ## 5) 실행 방법
 
@@ -405,8 +383,6 @@ models/
 2. Jupyter/VS Code에서 **Modeling.ipynb** 열기  
 3. 노트북 상단 **Config** 섹션에서 CSV/모델 경로 확인  
 4. 전체 셀 실행 → 입력(제목/설명) → 결과 테이블/CSV 저장
-
----
 
 ## 6) GPU 사용 확인 코드
 
@@ -418,8 +394,6 @@ if torch.cuda.is_available():
 else:
     print("CUDA not available → CPU 모드")
 ```
-
----
 
 ## 7) 필수 라이브러리 버전 고정 (requirements)
 
@@ -449,8 +423,6 @@ pip freeze > requirements_freeze.txt
 # 또는 conda env export --no-builds > environment_freeze.yaml
 ```
 
----
-
 ## 8) 트러블슈팅
 
 - **torch.cuda.is_available() = False**
@@ -463,16 +435,9 @@ pip freeze > requirements_freeze.txt
 - **오프라인 환경**
   - 모델 폴더(위 4절)를 사전에 채워 두고, `SentenceTransformer(local_path)`로 로드
 
----
-
 ## 9) 요약
 
 - **Conda + pip**로 재현 가능한 환경을 구성  
 - **PyTorch (CUDA별 휠)**는 별도 명령으로 설치  
 - 모델은 **로컬 디렉터리**에서 바로 로드  
 - `pip freeze`/`conda env export`로 **버전 고정** 파일을 함께 제공
-
----
-
-
-
