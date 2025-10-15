@@ -51,11 +51,26 @@ TF-IDF 기반 추천 모델을 통해 가장 관련성 높은 논문/데이터�
 | **CUDA Toolkit** | 12.1 | GPU 가속용 |
 | **NVIDIA Driver** | ≥ 530.x | CUDA 12.1 이상 대응 |
 > Conda 환경 구성 (권장)
+> A. 새 환경 만들기
 >  ```bash
 >  # Miniconda/Anaconda 설치 후 실행
 >  conda create -n recsys-llm python=3.10 -y
 >  conda activate recsys-llm
 >  ```
+>  B. 핵심 파이썬 패키지 설치 (GPU 또는 CPU 중 한 가지 선택)
+> **[GPU – CUDA 12.1]**
+> ```bash
+> # PyTorch (cu121)
+> pip install --index-url
+> https://download.pytorch.org/whl/cu121
+> torch==2.3.1 torchvision==0.18.1
+> torchaudio==2.3.1
+> ```
+> **[CPU 전용]**
+> ```bash
+> pip install torch==2.3.1 torchvision==0.18.1
+> torchaudio==2.3.1
+> ```
 
 ## 필수 라이브러리 (requirements.txt)
 ```yaml
@@ -68,6 +83,19 @@ scipy==1.11.4
 pandas==2.2.2
 tqdm==4.66.4
 huggingface-hub==0.23.4
+torch==2.8.0
+torchvision==0.22.2
+torchaudio==2.8.0
+sentencepiece==0.2.1
+safetensors==0.4.5
+accelerate==0.33.0
+regex==2025.9.18
+requests==2.32.3
+pyyaml==6.0.2
+colorama==0.4.6
+packaging==25.0
+filelock==3.15.4
+typing-extensions>=4.10.0
 ```
 
 
