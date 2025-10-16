@@ -4,12 +4,13 @@
 # 1. OverView
 이 프로젝트는 사용자의 질의(Query)를 자동으로 명확화(Clarify) 한 뒤,
 TF-IDF 기반 추천 모델을 통해 가장 관련성 높은 논문/데이터셋을 추천하는 시스템이다. <br>
-✅ 웹에서 별도의 설치 없이 이용할 수 있습니다. [knowledgeodyssey.lovable.app](https://knowledgeodyssey.lovable.app/) <br>
+✅ 웹에서 별도의 설치 없이 이용 가능 > [knowledgeodyssey.lovable.app](https://knowledgeodyssey.lovable.app/) <br>
 
 [주요 기능]
 - 한·영 자동 질의 인식 및 번역 (Opus-MT)
 - Flan-T5 기반 질의 명확화 (Clarify)
-- BM25/SVERT/Cross-Encoder 기반 다단계 추천 <br>
+- BM25/SVERT/Cross-Encoder 기반 다단계 추천
+- 입력 질의에 대한 Top-K 논문/데이터셋 추천 및 사유 출력 <br><br>
 
 # 2. 데이터 및 모델
 ## 데이터 구성 <br>
@@ -29,7 +30,7 @@ TF-IDF 기반 추천 모델을 통해 가장 관련성 높은 논문/데이터�
 | BM25 Retriever | `rank-bm25` | 필드별 토큰 기반 1차 검색 |
 | Dense Retrieval (SBERT) | `models/paraphrase-multilingual-MiniLM-L12-v2` | SBERT 임베딩 |
 | Cross-Encoder (옵션) |`models/bge-reranker-v2-m3` | 다국어 임베딩, Sentence-BERT |
-> 두 모델은 **로컬 경로**를 사용하며, 노트북 상단 설정에서 변경 가능합니다.
+> 두 모델은 **로컬 경로**를 사용하며, 노트북 상단 설정에서 변경 가능. <br><br>
 
 # 3. 모델 실행환경 (HW/SW)
 ## 하드웨어 요구사항 <br>
@@ -50,6 +51,7 @@ TF-IDF 기반 추천 모델을 통해 가장 관련성 높은 논문/데이터�
 | **Conda** | 24.5.x | 가상환경 및 의존성 관리 |
 | **CUDA Toolkit** | 12.1 | GPU 가속용 |
 | **NVIDIA Driver** | ≥ 530.x | CUDA 12.1 이상 대응 |
+<br>
 > Conda 환경 구성 (권장) <br>
 > A. 새 환경 만들기
 >  ```bash
@@ -71,6 +73,7 @@ TF-IDF 기반 추천 모델을 통해 가장 관련성 높은 논문/데이터�
 > pip install torch==2.3.1 torchvision==0.18.1
 > torchaudio==2.3.1
 > ```
+<br>
 
 ## 필수 라이브러리 (requirements.txt)
 ```yaml
@@ -97,7 +100,7 @@ packaging==25.0
 filelock==3.15.4
 typing-extensions>=4.10.0
 ```
-
+<br><br>
 
 # 4. PipeLine
 ```text
@@ -116,9 +119,8 @@ typing-extensions>=4.10.0
  └─ 상위 K개 추천 및 등급화, 사유 생성
      ↓
 [결과 출력 및 CSV 저장]
-
 ```
-
+<br><br>
 
 # 5. 학습/추론 수행방법
 ## 1. Clarify 단계
@@ -133,6 +135,8 @@ typing-extensions>=4.10.0
 |------------|--------------|
 | 딥러닝 모델 성능 검증 논문을 추천해주세요 | Performance evaluation of deep learning models |
 | AI 기반 의료 데이터 분석 연구 | AI-based analysis of medical data |
+
+<br>
 
 ## 2) Modeling 단계
 1. 콘다 활성화: `conda activate recsys-llm`  
@@ -158,12 +162,14 @@ typing-extensions>=4.10.0
 |---|---|---|---|---|---|---|
 | thesis/dataset | … | … | 0.9123 | … | 강추 | https://… |
 
+<br><br>
 # 6. 검증 및 성능 평가
 - **효율**: Latency (입력~결과 저장까지의 시간)
   - Cold/Warm 분리 (캐시/모델 로드 전후)
 - **품질**: Top‑K 정밀도/랭킹 품질  
   - Precision@K, nDCG@K(기본 K=5), MRR  
   - 오프라인 수작업 라벨(관련성 0/1/2) 기반
+<br>
 ### 6.1 재현 방법(간단 오프라인 평가)
 1) 아래 템플릿으로 **골드 라벨** 작성(샘플)
 ```csv
@@ -173,8 +179,7 @@ query_title,query_desc,doc_title,doc_url,label
 "예: 코로나 IP 이슈","온라인 소비 전환","Illicit Trade in Fakes under COVID-19",https://...,2
 ```
 
-2) 노트북을 실행해 `추천_통합_다단계.csv`를 생성한 뒤, 아래 코드를
-노트북의 새 셀 또는 별도 파이썬 스크립트로 실행.
+2) 노트북을 실행해 `추천_통합_다단계.csv`를 생성한 뒤, 아래 코드를 노트북의 새 셀 또는 별도 파이썬 스크립트로 실행.
 ```python
 import pandas as pd, numpy as np
 
@@ -215,21 +220,24 @@ print(f"nDCG@{K}: {ndcg5:.3f}")
 
 > 여러 질의를 한꺼번에 평가하려면 질의 키(`qkey`)별로 Top‑K 추천을 생성하여 매칭/집계를 반복.
 
+<br>
+
 ### 6.2 성능/정확도 가이드라인(예시 지표 정의)
 - **Latency**(warm): SBERT 임베딩 + CE 15쌍 재랭킹 기준 *X*–*Y*초(머신 사양에 따라 다름)  
 - **Precision@5 / nDCG@5**: 프로젝트 골 기준(예: P@5 ≥ 0.60, nDCG@5 ≥ 0.70)
+<br>
 
 ### 6.3 어블레이션(권장)
 - `USE_CE=False` : CE 제거 시 품질/속도 변화
 - `TOPN_BM25, M_DENSE, L_CE` 축소/확대
 - `W_LANG`(ko/en 가중) 조정
+<br>
 
 ### 6.4 결과
 - nDCG@10 ≈ 0.65: 상위 랭킹 품질이 꽤 괜찮은 편(상위 결과에 관련 문서가 잘 올라옴).
-
 - MRR@10 ≈ 0.47: 평균적으로 첫 관련 문서가 2위쯤에 등장(1위면 1.0, 2위면 0.5이므로). 초반 정밀도가 괜찮음.
-
 - Recall@10 ≈ 0.54: 쿼리당 정답(긍정) 중 절반 조금 넘게 Top-10에 포착.
+<br>
 
 ### 6.5 오프라인 검증 결과
 
@@ -242,7 +250,7 @@ print(f"nDCG@{K}: {ndcg5:.3f}")
 | BM25+Dense+CE(최종)  | 0.649   | 0.473  | 0.538     |
 
 - 부연 설명 : CE를 넣으면 Recall이 많이 오르고 nDCG도 상승. MRR이 다소 내려간 건, CE가 “첫 관련 문서의 위치”를 항상 더 위로 올려주진 않기 때문(대신 Top-10 안에 관련 문서를 많이 넣어줌).
-
+<br><br>
 
 # 7. Tech Stack Summary
 | Layer | Stack |
@@ -251,6 +259,7 @@ print(f"nDCG@{K}: {ndcg5:.3f}")
 | **Backend** | Python + Supabase Functions |
 | **AI Models** | Flan-T5, SBERT, BGE-Reranker |
 | **Data** | JSONL corpus (`dataon_clean`, `datasets_part1~12`) |
+<br><br>
 
 # 8. 문제 해결
 - **속도**: 캐시가 없으면 최초 로드가 느릴 수 있음 → 동일 세션에서 반복 실행 권장  
@@ -259,6 +268,7 @@ print(f"nDCG@{K}: {ndcg5:.3f}")
 - **LLM prompting 대신 추출적 근거를 사용하여 추천 사유 생성**
    - Multi-Agent를 사용할 목적이었으나 모델을 3개나 사용하기 때문에 응답시간 길어지고(성능을 올릴려면 불가피) 중저사양 H/W에서는 힘들 것으로 판단함
    - 쿼리와 문서(제목·설명)를 문장 단위로 쪼개서 Cross-Encoder(지금 쓰는 BGE reranker)로 쿼리–문장 점수를 계산 → 상위 1–2개 문장을 근거로 뽑아 자연어 문장으로 조립했음.
+<br><br>
 
 # 9. License
 - FLAN-T5 (google/flan-t5-base): Apache-2.0  https://huggingface.co/google/flan-t5-base
