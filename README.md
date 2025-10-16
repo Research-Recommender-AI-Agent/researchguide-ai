@@ -10,10 +10,10 @@ TF-IDF 기반 추천 모델을 통해 가장 관련성 높은 논문/데이터�
 - 한·영 자동 질의 인식 및 번역 (Opus-MT)
 - Flan-T5 기반 질의 명확화 (Clarify)
 - BM25/SVERT/Cross-Encoder 기반 다단계 추천
-- 입력 질의에 대한 Top-K 논문/데이터셋 추천 및 사유 출력 <br><br>
+- 입력 질의에 대한 Top-K 논문/데이터셋 추천 및 사유 출력 <br>
 
 # 2. 데이터 및 모델
-## 데이터 구성 <br>
+### 2.1 데이터 구성 <br>
 | 데이터셋 | 내용 | 비고 |
 |-----------|------|------|
 | `dataon_clean.jsonl` | Dataon 연구 메타데이터 (논문·데이터셋 통합) | 전체 1차 원본 |
@@ -22,7 +22,7 @@ TF-IDF 기반 추천 모델을 통해 가장 관련성 높은 논문/데이터�
 - **컬럼 스키마 (권장)**
   - **필수:** `title`, `description`, `url`
   - **선택:** `keywords`, `org`, `doi` (BM25 가중치 반영 가능) <br>
-## 사용 모델 <br>
+### 2.2 사용 모델 <br>
 | 단계 | 모델명 | 역할 |
 |------|---------|------|
 | Clarify | `google/flan-t5-base` | 질의 명확화 (연구주제형 변환) |
@@ -32,9 +32,10 @@ TF-IDF 기반 추천 모델을 통해 가장 관련성 높은 논문/데이터�
 | Cross-Encoder (옵션) |`models/bge-reranker-v2-m3` | 다국어 임베딩, Sentence-BERT |
 > 두 모델은 **로컬 경로**를 사용하며, 노트북 상단 설정에서 변경 가능.
 
-<br><br>
+<br>
+
 # 3. 모델 실행환경 (HW/SW)
-## 하드웨어 요구사항
+### 3.1 하드웨어 요구사항
 | 항목 | 권장 사양 | 비고 |
 |------|------------|------|
 | **GPU** |NVIDIA 8GB VRAM 이상 | CPU도 가능하지만 속도 저하 |
@@ -42,7 +43,7 @@ TF-IDF 기반 추천 모델을 통해 가장 관련성 높은 논문/데이터�
 | **RAM** | 16GB 이상 | SBERT·CE 임베딩 처리용 |
 | **Storage** | 10GB 이상 | 모델 가중치 및 데이터셋 포함 |
 
-## 소프트웨어 환경 요구사항
+### 3.2 소프트웨어 환경 요구사항
 | 항목 | 권장 버전 | 비고 |
 |------|-----------|------|
 | **OS** | Ubuntu 22.04 / macOS 14 / Windows 11 | |
@@ -73,9 +74,8 @@ TF-IDF 기반 추천 모델을 통해 가장 관련성 높은 논문/데이터�
 > pip install torch==2.3.1 torchvision==0.18.1
 > torchaudio==2.3.1
 > ```
-<br>
 
-## 필수 라이브러리 (requirements.txt)
+### 3.3 필수 라이브러리 (requirements.txt)
 ```yaml
 sentence-transformers==2.7.0
 transformers==4.41.2
@@ -100,7 +100,7 @@ packaging==25.0
 filelock==3.15.4
 typing-extensions>=4.10.0
 ```
-<br><br>
+<br>
 
 # 4. PipeLine
 ```text
@@ -120,25 +120,23 @@ typing-extensions>=4.10.0
      ↓
 [결과 출력 및 CSV 저장]
 ```
-<br><br>
+<br>
 
 # 5. 학습/추론 수행방법
-## 1. Clarify 단계
+### 5.1 Clarify 단계
 1. Jupyter/VS Code에서 `clarify_utils.py` 열기
 2. python clarify_utils.py를 통해 실행
   - 한국어 입력을 감지 → 영어로 번역 (**Helsinki-NLP/opus-mt-ko-en**)  
   - **Flan-T5** 모델을 통해 문장을 명확화  <br>
 
 **예시**
-
 | 입력 질의 | Clarify 결과 |
 |------------|--------------|
 | 딥러닝 모델 성능 검증 논문을 추천해주세요 | Performance evaluation of deep learning models |
 | AI 기반 의료 데이터 분석 연구 | AI-based analysis of medical data |
 
-<br>
 
-## 2) Modeling 단계
+### 5.2 Modeling 단계
 1. 콘다 활성화: `conda activate recsys-llm`  
 2. Jupyter/VS Code에서 **Modeling.ipynb** 열기  
 3. 노트북 상단 **Config** 섹션에서 경로/파라미터 확인
@@ -169,7 +167,7 @@ typing-extensions>=4.10.0
 - **품질**: Top‑K 정밀도/랭킹 품질  
   - Precision@K, nDCG@K(기본 K=5), MRR  
   - 오프라인 수작업 라벨(관련성 0/1/2) 기반
-<br>
+
 ### 6.1 재현 방법(간단 오프라인 평가)
 1) 아래 템플릿으로 **골드 라벨** 작성(샘플)
 ```csv
@@ -220,24 +218,20 @@ print(f"nDCG@{K}: {ndcg5:.3f}")
 
 > 여러 질의를 한꺼번에 평가하려면 질의 키(`qkey`)별로 Top‑K 추천을 생성하여 매칭/집계를 반복.
 
-<br>
 
 ### 6.2 성능/정확도 가이드라인(예시 지표 정의)
 - **Latency**(warm): SBERT 임베딩 + CE 15쌍 재랭킹 기준 *X*–*Y*초(머신 사양에 따라 다름)  
 - **Precision@5 / nDCG@5**: 프로젝트 골 기준(예: P@5 ≥ 0.60, nDCG@5 ≥ 0.70)
-<br>
 
 ### 6.3 어블레이션(권장)
 - `USE_CE=False` : CE 제거 시 품질/속도 변화
 - `TOPN_BM25, M_DENSE, L_CE` 축소/확대
 - `W_LANG`(ko/en 가중) 조정
-<br>
 
 ### 6.4 결과
 - nDCG@10 ≈ 0.65: 상위 랭킹 품질이 꽤 괜찮은 편(상위 결과에 관련 문서가 잘 올라옴).
 - MRR@10 ≈ 0.47: 평균적으로 첫 관련 문서가 2위쯤에 등장(1위면 1.0, 2위면 0.5이므로). 초반 정밀도가 괜찮음.
 - Recall@10 ≈ 0.54: 쿼리당 정답(긍정) 중 절반 조금 넘게 Top-10에 포착.
-<br>
 
 ### 6.5 오프라인 검증 결과
 
@@ -259,7 +253,8 @@ print(f"nDCG@{K}: {ndcg5:.3f}")
 | **Backend** | Python + Supabase Functions |
 | **AI Models** | Flan-T5, SBERT, BGE-Reranker |
 | **Data** | JSONL corpus (`dataon_clean`, `datasets_part1~12`) |
-<br><br>
+
+<br>
 
 # 8. 문제 해결
 - **속도**: 캐시가 없으면 최초 로드가 느릴 수 있음 → 동일 세션에서 반복 실행 권장  
