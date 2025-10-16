@@ -31,6 +31,7 @@ TF-IDF 기반 추천 모델을 통해 가장 관련성 높은 논문/데이터�
 | Dense Retrieval (SBERT) | `models/paraphrase-multilingual-MiniLM-L12-v2` | SBERT 임베딩 |
 | Cross-Encoder (옵션) |`models/bge-reranker-v2-m3` | 다국어 임베딩, Sentence-BERT |
 > 두 모델은 **로컬 경로**를 사용하며, 노트북 상단 설정에서 변경 가능.
+
 <br><br>
 
 # 3. 모델 실행환경 (HW/SW)
@@ -52,7 +53,7 @@ TF-IDF 기반 추천 모델을 통해 가장 관련성 높은 논문/데이터�
 | **Conda** | 24.5.x | 가상환경 및 의존성 관리 |
 | **CUDA Toolkit** | 12.1 | GPU 가속용 |
 | **NVIDIA Driver** | ≥ 530.x | CUDA 12.1 이상 대응 
-> **Conda 환경 구성 (권장)**
+> **Conda 환경 구성 (권장)** <br>
 > A. 새 환경 만들기
 >  ```bash
 >  # Miniconda/Anaconda 설치 후 실행
