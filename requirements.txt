@@ -2,27 +2,35 @@
 python>=3.9
 
 # === ML / NLP Core ===
-torch>=2.0.0
-transformers>=4.44.0
-sentencepiece>=0.1.99
-scipy>=1.11.0
-numpy>=1.25.0
-pandas>=2.0.0
-scikit-learn>=1.3.0
+torch==2.8.0
+torchvision==0.22.2
+torchaudio==2.8.0
+transformers==4.44.0
+sentence-transformers==2.7.0
+sentencepiece==0.2.1
+rank-bm25==0.2.2
+scikit-learn==1.4.2
+numpy==1.26.4
+scipy==1.11.4
+pandas==2.2.2
 
 # === Logging / Utils ===
-tqdm>=4.66.0
+tqdm==4.66.4
 regex>=2023.10.0
+colorama>=0.4.6
+packaging>=25.0
+filelock>=3.15.4
+typing-extensions>=4.10.0
 
 # === For Text Processing / Recommendation ===
 nltk>=3.8.1
 
-# === Optional but Recommended (for CUDA speedup) ===
-accelerate>=0.30.0
+# === Hugging Face / Optimization ===
+huggingface-hub==0.24.0
+safetensors==0.4.5
+accelerate==0.33.0
 
-# === Compatibility (Hugging Face Hub & Token Caching) ===
-huggingface-hub>=0.24.0
-safetensors>=0.4.2
-
-# === Local Encoding & I/O ===
+# === I/O and Network ===
+requests==2.32.3
+pyyaml==6.0.2
 charset-normalizer>=3.3.0
