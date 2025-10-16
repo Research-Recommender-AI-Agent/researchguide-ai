@@ -1,5 +1,5 @@
 # Clarify Module
-본 모듈(`clarify_utils.py`)은 사용자의 **자연어 질의(Query)**를 자동으로 감지·번역·명확화하여 추천 모델(`TextRecommender`)에 전달하는 **전처리 LLM 파이프라인**입니다.
+본 모듈(`clarify_utils.py`)은 사용자의 **자연어 질의(Query)** 를 자동으로 감지·번역·명확화하여 추천 모델(`TextRecommender`)에 전달하는 **전처리 LLM 파이프라인**이다.
 
 
 ## 1. 개요 (Overview)
